@@ -1,0 +1,84 @@
+<div id="main-wrapper">
+    <header class="topbar">
+        <nav class="navbar top-navbar navbar-expand-md navbar-light">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="index.html">
+                    <b>
+                        <img src="../../assets/assets/images/logo.png" alt="homepage" width="70px" class="dark-logo" style="margin-top: 5px;"/>
+                        <img src="../../assets/assets/images/letras.png" alt="homepage" class="light-logo" style="margin-top: 5px;"/>
+                    </b>
+                    <span>
+                        <img src="../../assets/assets/images/letras.png" alt="homepage" width="120px" class="dark-logo" style="margin-top: 5px;" />
+                        <img src="../assets/assets/images/logo-light-text.png" class="light-logo" alt="homepage" />
+                    </span>
+                </a>
+            </div>
+            <div class="navbar-collapse">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link nav-toggler hidden-md-up waves-effect waves-dark" href="javascript:void(0)">
+                            <i class="ti-menu"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link sidebartoggler hidden-sm-down waves-effect waves-dark" href="javascript:void(0)">
+                            <i class="ti-menu"></i>
+                        </a>
+                    </li>
+                    <li class="nav-item hidden-sm-down"></li>
+                </ul>
+                <ul class="navbar-nav my-lg-0">
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img src="../assets/assets/images/users/10.jpg" alt="user" class="profile-pic" />
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right animated flipInY">
+                            <ul class="dropdown-user">
+                                <li class="nav-devider"></li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a class="cursor" (click)="logout();">
+                                        <i class="fa fa-power-off"></i>
+                                    Salir
+                                    </a>
+                                </li>  
+                            </ul>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </nav>
+    </header>
+    <aside class="left-sidebar">
+        <div class="scroll-sidebar">
+            <nav class="sidebar-nav">
+                <ul id="sidebarnav">
+                    <li *ngFor="let item of usuariosService.menu">
+                        <a class="has-arrow waves-effect waves-dark" href="#" aria-expanded="false">
+                            <i class={{item.icon}}></i>
+                            <span class="hide-menu">{{item.title}}</span>
+                        </a>
+                        <ul aria-expanded="false" class="collapse">
+                            <li *ngFor="let subitem of item.submenu">
+                                <a 
+                                [routerLink]="subitem.url"
+                                routerLinkActive="active"
+                                [routerLinkActiveOptions]="{exact: true}"
+                                >{{subitem.title}} </a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="nav-devider"></li>
+                    <li>
+                        <a class="cursor" (click)="logout();">
+                            <i class="fa fa-power-off"></i>
+                            Salir
+                        </a>
+                    </li>  
+                </ul>
+            </nav>
+        </div>
+    </aside>
+    <router-outlet></router-outlet>
+</div>

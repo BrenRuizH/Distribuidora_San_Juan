@@ -1,0 +1,142 @@
+<div class="page-wrapper">
+    <div class="container-fluid animated fadeIn">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Registrar Orden Compra</h3>
+            </div>
+            <div class="">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h3 class="card-title">Solicitud de Datos de la Orden de Compra</h3>
+                            <hr>
+                            <form [formGroup]="ordenesForm" (ngSubmit)="agregarOrdenCompra()">
+                            <div class="row p-t-20">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Fecha de Orden</label>
+                                        <input type="text" class="form-control" name="fecha_orden" [(ngModel)]="fechaOrden" [ngModelOptions]="{standalone: true}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Fecha de Entrega</label>
+                                        <input type="date" class="form-control text-uppercase" name="fecha_entrega" formControlName="fecha_entrega">
+                                        <div *ngIf="ordenesForm.get('fecha_entrega')?.invalid && (ordenesForm.get('fecha_entrega')?.dirty || ordenesForm.get('fecha_entrega')?.touched)" class="text-danger">
+                                            Falta rellenar fecha de entrega
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Cliente</label>
+                                        <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id" (change)="getHormas(ordenesForm.get('cliente_id')?.value); seleccionarCliente(ordenesForm.get('cliente_id')?.value)">
+                                            <option value="" disabled >Seleccione un cliente</option>
+                                            <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                        </select>
+                                        <div *ngIf="ordenesForm.get('cliente_id')?.invalid && (ordenesForm.get('cliente_id')?.dirty || ordenesForm.get('cliente_id')?.touched)" class="text-danger">
+                                            Falta rellenar cliente
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Folio</label>
+                                        <input type="text" class="form-control" name="folioMax" [(ngModel)]="folioMax" [ngModelOptions]="{standalone: true}" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Orden de Compra del Cliente</label>
+                                        <input type="text"  class="form-control" name="countMax" [(ngModel)]="countMax" [ngModelOptions]="{standalone: true}" readonly>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Horma</label>
+                                        <select class="form-control text-uppercase" name="horma_id" formControlName="horma_id" (change)="seleccionarHorma(ordenesForm.get('horma_id')?.value);" [disabled]="!ordenesForm.get('cliente_id')?.value || noHormas">
+                                            <option value="" disabled >Seleccione una horma</option>
+                                            <option *ngFor="let datos of hormas" value="{{datos.id}}">{{datos.nombre}}</option>
+                                        </select>
+                                        <div *ngIf="noHormas" class="text-danger">
+                                            No hay hormas que coincidan con el cliente
+                                        </div>
+                                        <div *ngIf="ordenesForm.get('horma_id')?.invalid && (ordenesForm.get('horma_id')?.dirty || ordenesForm.get('horma_id')?.touched)" class="text-danger">
+                                            Falta rellenar horma
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Matriz</label>
+                                    <input type="text" class="form-control text-uppercase" name="matriz" [(ngModel)]="horma.matriz" [ngModelOptions]="{standalone: true}" disabled>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Cambrillón</label>
+                                    <input type="text" class="form-control text-uppercase" name="cambrillon" [(ngModel)]="horma.cambrillon" [ngModelOptions]="{standalone: true}" disabled>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Materiales</label>
+                                    <textarea type="text" class="form-control text-uppercase" name="materiales" [(ngModel)]="horma.materiales" [ngModelOptions]="{standalone: true}" disabled></textarea>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Observaciones</label>
+                                    <textarea type="text" class="form-control text-uppercase" name="observaciones" [(ngModel)]="horma.observaciones" [ngModelOptions]="{standalone: true}" disabled></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Total de Pares</label>
+                                    <input type="text" class="form-control" name="total" [(ngModel)]="total" [ngModelOptions]="{standalone: true}" readonly>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <table class="miTabla">
+                                <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                  <td *ngFor="let item of fila">
+                                    <div class="punto">{{item.vista}}</div>
+                                    <hr class="linea">
+                                    <input [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}" (change)="calcularTotalPares()" type="number" min="0" class="cantidad" >
+                                  </td>
+                                </tr>
+                              </table>
+                        </div>
+                        <br>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-success" (click)="agregarOrdenCompra();"><i class="fa fa-check"></i> Guardar </button> 
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

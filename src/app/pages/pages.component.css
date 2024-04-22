@@ -1,0 +1,9 @@
+/* Ocultar el logo con texto cuando el menú está colapsado */
+.logo-with-text {
+    display: none;
+}
+
+/* Mostrar el logo con texto cuando el menú se expande */
+.navbar-collapse.show + .navbar-header .logo-with-text {
+    display: block;
+}

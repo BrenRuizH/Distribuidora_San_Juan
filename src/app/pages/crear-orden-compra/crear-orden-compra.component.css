@@ -1,0 +1,26 @@
+.miTabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.miTabla td {
+  border: 1px solid black;
+  padding: 10px;
+  text-align: center;
+}
+
+.miTabla .punto {
+  font-weight: bold;
+  color: black;
+}
+
+.miTabla .linea {
+  border-top: 1px solid black;
+}
+
+.miTabla .cantidad {
+  width: 50px;
+  border: none;
+  background: none;
+  text-align: center;
+}

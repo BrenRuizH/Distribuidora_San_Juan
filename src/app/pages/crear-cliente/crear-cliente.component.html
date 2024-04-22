@@ -1,0 +1,86 @@
+<div class="page-wrapper">
+    <div class="container-fluid animated fadeIn">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Registrar Cliente</h3>
+            </div>
+            <div class="">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h3 class="card-title">Solicitud de Datos del Cliente</h3>
+                            <hr>
+                            <form [formGroup]="clientesForm" (ngSubmit)="agregarCliente()">
+                            <div class="row p-t-20">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Código</label>
+                                        <input type="text" class="form-control text-uppercase" name="codigo" formControlName="codigo" placeholder="migajitas">
+                                        <div *ngIf="clientesForm.get('codigo')?.invalid && (clientesForm.get('codigo')?.dirty || clientesForm.get('codigo')?.touched)" class="text-danger">
+                                            Falta rellenar codigo
+                                        </div>           
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Razón Social</label>
+                                        <input type="text" class="form-control text-uppercase" name="razonSocial" formControlName="razonSocial" placeholder="maría guadalupe ramírez villalobos">
+                                        <div *ngIf="clientesForm.get('razonSocial')?.invalid && (clientesForm.get('razonSocial')?.dirty || clientesForm.get('razonSocial')?.touched)" class="text-danger">
+                                            Falta rellenar razon social
+                                        </div>           
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>RFC</label>
+                                        <input type="text" class="form-control text-uppercase" name="rfc" [(ngModel)]="clientes.rfc" [ngModelOptions]="{standalone: true}" placeholder="ravg690920lx9" maxlength="13" minlength="13">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label class="control-label">Teléfono</label>
+                                        <input type="number" class="form-control" name="telefono" [(ngModel)]="clientes.telefono" [ngModelOptions]="{standalone: true}" placeholder="4777963324" maxlength="10" minlength="10">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label>Pagos Con</label>
+                                        <input type="text"  class="form-control text-uppercase" name="pagosCon" [(ngModel)]="clientes.pagosCon" [ngModelOptions]="{standalone: true}" placeholder="ana">
+                                    </div>
+                                </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Pedidos A</label>
+                                    <input type="text" class="form-control text-uppercase" name="pedidosA" [(ngModel)]="clientes.pedidosA" [ngModelOptions]="{standalone: true}" placeholder="judith 4771845580">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="control-label">Recepción de Pedidos</label>
+                                    <input type="text" class="form-control text-uppercase" name="recepcionDePedidos" [(ngModel)]="clientes.recepcionDePedidos" [ngModelOptions]="{standalone: true}" placeholder="4777963324">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-success" (click)="agregarCliente();"
+                            ><i class="fa fa-check" ></i> Guardar </button> 
+                        </div>
+                    </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>   
