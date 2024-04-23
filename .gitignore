@@ -6,13 +6,11 @@
 /out-tsc
 /bazel-out
 
-<<<<<<< HEAD
-# Node
-/node_modules
-=======
 #Node Module
 node_modules/
->>>>>>> nuevaActualizacion
+
+# Node
+/node_modules
 npm-debug.log
 yarn-error.log
 
