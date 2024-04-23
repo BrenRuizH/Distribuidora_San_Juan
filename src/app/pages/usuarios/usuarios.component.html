@@ -1,0 +1,111 @@
+<div class="page-wrapper">
+    <div class="container-fluid">            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">                                  
+                                    <h3 class="text-themecolor">Datos de Usuarios</h3>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive animated fadeInDown">
+                            <table class="table full-color-table full-primary-table hover-table">
+                                <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Contraseña</th>
+                                        <th>Rol</th>
+                                        <th>Editar</th>
+                                        <th>Eliminar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let datos of usuarios | paginate: {itemsPerPage: 10, currentPage: p}">
+                                        <td>{{datos.nombre}}</td>
+                                        <td>{{datos.contrasenia}}</td>
+                                        <td>{{datos.rol}}</td>
+                                        <td> 
+                                            <a (click)="seleccionarUsuario(datos.id);" class="btn btn-warning" data-toggle="modal" data-target=".example2-modal-lg">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td> 
+                                            <a (click)="eliminarUsuario(datos.id);" class="btn btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>                                        
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="modal fade example2-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myLargeModalLabel">Modificar datos del usuario</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="card">
+                                <form>
+                                    <div class="card-body">
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Nombre</label>
+                                                        <input type="text"  class="form-control text-uppercase" name="nombre" [(ngModel)]="usuario.nombre" placeholder="Brenda Torres" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Contraseña</label>
+                                                        <input type="text" class="form-control" name="contrasenia" [(ngModel)]="usuario.contrasenia" placeholder="31 años" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Rol</label>
+                                                        <select class="form-control text-uppercase" name="rol_id" [(ngModel)]="usuario.rol_id" required>
+                                                            <option value="" disabled >Seleccione un rol</option>
+                                                            <option *ngFor="let datos of roles" value="{{datos.id}}">{{datos.nombre}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="text"  class="form-control" name="id" [(ngModel)]="usuario.id" placeholder="1" hidden>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button class="btn btn-success" (click)="editarUsuario();"> <i class="fa fa-check" ></i> Guardar </button> 
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

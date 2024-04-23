@@ -1,0 +1,59 @@
+<div class="page-wrapper">
+    <div class="container-fluid">            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">                                  
+                                    <h3 class="text-themecolor">Datos de Órdenes de Compra</h3>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <select class="form-control" name="cliente_id" [(ngModel)]="ordenCompra.cliente_id" (change)="buscarOrdenesCompra()" required>
+                                        <option value="">Seleccione un cliente</option>
+                                        <option *ngFor="let cliente of clientes" value="{{cliente.id}}">{{cliente.codigo}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive animated fadeInDown">
+                            <table class="table full-color-table full-primary-table hover-table">
+                                <thead>
+                                    <tr>
+                                        <th>Folio</th>
+                                        <th>Cliente</th>
+                                        <th>Orden de Compra</th>
+                                        <th>Fecha de Orden</th>
+                                        <th>Fecha de Entrega</th>
+                                        <th>Total del Pares</th>
+                                        <th>Ver más</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let orden of ordenesCompra | paginate: {itemsPerPage: 10, currentPage: p}">
+                                        <td>{{orden.folio}}</td>
+                                        <td>{{orden.codigo}}</td>
+                                        <td>{{orden.orden_compra_c}}</td>
+                                        <td>{{orden.fecha_orden}}</td>
+                                        <td>{{orden.fecha_entrega}}</td>
+                                        <td>{{orden.total_pares}}</td>
+                                        <td> 
+                                            <a (click)="verDetalles(orden.id);" class="btn btn-success">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>                                        
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>

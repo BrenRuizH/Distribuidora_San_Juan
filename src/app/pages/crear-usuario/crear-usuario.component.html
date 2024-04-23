@@ -1,0 +1,63 @@
+<div class="page-wrapper">
+    <div class="container-fluid animated fadeIn">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Registrar Usuario</h3>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h3 class="card-title">Solicitud de Datos del Usuario</h3><hr>
+                            <form [formGroup]="usuarioForm" (ngSubmit)="agregarUsuario()">
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Nombre Usuario</label>
+                                            <input type="text" class="form-control text-uppercase" formControlName="usuario" placeholder="Juan Pérez">
+                                            <div *ngIf="usuarioForm.get('usuario')?.invalid && (usuarioForm.get('usuario')?.dirty || usuarioForm.get('usuario')?.touched)" class="text-danger">
+                                                Falta rellenar usuario
+                                            </div>                                            
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Contraseña</label>
+                                            <input type="text" class="form-control" formControlName="contrasenia" placeholder="********">
+                                            <div *ngIf="usuarioForm.get('contrasenia')?.invalid && (usuarioForm.get('contrasenia')?.dirty || usuarioForm.get('contrasenia')?.touched)" class="text-danger">
+                                                Falta rellenar contraseña
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Rol</label>
+                                            <select class="form-control text-uppercase" name="rol_id" formControlName="rol_id">
+                                                <option value="" disabled >Seleccione un rol</option>
+                                                <option *ngFor="let datos of roles" value="{{datos.id}}">{{datos.nombre}}</option>
+                                            </select>
+                                            <div *ngIf="usuarioForm.get('rol_id')?.invalid && (usuarioForm.get('rol_id')?.dirty || usuarioForm.get('rol_id')?.touched)" class="text-danger">
+                                                Falta rellenar rol
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-actions">
+                                    <button type="submit" class="btn btn-success"><i class="fa fa-check"></i> Guardar </button> 
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

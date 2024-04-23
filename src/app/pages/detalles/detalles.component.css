@@ -1,0 +1,76 @@
+/* Estilos para ambas tablas */
+.hover-table {
+    width: 100%;
+    table-layout: auto;
+    border-collapse: collapse;
+}
+
+.no-border {
+  border: none !important;
+}
+
+.miTabla {
+    width: 97%;
+    table-layout: fixed;
+    border-collapse: collapse;
+    margin: auto;
+    font-size: 1em;
+}
+
+.hover-table th, .hover-table td, .miTabla th, .miTabla td {
+    border: 2px solid #403d3d; 
+    padding: 8px;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.miTabla {
+    border: 2px solid #000000;
+}
+
+.miTabla td {
+    width: 16.66%;
+    text-align: center;
+}
+
+.miTabla .punto {
+    font-weight: bold;
+    color: #000000;
+}
+
+.miTabla .cantidad {
+    font-weight: bold;
+    color: #4CAF50;
+}
+
+.btn-warning, .btn-danger {
+    width: 100%;
+}
+
+.miTabla2 {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  
+  .miTabla2 td {
+    border: 1px solid black;
+    padding: 10px;
+    text-align: center;
+  }
+  
+  .miTabla2 .punto {
+    font-weight: bold;
+    color: black;
+  }
+  
+  .miTabla2 .linea {
+    border-top: 1px solid black;
+  }
+  
+  .miTabla2 .cantidad {
+    width: 50px;
+    border: none;
+    background: none;
+    text-align: center;
+  }
+  
