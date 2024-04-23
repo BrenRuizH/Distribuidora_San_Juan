@@ -6,8 +6,13 @@
 /out-tsc
 /bazel-out
 
+<<<<<<< HEAD
 #Node Module
 node_modules/
+=======
+# Node
+/node_modules
+>>>>>>> 61c9f370c2391244c4fa3ed8a91fd471bf86cc3e
 npm-debug.log
 yarn-error.log
 
