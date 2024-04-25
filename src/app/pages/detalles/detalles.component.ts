@@ -168,6 +168,7 @@ export class DetallesComponent implements OnInit{
         formData.append('fecha_orden', this.detalle.items1[0].fecha_orden);
         formData.append('fecha_entrega', this.detalle.items1[0].fecha_entrega);
         formData.append('cliente_id', this.detalle.items1[0].cliente_id);
+        console.log(this.detalle.items1[0].cliente_id);
         formData.append('folio', this.detalle.items1[0].folio);
         formData.append('orden_compra_c', this.countMax);
         formData.append('horma_id', this.detalle.items1[0].horma_id);
