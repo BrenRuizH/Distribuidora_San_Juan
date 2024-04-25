@@ -88,7 +88,7 @@ export class HormasComponent {
           formData.append('nombre', this.hormaEditada.nombre.toUpperCase());
           formData.append('cliente_id', this.hormaEditada.cliente_id.toUpperCase());
           if(this.hormaEditada.matriz || this.hormaEditada.matriz === '') {
-            formData.append('matriz', this.hormaEditada.matriz);
+            formData.append('matriz', this.hormaEditada.matriz.toUpperCase());
           }
           if(this.hormaEditada.cambrillon || this.hormaEditada.cambrillon === '') {
             formData.append('cambrillon', this.hormaEditada.cambrillon.toUpperCase());

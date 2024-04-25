@@ -55,7 +55,7 @@ export class CrearHormaComponent implements OnInit{
           formData.append('nombre', this.hormaForm.get('nombre')?.value.toUpperCase());
           formData.append('cliente_id', this.hormaForm.get('cliente_id')?.value.toUpperCase());
           if(this.hormas.matriz !== undefined && this.hormas.matriz !== null) {
-            formData.append('matriz', this.hormas.matriz);
+            formData.append('matriz', this.hormas.matriz.toUpperCase());
           }
           if(this.hormas.cambrillon !== undefined && this.hormas.cambrillon !== null) {
           formData.append('cambrillon', this.hormas.cambrillon.toUpperCase());
