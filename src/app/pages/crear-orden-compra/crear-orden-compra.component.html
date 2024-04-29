@@ -14,7 +14,7 @@
                         <div class="form-body">
                             <h3 class="card-title">Solicitud de Datos de la Orden de Compra</h3>
                             <hr>
-                            <form [formGroup]="ordenesForm" (ngSubmit)="agregarOrdenCompra()">
+                            <form [formGroup]="ordenesForm">
                             <div class="row p-t-20">
                                 <div class="col-md-6">
                                     <div class="form-group">
@@ -37,7 +37,7 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Cliente</label>
-                                        <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id" (change)="getHormas(ordenesForm.get('cliente_id')?.value); seleccionarCliente(ordenesForm.get('cliente_id')?.value)">
+                                        <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id" (change)="getHormas(ordenesForm.get('cliente_id')?.value);">
                                             <option value="" disabled >Seleccione un cliente</option>
                                             <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
                                         </select>
@@ -59,7 +59,10 @@
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label class="control-label">Orden de Compra del Cliente</label>
-                                        <input type="text" class="form-control" name="countMax" [(ngModel)]="countMax" [ngModelOptions]="{standalone: false}">
+                                        <div style="display: flex; align-items: center;">
+                                            <input type="text" class="form-control text-uppercase" name="countMax" [(ngModel)]="countMax" [ngModelOptions]="{standalone: true}" (ngModelChange)="actualizarOrden($event);" style="width: 85%;">
+                                            <button class="btn btn-info" style="margin-left: 10px;" (click)="generarNuevoNumeroOrden(ordenesForm.get('cliente_id')?.value);"><i class="fa fa-retweet"></i></button>
+                                        </div>
                                     </div>
                                 </div>
                                 

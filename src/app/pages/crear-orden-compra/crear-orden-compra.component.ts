@@ -1,5 +1,5 @@
 import { formatDate } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { CambrillonesService } from 'src/app/services/cambrillones.service';
@@ -86,7 +86,9 @@ export class CrearOrdenCompraComponent implements OnInit{
   constructor(private clientesService: ClientesService,
               private hormasService: HormasService,
               public ordenesCompraService: OrdenesCompraService, 
-              public router: Router, private fb: FormBuilder) {
+              public router: Router, private fb: FormBuilder,
+              private cdr: ChangeDetectorRef,
+              private ngZone: NgZone) {
     this.ordenesForm = this.fb.group({
       fecha_entrega: ['', Validators.required],
       cliente_id: ['', Validators.required],
@@ -107,13 +109,28 @@ export class CrearOrdenCompraComponent implements OnInit{
     })
   }
 
-  seleccionarCliente(cliente_id:any) {
+  // generarNuevoNumeroOrden(cliente_id:any) {
+  //     this.ordenesCompraService.consultarOrden(cliente_id).subscribe((data) => {
+  //       this.ngZone.run(() => {
+  //         this.countMax = data.new_orden_compra_c;
+  //       })
+        
+  //       console.log('CLIENTE: ' + cliente_id);
+  //       console.log('ORDEN C: ' + this.countMax);
+  //     });
+  // }
+
+  generarNuevoNumeroOrden(cliente_id:any) {
     this.clientesService.seleccionarCliente(cliente_id).subscribe((resp: any) => {
       this.cliente = resp.items[0];
       this.ordenesCompraService.consultarOrden(cliente_id).subscribe((data) => {
         this.countMax = data.new_orden_compra_c;
       });
     });
+  }
+
+  actualizarOrden(nuevoValor: string) {
+    this.countMax = nuevoValor;
   }
 
   getHormas(cliente_id: any) {
@@ -142,7 +159,7 @@ export class CrearOrdenCompraComponent implements OnInit{
     this.ordenesCompraService.getOrdenesCompra('leer.php').subscribe((data) => {
       this.ordenesCompra = data.items;
       this.folioMax = String(Number(data.maxFolio) + 1);
-    })
+    });
   }
 
 calcularTotalPares() {
@@ -178,7 +195,7 @@ calcularTotalPares() {
           formData.append('fecha_entrega', this.ordenesForm.get('fecha_entrega')?.value);
           formData.append('cliente_id', this.ordenesForm.get('cliente_id')?.value);
           formData.append('folio', this.folioMax);
-          formData.append('orden_compra_c', this.countMax);
+          formData.append('orden_compra_c', this.countMax.toUpperCase());
           formData.append('horma_id', this.ordenesForm.get('horma_id')?.value);
           formData.append('total_pares', this.total);
         

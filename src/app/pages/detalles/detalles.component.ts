@@ -26,7 +26,12 @@ export class DetallesComponent implements OnInit{
   horma: any = {};
 
   countMax: string = '';
+
   total: string = '';
+
+  ordenPersonalizada: boolean = false;
+  editarOrden: boolean = false;
+  clienteAnterior: any = null;
 
   constructor(private clientesService: ClientesService,
               private hormasService: HormasService,
@@ -49,13 +54,14 @@ export class DetallesComponent implements OnInit{
     })
   }
 
-  seleccionarCliente(cliente_id:any) {
-    this.clientesService.seleccionarCliente(cliente_id).subscribe((resp: any) => {
-      this.cliente = resp.items[0];
-      this.detallesService.consultarOrden(cliente_id).subscribe((data) => {
-        this.countMax = data.new_orden_compra_c;
-      });
-  });
+  generarNuevoNumeroOrden(cliente_id: any) {
+    this.detallesService.consultarOrden(cliente_id).subscribe((data) => {
+      this.detalle.items1[0].orden_compra_c = data.new_orden_compra_c;
+    });
+  }
+
+  actualizarOrden(nuevoValor: string) {
+    this.detalle.items1[0].orden_compra_c = nuevoValor;
   }
 
   getHormas(cliente_id: any) {
@@ -139,7 +145,6 @@ export class DetallesComponent implements OnInit{
 
       if (this.detalle.items1[0]) {
         this.getHormas(this.detalle.items1[0].cliente_id);
-        this.seleccionarCliente(this.detalle.items1[0].cliente_id);
         this.seleccionarHorma(this.detalle.items1[0].horma_id);
       }
     });
@@ -168,9 +173,8 @@ export class DetallesComponent implements OnInit{
         formData.append('fecha_orden', this.detalle.items1[0].fecha_orden);
         formData.append('fecha_entrega', this.detalle.items1[0].fecha_entrega);
         formData.append('cliente_id', this.detalle.items1[0].cliente_id);
-        console.log(this.detalle.items1[0].cliente_id);
         formData.append('folio', this.detalle.items1[0].folio);
-        formData.append('orden_compra_c', this.countMax);
+        formData.append('orden_compra_c', this.detalle.items1[0].orden_compra_c.toUpperCase());
         formData.append('horma_id', this.detalle.items1[0].horma_id);
         formData.append('total_pares', this.detalle.items1[0].total_pares);
 

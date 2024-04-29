@@ -106,7 +106,7 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="control-label">Cliente</label>
-                                                        <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="detalle.items1[0].cliente_id" (change)="getHormas(detalle.items1[0].cliente_id); seleccionarCliente(detalle.items1[0].cliente_id)" required>
+                                                        <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="detalle.items1[0].cliente_id" (change)="getHormas(detalle.items1[0].cliente_id);" required>
                                                             <option value="" disabled >Seleccione un cliente</option>
                                                             <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
                                                         </select>
@@ -124,7 +124,10 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="control-label">Orden de Compra del Cliente</label>
-                                                        <input type="text"  class="form-control" name="countMax" [(ngModel)]="countMax">
+                                                        <div style="display: flex; align-items: center;">
+                                                            <input type="text" class="form-control text-uppercase" name="countMax" [(ngModel)]="detalle.items1[0].orden_compra_c" (ngModelChange)="actualizarOrden($event);" style="width: 85%;">
+                                                            <button class="btn btn-info" style="margin-left: 10px;" (click)="generarNuevoNumeroOrden(detalle.items1[0].cliente_id);"><i class="fa fa-retweet"></i></button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
