@@ -163,6 +163,46 @@ export class ClientesComponent {
     `).join('');
   
     const tablaHTML = `
+    <style>
+      .table-container {
+        width: 100%;
+        max-width: 11in; /* Ancho máximo ajustado al tamaño de la página tabloid horizontalmente */
+        margin: 0 auto;
+        overflow-x: hidden; /* Evitar desplazamiento horizontal */
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin: 20px 0;
+        font-size: 16px; /* Tamaño de la fuente ajustado */
+        text-align: left;
+      }
+      th, td {
+        padding: 6px 8px; /* Padding ajustado */
+        border: 1px solid #ddd;
+        white-space: normal; /* Permitir el ajuste de línea dentro de las celdas */
+        word-wrap: break-word; /* Permitir el ajuste de palabras largas */
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      tr:hover {
+        background-color: #f1f1f1;
+      }
+      /* Mejorar la visualización en pantallas pequeñas */
+      @media (max-width: 600px) {
+        table {
+          font-size: 10px; /* Tamaño de la fuente reducido para pantallas pequeñas */
+        }
+        th, td {
+          padding: 4px 6px;
+        }
+      }
+    </style>
+    <div class="table-container">
       <table>
         <thead>
           <tr>
@@ -179,7 +219,8 @@ export class ClientesComponent {
           ${clientesHTML}
         </tbody>
       </table>
-    `;
+    </div>
+  `;
   
     printJS({
       printable: tablaHTML,
