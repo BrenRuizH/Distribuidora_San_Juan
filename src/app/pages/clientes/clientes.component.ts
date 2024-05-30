@@ -149,52 +149,6 @@ export class ClientesComponent {
     });
   }
 
-  imprimirCatalogoClienteee() {
-    let elemento = document.getElementById('contdiv');
-
-    if (elemento) {
-      let myHTML = elemento.innerHTML;
-
-      printJS({
-        printable: myHTML,
-        type: 'raw-html'
-      });
-    }
-  }
-
-  imprimirCatalogoCliente(){
-    let elemento = `
-    <table>
-      <thead>
-        <tr>
-          <th>Código</th>
-          <th>Razón Social</th>
-          <th>RFC</th>
-          <th>Teléfono</th>
-          <th>Pagos Con</th>
-          <th>Pedidos A</th>
-          <th>Dirección</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr for="let datos of clientes">
-          <td>{{datos.codigo}}</td>
-          <td>{{datos.razonSocial}}</td>
-          <td>{{datos.rfc}}</td>
-          <td>{{datos.telefono}}</td>
-          <td>{{datos.pagosCon}}</td>
-          <td>{{datos.pedidosA}}</td>
-          <td>{{datos.direccion}}</td>
-        </tr>
-      </tbody>
-    </table> `
-
-    printJS({
-      printable: elemento,
-      type: 'raw-html'
-    });
-  }
-
   imprimirCatalogoClientes() {
     const clientesHTML = this.clientes.map((cliente: { codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => `
       <tr>
