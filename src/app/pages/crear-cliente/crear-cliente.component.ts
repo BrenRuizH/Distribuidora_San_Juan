@@ -53,8 +53,8 @@ export class CrearClienteComponent {
           if (this.clientes.pedidosA !== undefined && this.clientes.pedidosA !== null) {
             formData.append('pedidosA', this.clientes.pedidosA.toUpperCase());
           }
-          if (this.clientes.recepcionDePedidos !== undefined && this.clientes.recepcionDePedidos !== null) {
-            formData.append('recepcionDePedidos', this.clientes.recepcionDePedidos.toUpperCase());
+          if (this.clientes.direccion !== undefined && this.clientes.direccion !== null) {
+            formData.append('direccion', this.clientes.direccion.toUpperCase());
           }
         
           this.clientesService.agregarCliente('agregar.php', formData).subscribe((event: any) =>{

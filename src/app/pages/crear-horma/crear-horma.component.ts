@@ -65,7 +65,10 @@ export class CrearHormaComponent implements OnInit{
           }
           if(this.hormas.observaciones !== undefined && this.hormas.observaciones !== null) {
           formData.append('observaciones', this.hormas.observaciones.toUpperCase());
-          }          
+          }
+          if(this.hormas.precio !== undefined && this.hormas.precio !== null) {
+            formData.append('precio', this.hormas.precio);
+            }          
 
           this.hormasService.agregarHorma('agregar.php', formData).subscribe((event: any) =>{
             swalWithBootstrapButtons.fire({

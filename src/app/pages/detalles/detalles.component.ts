@@ -29,6 +29,9 @@ export class DetallesComponent implements OnInit{
 
   total: string = '';
 
+  cliente_id: number | null = null;
+
+
   ordenPersonalizada: boolean = false;
   editarOrden: boolean = false;
   clienteAnterior: any = null;
@@ -65,6 +68,7 @@ export class DetallesComponent implements OnInit{
   }
 
   getHormas(cliente_id: any) {
+    this.cliente_id = cliente_id;
     this.hormasService.consultarHorma(cliente_id).subscribe((data) => {
       this.hormas = data.items;
       if (this.hormas.length === 0) {

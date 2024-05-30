@@ -99,6 +99,7 @@ export class HormasComponent {
           if(this.hormaEditada.observaciones) {
             formData.append('observaciones', this.hormaEditada.observaciones.toUpperCase());
           }
+          formData.append('precio', this.hormaEditada.precio);
 
           this.hormasService.agregarHorma('editar.php', formData).subscribe((event: any) =>{
             swalWithBootstrapButtons.fire({

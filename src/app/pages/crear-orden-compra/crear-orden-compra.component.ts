@@ -30,6 +30,8 @@ export class CrearOrdenCompraComponent implements OnInit{
   countMax: string = '';
   total: string = '';
 
+  cliente_id: number | null = null;
+
   noHormas: boolean = false;
 
   puntosYcantidades = [
@@ -83,6 +85,19 @@ export class CrearOrdenCompraComponent implements OnInit{
     ]
   ];
 
+  puntosYcantidadesCondorin =
+  [
+    [
+      { vista:'33',  punto: 33, cantidad: 0},
+      { vista:'34', punto: 34, cantidad: 0},
+      { vista:'35', punto: 35, cantidad: 0},
+      { vista:'36', punto: 36, cantidad: 0},
+      { vista:'37', punto: 37, cantidad: 0},
+      { vista:'38',  punto: 38, cantidad: 0},
+    ],
+  ];
+  
+  
   constructor(private clientesService: ClientesService,
               private hormasService: HormasService,
               public ordenesCompraService: OrdenesCompraService, 
@@ -109,17 +124,6 @@ export class CrearOrdenCompraComponent implements OnInit{
     })
   }
 
-  // generarNuevoNumeroOrden(cliente_id:any) {
-  //     this.ordenesCompraService.consultarOrden(cliente_id).subscribe((data) => {
-  //       this.ngZone.run(() => {
-  //         this.countMax = data.new_orden_compra_c;
-  //       })
-        
-  //       console.log('CLIENTE: ' + cliente_id);
-  //       console.log('ORDEN C: ' + this.countMax);
-  //     });
-  // }
-
   generarNuevoNumeroOrden(cliente_id:any) {
     this.clientesService.seleccionarCliente(cliente_id).subscribe((resp: any) => {
       this.cliente = resp.items[0];
@@ -134,6 +138,7 @@ export class CrearOrdenCompraComponent implements OnInit{
   }
 
   getHormas(cliente_id: any) {
+    this.cliente_id = cliente_id;
     this.hormasService.consultarHorma(cliente_id).subscribe((data) => {
       this.hormas = data.items;
       if (this.hormas.length === 0) {
@@ -164,9 +169,17 @@ export class CrearOrdenCompraComponent implements OnInit{
 
 calcularTotalPares() {
   let totalPares = 0;
-  for (let fila of this.puntosYcantidades) {
-    for (let item of fila) {
-      totalPares += item.cantidad;
+  if(this.cliente_id != 37) {
+    for (let fila of this.puntosYcantidades) {
+      for (let item of fila) {
+        totalPares += item.cantidad;
+      }
+    }
+  } else {
+    for (let fila of this.puntosYcantidadesCondorin) {
+      for (let item of fila) {
+        totalPares += item.cantidad;
+      }
     }
   }
   this.total =  String(totalPares);
@@ -202,14 +215,26 @@ calcularTotalPares() {
           let puntos = [];
           let cantidades = [];
 
-          for (let fila of this.puntosYcantidades) {
-            for (let dato of fila) {
-              if (dato.cantidad !== 0) {
-                puntos.push(dato.punto);
-                cantidades.push(dato.cantidad);
+          if(this.cliente_id != 37) {
+            for (let fila of this.puntosYcantidades) {
+              for (let dato of fila) {
+                if (dato.cantidad !== 0) {
+                  puntos.push(dato.punto);
+                  cantidades.push(dato.cantidad);
+                }
+              }
+            }
+          } else {
+            for (let fila of this.puntosYcantidadesCondorin) {
+              for (let dato of fila) {
+                if (dato.cantidad !== 0) {
+                  puntos.push(dato.punto);
+                  cantidades.push(dato.cantidad);
+                }
               }
             }
           }
+
           puntos = [...new Set(puntos)];
 
           formData.append('punto', puntos.join(','));

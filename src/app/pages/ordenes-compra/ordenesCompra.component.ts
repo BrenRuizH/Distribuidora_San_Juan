@@ -16,6 +16,7 @@ export class OrdenesCompraComponent {
   clientes: any[] = [];
 
   p: number = 1;
+  textoBusqueda: string = '';
 
   constructor(private clientesService: ClientesService, private ordenCompraService: OrdenesCompraService, private router: Router, private changeDetector: ChangeDetectorRef) {
     this.obtenerOrdenesCompra();
@@ -39,10 +40,10 @@ export class OrdenesCompraComponent {
   }
 
   buscarOrdenesCompra() {
-    if (!this.ordenCompra.cliente_id) {
+    if (!this.textoBusqueda) {
       this.obtenerOrdenesCompra();
     } else {
-      this.ordenCompraService.getOrdenesCompra('buscar.php?id=' + this.ordenCompra.cliente_id).pipe(catchError(error => {
+      this.ordenCompraService.getOrdenesCompra('buscar.php?texto=' + this.textoBusqueda).pipe(catchError(error => {
         if(error.status === 404) {
           Swal.fire({
             icon: "error",
@@ -54,8 +55,8 @@ export class OrdenesCompraComponent {
       })
     ).subscribe((data) => {
         this.ordenesCompra = data.items;
-        console.log(this.ordenesCompra);
-        this.changeDetector.detectChanges();
+        //console.log(this.ordenesCompra);
+        //this.changeDetector.detectChanges();
       });
     }
   }
@@ -63,4 +64,9 @@ export class OrdenesCompraComponent {
   verDetalles(ordenId: any) {
     this.router.navigate(['/home/detalles', ordenId]);
   }
+
+  remisionar(ordenId: any){
+  }
+
+  imprimirReporte(){}
 }

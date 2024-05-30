@@ -12,10 +12,20 @@
                             </div>
                             <div class="ml-auto">
                                 <div class="form-group">
-                                    <select class="form-control" name="cliente_id" [(ngModel)]="ordenCompra.cliente_id" (change)="buscarOrdenesCompra()" required>
-                                        <option value="">Seleccione un cliente</option>
-                                        <option *ngFor="let cliente of clientes" value="{{cliente.id}}">{{cliente.codigo}}</option>
+                                    <input id="input-search" type="text" class="form-control text-uppercase" name="texto_busqueda" [(ngModel)]="textoBusqueda" (input)="buscarOrdenesCompra()" placeholder="Buscar Órdenes" autocomplete="on">
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group d-flex">
+                                    <select class="form-control text-uppercase">
+                                        <option value="" disabled>Seleccione un periodo</option>
+                                        <option>Hoy</option>
+                                        <option>Esta Semana</option>
+                                        <option>Esta Quincena</option>
+                                        <option>Próxima Quincena</option>
+                                        <option>Este Mes</option>
                                     </select>
+                                    <button type="button" (click)="imprimirReporte()" class="btn btn-primary"><i class="fa fa-print"></i>  Imprimir Reporte</button>                                                                              
                                 </div>
                             </div>
                         </div>
@@ -31,6 +41,7 @@
                                         <th>Fecha de Entrega</th>
                                         <th>Total del Pares</th>
                                         <th>Ver más</th>
+                                        <th>Remisión</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -44,6 +55,11 @@
                                         <td> 
                                             <a (click)="verDetalles(orden.id);" class="btn btn-success">
                                                 <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <a (click)="remisionar(orden.id);" class="btn btn-info">
+                                                <i class="fa fa-file"></i>
                                             </a>
                                         </td>
                                     </tr>                                        

@@ -75,6 +75,15 @@
                                     </div>
                                 </div>
 
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Precio</label>
+                                            <input type="number" class="form-control text-uppercase" name="precio" [(ngModel)]="hormas.precio" [ngModelOptions]="{standalone: true}" placeholder="">
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-success" (click)="agregarHorma();">
                                         <i class="fa fa-check"></i> Guardar

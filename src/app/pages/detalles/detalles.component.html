@@ -41,7 +41,7 @@
                         </table>
 
                         <table class="miTabla">
-                            <tr *ngFor="let item of puntosYcantidades; let i = index">
+                            <tr *ngFor="let item of (puntosYcantidades); let i = index">
                                 <ng-container *ngIf="i % 6 === 0">
                                     <td *ngFor="let j of [0, 1, 2, 3, 4, 5]">
                                         <div class="punto">{{puntosYcantidades[i + j].vista}}</div>

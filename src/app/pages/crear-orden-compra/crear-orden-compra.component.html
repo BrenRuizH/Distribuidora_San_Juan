@@ -126,7 +126,7 @@
                         
                         <div class="row">
                             <table class="miTabla">
-                                <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                <tr *ngFor="let fila of (cliente_id == 37 ? puntosYcantidadesCondorin : puntosYcantidades); let i = index">
                                   <td *ngFor="let item of fila">
                                     <div class="punto">{{item.vista}}</div>
                                     <hr class="linea">
