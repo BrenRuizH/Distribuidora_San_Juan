@@ -112,7 +112,7 @@ export class DetallesComponent implements OnInit{
   
     let fila = [];
 
-    if(this.cliente_id = 37) {
+    if(this.cliente_id == 37) {
       for (let i = 33; i <= 38; i ++) {
         let vista = i;
         let punto = i.toFixed(2);
@@ -159,7 +159,7 @@ export class DetallesComponent implements OnInit{
 
       this.puntosYcantidades = [];
 
-      if(this.cliente_id = 37) {
+      if(this.cliente_id == 37) {
         for (let i = 33; i <= 38; i ++) {
           let vista = i;
           let punto = i.toFixed(2);
