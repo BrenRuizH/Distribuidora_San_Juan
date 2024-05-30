@@ -17,6 +17,8 @@ export class DetallesComponent implements OnInit{
   puntosYcantidades: any[] = [];
   puntosYcantidadesEditar: any[] = [];
 
+  puntosYcantidadesEditarCondorin: any[] = [];
+
   noHormas: boolean = false;
 
   clientes: any[] = [];
@@ -109,20 +111,37 @@ export class DetallesComponent implements OnInit{
     let nuevosPuntosYcantidadesEditar = [];
   
     let fila = [];
-    for (let i = 15; i <= 32.5; i += 0.5) {
-      let vista = i % 1 === 0 ? i.toString() : '1/2';
-      let punto = i.toFixed(2);
-      let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : 0;
-      fila.push({punto: punto, vista: vista, cantidad: cantidad});
-      if (fila.length === 6) {
+
+    if(this.cliente_id = 37) {
+      for (let i = 33; i <= 38; i ++) {
+        let vista = i;
+        let punto = i.toFixed(2);
+        let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : 0;
+        fila.push({punto: punto, vista: vista, cantidad: cantidad});
+        if (fila.length === 6) {
+          nuevosPuntosYcantidadesEditar.push(fila);
+          fila = [];
+        }
+      }
+      if (fila.length > 0) {
         nuevosPuntosYcantidadesEditar.push(fila);
-        fila = [];
+      }
+    } else {
+      for (let i = 15; i <= 32.5; i += 0.5) {
+        let vista = i % 1 === 0 ? i.toString() : '1/2';
+        let punto = i.toFixed(2);
+        let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : 0;
+        fila.push({punto: punto, vista: vista, cantidad: cantidad});
+        if (fila.length === 6) {
+          nuevosPuntosYcantidadesEditar.push(fila);
+          fila = [];
+        }
+      }
+      if (fila.length > 0) {
+        nuevosPuntosYcantidadesEditar.push(fila);
       }
     }
-    if (fila.length > 0) {
-      nuevosPuntosYcantidadesEditar.push(fila);
-    }
-  
+    
     this.puntosYcantidadesEditar = nuevosPuntosYcantidadesEditar;
   }
 
@@ -140,12 +159,22 @@ export class DetallesComponent implements OnInit{
 
       this.puntosYcantidades = [];
 
-      for (let i = 15; i <= 32.5; i += 0.5) {
-        let vista = i % 1 === 0 ? i.toString() : '1/2';
-        let punto = i.toFixed(2);
-        let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
-        this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});
+      if(this.cliente_id = 37) {
+        for (let i = 33; i <= 38; i ++) {
+          let vista = i;
+          let punto = i.toFixed(2);
+          let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
+          this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});
+        }
+      } else {
+        for (let i = 15; i <= 32.5; i += 0.5) {
+          let vista = i % 1 === 0 ? i.toString() : '1/2';
+          let punto = i.toFixed(2);
+          let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
+          this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});
+        }
       }
+      
 
       if (this.detalle.items1[0]) {
         this.getHormas(this.detalle.items1[0].cliente_id);
