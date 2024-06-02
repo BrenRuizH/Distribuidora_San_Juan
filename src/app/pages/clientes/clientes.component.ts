@@ -14,6 +14,9 @@ export class ClientesComponent {
   clientes: any = [];
   cliente: any = {};
 
+
+  clientesI: any = [];
+
   textoBusqueda: string = '';
 
   p: number = 1;
@@ -29,6 +32,7 @@ export class ClientesComponent {
   obtenerClientes() {
     this.clienteService.getClientes('leer.php').subscribe((data) => {
       this.clientes = data.items;
+      this.clientesI = data.items;
     })
   }
 
@@ -150,7 +154,7 @@ export class ClientesComponent {
   }
 
   imprimirCatalogoClientes() {
-    const clientesHTML = this.clientes.map((cliente: { codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => `
+    const clientesHTML = this.clientesI.map((cliente: { codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => `
       <tr>
         <td>${cliente.codigo || ''}</td>
         <td>${cliente.razonSocial || ''}</td>

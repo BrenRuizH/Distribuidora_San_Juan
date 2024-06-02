@@ -16,6 +16,9 @@ export class HormasComponent {
   hormaEditada: any = {};
   clientes: any[] = [];
 
+  clientesI: any[] = [];
+  hormasI: any = [];
+
   p: number = 1;
 
   constructor(private clientesService: ClientesService, private hormasService: HormasService, private changeDetector: ChangeDetectorRef) {
@@ -30,12 +33,14 @@ export class HormasComponent {
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
       this.clientes = data.items;
+      this.clientesI = data.items;
     })
   }
 
   obtenerHormas() {
     this.hormasService.getHormas('leer.php').subscribe((data) => {
       this.hormas = data.items;
+      this.hormasI = data.items;
     })
   }
 
@@ -157,8 +162,8 @@ export class HormasComponent {
 
   imprimirCatalogoHormas() {
     let pdfContent = '';
-    this.clientes.forEach((cliente: { id: any; codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => {
-      const hormasCliente = this.hormas.filter((h: { horma: any; cliente: any; precio: any;}) => h.cliente === cliente.codigo);
+    this.clientesI.forEach((cliente: { id: any; codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => {
+      const hormasCliente = this.hormasI.filter((h: { horma: any; cliente: any; precio: any;}) => h.cliente === cliente.codigo);
       pdfContent += `
       <div class="cliente-page">
       <h1>Cliente: ${cliente.codigo  || ''}</h1>
