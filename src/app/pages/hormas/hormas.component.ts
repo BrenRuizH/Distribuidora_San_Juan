@@ -3,6 +3,7 @@ import { ClientesService } from 'src/app/services/clientes.service';
 import { catchError, of } from 'rxjs';
 import { HormasService } from 'src/app/services/hormas.service';
 import Swal from 'sweetalert2';
+import * as printJS from 'print-js';
 
 @Component({
   selector: 'app-hormas',
@@ -151,6 +152,58 @@ export class HormasComponent {
           }
         });
       }
+    });
+  }
+
+  imprimirCatalogoHormas() {
+    let pdfContent = '';
+    this.clientes.forEach((cliente: { id: any; codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => {
+      const hormasCliente = this.hormas.filter((h: { horma: any; cliente: any; precio: any;}) => h.cliente === cliente.codigo);
+      pdfContent += `
+      <div class="cliente-page">
+      <h1>Cliente: ${cliente.codigo  || ''}</h1>
+      <p>Dirección: ${cliente.direccion || ''}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>Horma</th>
+            <th>Matriz</th>
+            <th>Cambrillón</th>
+            <th>Materiales</th>
+            <th>Observaciones</th>
+            <th>Precio</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${hormasCliente.map((hormaa: { nombre: any; matriz: any; cambrillon: any; materiales: any; observaciones: any; cliente: any; precio: any;}) => `
+          <tr>
+            <td>${hormaa.nombre || ''}</td>
+            <td>${hormaa.matriz || ''}</td>
+            <td>${hormaa.cambrillon || ''}</td>
+            <td>${hormaa.materiales || ''}</td>
+            <td>${hormaa.observaciones || ''}</td>
+            <td>S${hormaa.precio || ''}</td>
+          </tr>
+          `
+        ).join('')}
+        </tbody>
+      </table>
+      </div>
+      `;
+    });
+
+    pdfContent += `
+    <style>
+      .cliente-page {
+        page-break-before: always;
+      }
+    </style>
+    `;
+  
+    printJS({
+      printable: pdfContent,
+      type: 'raw-html', 
+      documentTitle: `Catálogo de Hormas`,
     });
   }
 }
