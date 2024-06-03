@@ -164,9 +164,12 @@ export class HormasComponent {
     let pdfContent = '';
     this.clientesI.forEach((cliente: { id: any; codigo: any; razonSocial: any; rfc: any; telefono: any; pagosCon: any; pedidosA: any; direccion: any; }) => {
       const hormasCliente = this.hormasI.filter((h: { horma: any; cliente: any; precio: any;}) => h.cliente === cliente.codigo);
-      pdfContent += `
+      pdfContent +=`
       <div class="cliente-page">
-        <h1>Cliente: ${cliente.codigo || ''}</h1>
+          <div class="header">
+          <h1>Cliente: ${cliente.codigo || ''}</h1>
+          <img src="../../../assets/assets/images/logo.png" alt="Home" class="logo"/>
+         </div>
         <p><strong>Razón Social:</strong> ${cliente.razonSocial || ''}</p>
         <p><strong>RFC:</strong> ${cliente.rfc || ''}</p>
         <p><strong>Teléfono:</strong> ${cliente.telefono || ''}</p>
@@ -184,7 +187,7 @@ export class HormasComponent {
           </tr>
         </thead>
         <tbody>
-          ${hormasCliente.map((hormaa: { nombre: any; matriz: any; cambrillon: any; materiales: any; observaciones: any; cliente: any; precio: any;}) => `
+        ${hormasCliente.map((hormaa: { nombre: any; matriz: any; cambrillon: any; materiales: any; observaciones: any; cliente: any; precio: any;}) =>`
           <tr>
             <td>${hormaa.nombre || ''}</td>
             <td>${hormaa.matriz || ''}</td>
@@ -193,8 +196,7 @@ export class HormasComponent {
             <td>${hormaa.observaciones || ''}</td>
             <td>S${hormaa.precio || ''}</td>
           </tr>
-          `
-        ).join('')}
+          `).join('')}
         </tbody>
       </table>
       </div>
@@ -209,13 +211,22 @@ export class HormasComponent {
       }
       .cliente-page {
         page-break-before: always;
+        position: relative;
+        padding-top: 100px; /* Ajusta si es necesario para evitar solapamiento */
+      }
+      .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: relative;
       }
       h1 {
         font-size: 24px;
         color: #333;
+        margin: 0;
       }
-       .logo {
-        position: fixed;
+      .logo {
+        position: absolute;
         top: 20px;
         right: 20px;
         width: 80px;
@@ -228,6 +239,7 @@ export class HormasComponent {
         width: 100%;
         border-collapse: collapse;
         margin-top: 10px;
+        page-break-inside: auto;
       }
       table, th, td {
         border: 1px solid #ddd;
@@ -235,6 +247,7 @@ export class HormasComponent {
       th, td {
         padding: 8px;
         text-align: left;
+        page-break-inside: avoid;
       }
       th {
         background-color: #f2f2f2;
@@ -244,13 +257,12 @@ export class HormasComponent {
         background-color: #f9f9f9;
       }
     </style>
-    <img src="../../../assets/assets/images/logo.png" alt="Home" class="logo"/>
     `;
-  
+
     printJS({
       printable: pdfContent,
       type: 'raw-html', 
       documentTitle: `Catálogo de Hormas`,
     });
-  }
+}
 }
