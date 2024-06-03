@@ -166,9 +166,13 @@ export class HormasComponent {
       const hormasCliente = this.hormasI.filter((h: { horma: any; cliente: any; precio: any;}) => h.cliente === cliente.codigo);
       pdfContent += `
       <div class="cliente-page">
-      <h1>Cliente: ${cliente.codigo  || ''}</h1>
-      <p>Dirección: ${cliente.direccion || ''}</p>
-      <table>
+        <h1>Cliente: ${cliente.codigo || ''}</h1>
+        <p><strong>Razón Social:</strong> ${cliente.razonSocial || ''}</p>
+        <p><strong>RFC:</strong> ${cliente.rfc || ''}</p>
+        <p><strong>Teléfono:</strong> ${cliente.telefono || ''}</p>
+        <p><strong>Dirección:</strong> ${cliente.direccion || ''}</p>
+        <table>
+        
         <thead>
           <tr>
             <th>Horma</th>
@@ -199,10 +203,48 @@ export class HormasComponent {
 
     pdfContent += `
     <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+      }
       .cliente-page {
         page-break-before: always;
       }
+      h1 {
+        font-size: 24px;
+        color: #333;
+      }
+       .logo {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        width: 80px;
+      }
+      p {
+        font-size: 14px;
+        margin: 4px 0;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 10px;
+      }
+      table, th, td {
+        border: 1px solid #ddd;
+      }
+      th, td {
+        padding: 8px;
+        text-align: left;
+      }
+      th {
+        background-color: #f2f2f2;
+        font-weight: bold;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
     </style>
+    <img src="../../../assets/assets/images/logo.png" alt="Home" class="logo"/>
     `;
   
     printJS({
