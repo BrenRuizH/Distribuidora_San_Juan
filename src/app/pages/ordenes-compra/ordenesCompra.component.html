@@ -17,13 +17,13 @@
                             </div>
                             <div class="ml-auto">
                                 <div class="form-group d-flex">
-                                    <select class="form-control text-uppercase">
+                                    <select id="selectorTemporalidad" class="form-control text-uppercase">
                                         <option disabled selected>Temporalidad</option>
-                                        <option>Hoy</option>
-                                        <option>Esta Semana</option>
-                                        <option>Primer Quincena</option>
-                                        <option>Segunda Quincena</option>
-                                        <option>Este Mes</option>
+                                        <option value=1>Hoy</option>
+                                        <option value=2>Esta Semana</option>
+                                        <option value=3>Primer Quincena</option>
+                                        <option value=4>Segunda Quincena</option>
+                                        <option value=5>Este Mes</option>
                                     </select>
                                     <button type="button" (click)="imprimirReporte()" class="btn btn-primary"><i class="fa fa-print"></i>  Imprimir Reporte</button>                                                                              
                                 </div>
@@ -39,7 +39,8 @@
                                         <th>Orden de Compra</th>
                                         <th>Fecha de Orden</th>
                                         <th>Fecha de Entrega</th>
-                                        <th>Total del Pares</th>
+                                        <th>Total de Pares</th>
+                                        <th>No. Factura</th>
                                         <th>Ver más</th>
                                         <th>Remisión</th>
                                     </tr>
@@ -52,6 +53,7 @@
                                         <td>{{orden.fecha_orden}}</td>
                                         <td>{{orden.fecha_entrega}}</td>
                                         <td>{{orden.total_pares}}</td>
+                                        <td>{{orden.facturaNo}}</td>
                                         <td> 
                                             <a (click)="verDetalles(orden.id);" class="btn btn-success">
                                                 <i class="fa fa-eye"></i>
