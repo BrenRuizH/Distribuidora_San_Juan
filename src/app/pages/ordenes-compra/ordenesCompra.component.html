@@ -41,6 +41,7 @@
                                         <th>Fecha de Entrega</th>
                                         <th>Total de Pares</th>
                                         <th>No. Factura</th>
+                                        <th>Status</th>
                                         <th>Ver más</th>
                                         <th>Remisión</th>
                                     </tr>
@@ -54,6 +55,8 @@
                                         <td>{{orden.fecha_entrega}}</td>
                                         <td>{{orden.total_pares}}</td>
                                         <td>{{orden.facturaNo}}</td>
+                                        <td [ngClass]="getClaseEstado(orden.status)">{{orden.status}}</td>
+
                                         <td> 
                                             <a (click)="verDetalles(orden.id);" class="btn btn-success">
                                                 <i class="fa fa-eye"></i>

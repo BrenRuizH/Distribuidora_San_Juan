@@ -64,6 +64,19 @@ export class OrdenesCompraComponent {
     }
   }
 
+  getClaseEstado(status: string): string {
+    switch (status) {
+      case 'EN PRODUCCIÓN':
+        return 'estado-produccion';
+      case 'EN ENTREGA':
+        return 'estado-entrega';
+      case 'FACTURADO':
+        return 'estado-facturado';
+      default:
+        return '';
+    }
+  }
+
   verDetalles(ordenId: any) {
     this.router.navigate(['/home/detalles', ordenId]);
   }
@@ -139,7 +152,7 @@ export class OrdenesCompraComponent {
       console.log(this.ordenesCompraR);
   
 
-  const ordenesHTML = this.ordenesCompraR.map((orden: {folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; }) => `
+  const ordenesHTML = this.ordenesCompraR.map((orden: {folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any;}) => `
   <tr>
     <td>${orden.folio || ''}</td>
     <td>${orden.codigo || ''}</td>
@@ -148,6 +161,7 @@ export class OrdenesCompraComponent {
     <td>${orden.fecha_entrega || ''}</td>
     <td>${orden.total_pares || ''}</td>
     <td>${orden.facturaNo || ''}</td>
+    <td>${orden.status || ''}</td>
   `).join('');
 
   const tablaHTML = `
@@ -163,6 +177,7 @@ export class OrdenesCompraComponent {
             <th>Fecha de Entrega</th>
             <th>Total de Pares</th>
             <th>No. Factura</th>
+            <th>Status</th>
           </tr>
         </thead>
         <tbody>

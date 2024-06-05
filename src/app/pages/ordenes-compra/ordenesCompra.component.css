@@ -1,0 +1,38 @@
+ .estado-produccion {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #CCE5FF;
+    color: #2a7ed8;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.estado-entrega {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #E5FFCC;
+    color: #67bd16;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.estado-facturado {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    color: #c5c52e;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
