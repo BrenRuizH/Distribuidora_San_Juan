@@ -160,8 +160,8 @@ export class OrdenesCompraComponent {
     <td>${orden.fecha_orden || ''}</td>
     <td>${orden.fecha_entrega || ''}</td>
     <td>${orden.total_pares || ''}</td>
-    <td>${orden.facturaNo || ''}</td>
     <td>${orden.status || ''}</td>
+    <td>${orden.facturaNo || ''}</td>
   `).join('');
 
   const tablaHTML = `
@@ -176,8 +176,8 @@ export class OrdenesCompraComponent {
             <th>Fecha de Orden</th>
             <th>Fecha de Entrega</th>
             <th>Total de Pares</th>
-            <th>No. Factura</th>
             <th>Status</th>
+            <th>No. Factura</th>
           </tr>
         </thead>
         <tbody>
@@ -185,6 +185,56 @@ export class OrdenesCompraComponent {
         </tbody>
       </table>
     </div>
+
+    <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .reporte-ordenes {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      font-size: 24px;
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    h2 {
+      font-size: 18px;
+      color: #666;
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+      table-layout: fixed;
+    }
+    table, th, td {
+      border: 1px solid #ddd;
+    }
+    th, td {
+      padding: 10px;
+      text-align: left;
+      font-size: 14px;
+      word-wrap: break-word;
+    }
+    th {
+      background-color: #f4f4f4;
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+    tr:nth-child(even) {
+      background-color: #f9f9f9;
+    }
+    tr:hover {
+      background-color: #f1f1f1;
+    }
+  </style>
   `;
 
   printJS({
