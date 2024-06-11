@@ -1,3 +1,21 @@
+.input-group {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  .input-group .form-control {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+  
+  .input-group .btn-outline-secondary {
+    border-radius: 0 0.25rem 0.25rem 0;
+    border: 1px solid #55b66a;
+  }
+  
+  .input-group .btn-outline-secondary:hover {
+    background-color: #55b66a;
+  }  
+ 
  .estado-produccion {
     font-size: 11px;
     font-weight: bold;

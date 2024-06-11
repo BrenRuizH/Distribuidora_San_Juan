@@ -320,12 +320,13 @@ export class DetallesComponent implements OnInit{
             .hover-table th {
               font-weight: 300;
               padding: 5px;
-              font-size: 20px;
+              font-size: 18px;
             }
 
             .hover-table td{
               font-weight: bold;
               padding: 5px;
+              font-size: 19px;
             }
 
             .no-border {
@@ -349,7 +350,8 @@ export class DetallesComponent implements OnInit{
 
         printJS({
             printable: myHTML,
-            type: 'raw-html'
+            type: 'raw-html',
+            style: '@page { size: portrait; }'
         });
     } else {
         console.error('No se encontró el elemento con el ID "contdiv".');

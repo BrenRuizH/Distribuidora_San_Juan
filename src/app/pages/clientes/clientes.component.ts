@@ -196,10 +196,9 @@ export class ClientesComponent {
       tr:hover {
         background-color: #f1f1f1;
       }
-      /* Mejorar la visualización en pantallas pequeñas */
       @media (max-width: 600px) {
         table {
-          font-size: 10px; /* Tamaño de la fuente reducido para pantallas pequeñas */
+          font-size: 10px;
         }
         th, td {
           padding: 4px 6px;
@@ -228,7 +227,8 @@ export class ClientesComponent {
   
     printJS({
       printable: tablaHTML,
-      type: 'raw-html'
+      type: 'raw-html',
+      style: '@page { size: landscape; }'
     });
   }
   

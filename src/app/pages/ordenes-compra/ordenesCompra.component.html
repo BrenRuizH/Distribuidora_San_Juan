@@ -54,8 +54,26 @@
                                         <td>{{orden.fecha_orden}}</td>
                                         <td>{{orden.fecha_entrega}}</td>
                                         <td>{{orden.total_pares}}</td>
-                                        <td>{{orden.facturaNo}}</td>
-                                        <td [ngClass]="getClaseEstado(orden.status)">{{orden.status}}</td>
+                                        <td (dblclick)="mostrarInput(orden)" *ngIf="!orden.editando">
+                                            {{ orden.facturaNo || 'Doble clic para editar' }}
+                                        </td>
+                                        <td *ngIf="orden.editando">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-uppercase" [(ngModel)]="orden.facturaNo" placeholder="Número de factura">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" (click)="guardarFacturaNo(orden)">
+                                                      <i class="fa fa-check"></i>
+                                                    </button>
+                                                  </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select [ngClass]="getClaseEstado(orden.status)" (change)="cambiarEstado(orden, $event)">
+                                                <option [selected]="orden.status === 'EN PRODUCCIÓN'" value="EN PRODUCCIÓN">EN PRODUCCIÓN</option>
+                                                <option [selected]="orden.status === 'EN ENTREGA'" value="EN ENTREGA">EN ENTREGA</option>
+                                                <option [selected]="orden.status === 'FACTURADO'" value="FACTURADO">FACTURADO</option>
+                                            </select>
+                                        </td>
 
                                         <td> 
                                             <a (click)="verDetalles(orden.id);" class="btn btn-success">
