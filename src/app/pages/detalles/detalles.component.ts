@@ -283,13 +283,20 @@ export class DetallesComponent implements OnInit{
     });
   }
 
+  obtenerEscala(elemento: { scrollHeight: any; }) {
+    const alturaContenido = elemento.scrollHeight;
+    const alturaHoja = 1122; // Altura de una hoja A4 en píxeles a 96dpi
+    return alturaHoja / alturaContenido;
+  }
+
   imprimirDetalles() {
     let elemento = document.getElementById('contdiv');
 
     if (elemento) {
+      let escala = this.obtenerEscala(elemento);
         let myHTML = elemento.innerHTML;
 
-        myHTML += '<div style="width: 100%; display: block;"> <br><br>' + elemento.innerHTML + '</div>';
+        myHTML += '<div style="transform: scale(' + escala + '); transform-origin: top left;"> <br><br>'+ '</div>';
 
         myHTML += `
           <style>
@@ -349,7 +356,7 @@ export class DetallesComponent implements OnInit{
           </style>`
 
         printJS({
-            printable: myHTML,
+            printable: myHTML + myHTML,
             type: 'raw-html',
             style: '@page { size: portrait; }'
         });

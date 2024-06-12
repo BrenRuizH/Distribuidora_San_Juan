@@ -5,6 +5,8 @@ import { catchError, of } from 'rxjs';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { OrdenesCompraService } from 'src/app/services/ordenesCompra.service';
 import Swal from 'sweetalert2';
+import { NumerosALetras }  from 'numero-a-letras';
+
 
 @Component({
   selector: 'app-ordenesCompra',
@@ -21,6 +23,8 @@ export class OrdenesCompraComponent {
   p: number = 1;
   textoBusqueda: string = '';
   temporalidad: number = 0;
+
+  detalle: any = { items1: [{}], items2: [{}]};
 
 
   constructor(private clientesService: ClientesService, private ordenCompraService: OrdenesCompraService, private router: Router, private changeDetector: ChangeDetectorRef) {
@@ -41,8 +45,23 @@ export class OrdenesCompraComponent {
   obtenerOrdenesCompra() {
     this.ordenCompraService.getOrdenesCompra('leer.php').subscribe((data) => {
       this.ordenesCompra = data.items;
-      console.log(this.ordenesCompra);
-    })
+    });
+  }
+
+  obtenerDetalles(ordenId: any) {
+    this.ordenCompraService.detallesOrdenCompra(ordenId)
+    .subscribe((resp: any) => {
+      this.detalle = resp;
+
+      let datos = this.detalle.items2;
+      console.log(this.detalle)
+
+      let datosObj: { [key: string]: string } = {};
+      datos.forEach((dato: { punto: string, cantidad: string }) => {
+        datosObj[dato.punto] = dato.cantidad;
+      });
+      this.remisionar();
+    });
   }
 
   buscarOrdenesCompra() {
@@ -199,7 +218,232 @@ export class OrdenesCompraComponent {
     this.router.navigate(['/home/detalles', ordenId]);
   }
 
-  remisionar(ordenId: any) {
+  remisionar() {
+    
+    const clienteHTML = this.detalle.items1.map((encabezado: {razonSocial: any; direccion: any; telefono: any;}) => `
+    <div class="cliente-info">
+      <p>CLIENTE</p>
+      <p class="razon-social">${encabezado.razonSocial || ''}</p>
+      <div class="direccion-container">
+        <p class="direccion">${encabezado.direccion || ''}</p>
+        <div class="localidad-cp-telefono">
+          <p class="localidad">MÉXICO, LEÓN GTO.</p>
+          <p class="telefono">Tel.: ${encabezado.telefono || ''}</p>
+        </div>
+      </div>
+    </div>
+    `).join('');
+
+    let fecha = this.formatoDate(new Date());
+    const remisionHTML = this.detalle.items1.map((remision: {remision: any; cliente_id: any;}) => `
+    <div class="remision-info">
+      <p><strong>REMISIÓN:</strong> ${remision.remision || ''}</p>
+      <p> ${fecha}</p>
+      <p><strong>CLIENTE NO.:</strong> ${remision.cliente_id || ''}</p>
+    </div>
+    `).join('');
+
+    const puntosHTML = `
+      <tr>
+        ${this.detalle.items2.map((punto: { punto: any; }) => `
+          <th>${punto.punto || ''}</th>`)
+        .join('')}
+      </tr>
+      <tr>
+        ${this.detalle.items2.map((punto: { cantidad: any; }) => `
+          <td>${punto.cantidad || ''}</td>`)
+        .join('')}
+      </tr>
+    `;
+
+    let remision = this.detalle.items1[0].remision;
+    let total_pares = parseInt(this.detalle.items1.reduce((sum: any, item: { total_pares: any; }) => sum + item.total_pares, 0));
+    let subtotal = total_pares * this.detalle.items1[0].precio;
+    let total = subtotal;
+    let fechaFormatoLeyenda = this.formatoDateLeyenda(new Date());
+
+    let numeroEnLetras = NumerosALetras(total, {
+      plural: 'PESOS',
+      singular: 'PESO',
+      centPlural: 'CENTAVOS',
+      centSingular: 'CENTAVO'
+    });
+
+    const hormaHTML = this.detalle.items1.map((hormas: {horma: any; precio: any; total_pares: any;}) => `
+    <div class="horma-container">
+    <table>
+        <thead>
+          <tr>
+            <th>CANT.</th>
+            <th>UNID.</th>
+            <th>DESCRIPCIÓN</th>
+            <th>PRECIO</th>
+            <th>IMPORTE</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>${hormas.total_pares || ''}</td>
+            <td>PAR</td>
+            <td>
+              ${hormas.horma || ''}
+              <table class="puntos-table">
+                ${puntosHTML}
+              </table>
+            </td>
+            <td>$${hormas.precio || ''}</td>
+            <td>$${(hormas.precio)*(hormas.total_pares)}</td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+    `).join('');
+
+    const infoCliente = `
+    <div class="info-cliente-container">
+      ${clienteHTML}
+      ${remisionHTML}
+    </div>
+    ${hormaHTML}
+    <div class="totales">
+      <div class="sumatoria-cantidad">
+        <p>${total_pares}</p>
+      </div>
+      <div class="subtotal-total">
+        <p><strong>Subtotal</strong></p>
+        <p>$${subtotal}</p>
+        <p><strong>Total</strong></p>
+        <p>$${total}</p>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+      <p class="cantidad-letra">(${numeroEnLetras.toUpperCase()})</p>
+      <p class="leyenda">
+        Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., 
+        o en cualquier otra que me sea requerido su pago el día ${fechaFormatoLeyenda} la cantidad de 
+        $${total} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
+        Este pagaré es mercantil y está regido por la ley general de títulos y operaciones de crédito 
+        en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.
+      </p>
+      <p class="numero-remision">${remision || ''}</p>
+    </div>
+
+
+    <style>
+      .info-cliente-container {
+        display: flex;
+        justify-content: space-between;
+        page-break-inside: avoid;
+      }
+
+      .cliente-info {
+        border: 1px solid #000;
+        padding: 20px;
+        width: 66.66%;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      h2 {
+        margin-bottom: 10px;
+      }
+
+      .razon-social {
+        margin-bottom: 10px;
+        text-align: left;
+      }
+
+      .direccion-container {
+        display: flex;
+        justify-content: space-between;
+      }
+
+      .direccion {
+        width: 33.33%;
+      }
+
+      .localidad-cp-telefono {
+        width: 66.66%;
+        text-align: left;
+      }
+
+      .localidad, .cp, .telefono {
+        margin-bottom: 5px;
+      }
+
+      .remision-info {
+        width: 33.33%;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-end;
+      }
+
+      .horma-container {
+        width: 100%;
+        margin-bottom: 20px;
+      }
+      .puntos-table {
+        margin-top: 10px;
+        width: 100%;
+      }
+      .puntos-table th, .puntos-table td {
+        border: none;
+        padding: 5px;
+        text-align: center;
+      }
+      .puntos-table th {
+        background-color: #f0f0f0;
+      }
+
+      .totales {
+  display: flex;
+  justify-content: flex-end;
+  align-items: baseline;
+  margin-top: 20px;
+}
+
+.sumatoria-cantidad {
+  text-align: right;
+  margin-right: 20px;
+}
+
+.subtotal-total {
+  text-align: right;
+}
+      .footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  text-align: center;
+  border-top: 1px solid #000;
+  padding: 10px 0;
+}
+
+.numero-remision {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.cantidad-letra {
+  font-size: 1.2em;
+  margin-bottom: 5px;
+}
+
+.leyenda {
+  font-size: 0.8em;
+}
+
+
+    </style>
+  `;
+
+    printJS({
+      printable: infoCliente,
+      type: 'raw-html',
+      style: '@page { size: portrait; }'
+    });
   }
 
   imprimirReporte() {
@@ -267,8 +511,6 @@ export class OrdenesCompraComponent {
     this.ordenCompraService.getOrdenesCompra('reporte.php?fecha_inicio=' + fechaInicio + '&fecha_fin=' + fechaFin)
     .subscribe((data) => {
       this.ordenesCompraR = data.items;
-      console.log(this.ordenesCompraR);
-  
 
       const ordenesHTML = this.ordenesCompraR.map((orden: {folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any;}) => `
         <tr>
@@ -281,6 +523,8 @@ export class OrdenesCompraComponent {
           <td>${orden.status || ''}</td>
           <td>${orden.facturaNo || ''}</td>
       `).join('');
+
+
 
       const tablaHTML = `
         <h1> Reporte de Órdenes de Compra </h1>
@@ -365,5 +609,23 @@ export class OrdenesCompraComponent {
 
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
+  }
+
+  private formatoDate(date: Date): string {
+    const day = date.getDate().toString().padStart(2, '0');
+  const year = date.getFullYear();
+  const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+  const month = months[date.getMonth()];
+
+  return `${day}/${month}/${year}`;
+  }
+
+  private formatoDateLeyenda(date: Date): string {
+    const options: Intl.DateTimeFormatOptions = {
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric'
+    };
+    return new Intl.DateTimeFormat('es-ES', options).format(date).toUpperCase();
   }
 }
