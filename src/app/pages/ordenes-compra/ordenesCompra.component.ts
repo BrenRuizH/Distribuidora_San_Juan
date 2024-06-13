@@ -292,7 +292,7 @@ export class OrdenesCompraComponent {
               </table>
             </td>
             <td>$${hormas.precio || ''}</td>
-            <td>$${(hormas.precio)*(hormas.total_pares)}</td>
+            <td>$${total.toFixed(2)}</td>
           </tr>
         </tbody>
       </table>
@@ -311,9 +311,9 @@ export class OrdenesCompraComponent {
       </div>
       <div class="subtotal-total">
         <p><strong>Subtotal</strong></p>
-        <p>$${subtotal}</p>
+        <p>$${subtotal.toFixed(2)}</p>
         <p><strong>Total</strong></p>
-        <p>$${total}</p>
+        <p>$${total.toFixed(2)}</p>
       </div>
     </div>
   </div>
@@ -322,7 +322,7 @@ export class OrdenesCompraComponent {
       <p class="leyenda">
         Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., 
         o en cualquier otra que me sea requerido su pago el día ${fechaFormatoLeyenda} la cantidad de 
-        $${total} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
+        $${total.toFixed(2)} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
         Este pagaré es mercantil y está regido por la ley general de títulos y operaciones de crédito 
         en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.
       </p>
@@ -353,20 +353,20 @@ export class OrdenesCompraComponent {
     border: 1px solid #ddd;
     padding: 20px;
     width: 66.66%;
-    text-align: right; /* Alinear a la derecha */
+    text-align: right;
     background-color: #fdfdfe;
     border-radius: 8px;
   }
 
   .cliente-info h2, .remision-info h2 {
     margin-bottom: 10px;
-    text-align: right; /* Alinear a la derecha */
+    text-align: right;
   }
 
   .razon-social {
     margin-bottom: 10px;
-    text-align: justify; /* Justificar texto */
-    text-align-last: right; /* Alinear la última línea a la derecha */
+    text-align: justify;
+    text-align-last: right;
   }
 
   .direccion-container {
@@ -376,14 +376,14 @@ export class OrdenesCompraComponent {
 
   .direccion {
     width: 33.33%;
-    text-align: justify; /* Justificar texto */
-    text-align-last: right; /* Alinear la última línea a la derecha */
+    text-align: justify;
+    text-align-last: right;
   }
 
   .localidad-cp-telefono {
     width: 66.66%;
-    text-align: justify; /* Justificar texto */
-    text-align-last: right; /* Alinear la última línea a la derecha */
+    text-align: justify;
+    text-align-last: right;
   }
 
   .localidad, .cp, .telefono {
@@ -396,7 +396,7 @@ export class OrdenesCompraComponent {
     flex-direction: column;
     justify-content: flex-start;
     align-items: flex-end;
-    text-align: right; /* Alinear a la derecha */
+    text-align: right;
   }
 
   .horma-container {
