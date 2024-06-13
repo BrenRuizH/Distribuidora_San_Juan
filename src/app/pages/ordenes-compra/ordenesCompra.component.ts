@@ -330,113 +330,166 @@ export class OrdenesCompraComponent {
     </div>
 
 
-    <style>
-      .info-cliente-container {
-        display: flex;
-        justify-content: space-between;
-        page-break-inside: avoid;
-      }
+ <style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px;
+    color: #333;
+    background-color: #f8f9fa;
+  }
 
-      .cliente-info {
-        border: 1px solid #000;
-        padding: 20px;
-        width: 66.66%;
-        margin-bottom: 20px;
-        text-align: center;
-      }
+  .info-cliente-container {
+    display: flex;
+    justify-content: space-between;
+    page-break-inside: avoid;
+    margin-bottom: 20px;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    border-radius: 8px;
+  }
 
-      h2 {
-        margin-bottom: 10px;
-      }
+  .cliente-info {
+    border: 1px solid #ddd;
+    padding: 20px;
+    width: 66.66%;
+    text-align: right; /* Alinear a la derecha */
+    background-color: #fdfdfe;
+    border-radius: 8px;
+  }
 
-      .razon-social {
-        margin-bottom: 10px;
-        text-align: left;
-      }
+  .cliente-info h2, .remision-info h2 {
+    margin-bottom: 10px;
+    text-align: right; /* Alinear a la derecha */
+  }
 
-      .direccion-container {
-        display: flex;
-        justify-content: space-between;
-      }
+  .razon-social {
+    margin-bottom: 10px;
+    text-align: justify; /* Justificar texto */
+    text-align-last: right; /* Alinear la última línea a la derecha */
+  }
 
-      .direccion {
-        width: 33.33%;
-      }
+  .direccion-container {
+    display: flex;
+    justify-content: space-between;
+  }
 
-      .localidad-cp-telefono {
-        width: 66.66%;
-        text-align: left;
-      }
+  .direccion {
+    width: 33.33%;
+    text-align: justify; /* Justificar texto */
+    text-align-last: right; /* Alinear la última línea a la derecha */
+  }
 
-      .localidad, .cp, .telefono {
-        margin-bottom: 5px;
-      }
+  .localidad-cp-telefono {
+    width: 66.66%;
+    text-align: justify; /* Justificar texto */
+    text-align-last: right; /* Alinear la última línea a la derecha */
+  }
 
-      .remision-info {
-        width: 33.33%;
-        display: flex;
-        flex-direction: column;
-        justify-content: flex-start;
-        align-items: flex-end;
-      }
+  .localidad, .cp, .telefono {
+    margin-bottom: 5px;
+  }
 
-      .horma-container {
-        width: 100%;
-        margin-bottom: 20px;
-      }
-      .puntos-table {
-        margin-top: 10px;
-        width: 100%;
-      }
-      .puntos-table th, .puntos-table td {
-        border: none;
-        padding: 5px;
-        text-align: center;
-      }
-      .puntos-table th {
-        background-color: #f0f0f0;
-      }
+  .remision-info {
+    width: 33.33%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-end;
+    text-align: right; /* Alinear a la derecha */
+  }
 
-      .totales {
-  display: flex;
-  justify-content: flex-end;
-  align-items: baseline;
-  margin-top: 20px;
-}
+  .horma-container {
+    width: 100%;
+    margin-bottom: 20px;
+  }
 
-.sumatoria-cantidad {
-  text-align: right;
-  margin-right: 20px;
-}
+  .horma-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    table-layout: fixed;
+  }
 
-.subtotal-total {
-  text-align: right;
-}
-      .footer {
-  position: fixed;
-  bottom: 0;
-  width: 100%;
-  text-align: center;
-  border-top: 1px solid #000;
-  padding: 10px 0;
-}
+  .horma-table, .horma-table th, .horma-table td {
+    border: 1px solid #ddd;
+  }
 
-.numero-remision {
-  font-weight: bold;
-  margin-bottom: 5px;
-}
+  .horma-table th, .horma-table td {
+    padding: 8px;
+    text-align: left;
+    word-wrap: break-word;
+  }
 
-.cantidad-letra {
-  font-size: 1.2em;
-  margin-bottom: 5px;
-}
+  .horma-table th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+    text-transform: uppercase;
+  }
 
-.leyenda {
-  font-size: 0.8em;
-}
+  .horma-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
 
+  .horma-table tr:hover {
+    background-color: #f1f1f1;
+  }
 
-    </style>
+  .puntos-table {
+    margin-top: 10px;
+    width: 100%;
+  }
+
+  .puntos-table th, .puntos-table td {
+    border: none;
+    padding: 5px;
+    text-align: center;
+  }
+
+  .puntos-table th {
+    background-color: #f0f0f0;
+  }
+
+  .totales {
+    display: flex;
+    justify-content: flex-end;
+    align-items: baseline;
+    margin-top: 20px;
+  }
+
+  .sumatoria-cantidad {
+    text-align: right;
+    margin-right: 20px;
+  }
+
+  .subtotal-total {
+    text-align: right;
+  }
+
+  .footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+    border-top: 1px solid #000;
+    padding: 10px 0;
+    background-color: #fdfdfe;
+  }
+
+  .numero-remision {
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .cantidad-letra {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+  }
+
+  .leyenda {
+    font-size: 0.8em;
+  }
+</style>
   `;
 
     printJS({
