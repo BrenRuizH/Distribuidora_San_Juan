@@ -5,7 +5,7 @@ import { catchError, of } from 'rxjs';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { OrdenesCompraService } from 'src/app/services/ordenesCompra.service';
 import Swal from 'sweetalert2';
-import { NumerosALetras }  from 'numero-a-letras';
+import { NumerosALetras } from 'numero-a-letras';
 
 
 @Component({
@@ -17,14 +17,14 @@ export class OrdenesCompraComponent {
   ordenesCompraR: any = [];
 
   ordenesCompra: any = [];
-  ordenCompra: any = {cliente_id: ''};
+  ordenCompra: any = { cliente_id: '' };
   clientes: any[] = [];
 
   p: number = 1;
   textoBusqueda: string = '';
   temporalidad: number = 0;
 
-  detalle: any = { items1: [{}], items2: [{}]};
+  detalle: any = { items1: [{}], items2: [{}] };
 
 
   constructor(private clientesService: ClientesService, private ordenCompraService: OrdenesCompraService, private router: Router, private changeDetector: ChangeDetectorRef) {
@@ -50,18 +50,18 @@ export class OrdenesCompraComponent {
 
   obtenerDetalles(ordenId: any) {
     this.ordenCompraService.detallesOrdenCompra(ordenId)
-    .subscribe((resp: any) => {
-      this.detalle = resp;
+      .subscribe((resp: any) => {
+        this.detalle = resp;
 
-      let datos = this.detalle.items2;
-      console.log(this.detalle)
+        let datos = this.detalle.items2;
+        console.log(this.detalle)
 
-      let datosObj: { [key: string]: string } = {};
-      datos.forEach((dato: { punto: string, cantidad: string }) => {
-        datosObj[dato.punto] = dato.cantidad;
+        let datosObj: { [key: string]: string } = {};
+        datos.forEach((dato: { punto: string, cantidad: string }) => {
+          datosObj[dato.punto] = dato.cantidad;
+        });
+        this.remisionar();
       });
-      this.remisionar();
-    });
   }
 
   buscarOrdenesCompra() {
@@ -69,7 +69,7 @@ export class OrdenesCompraComponent {
       this.obtenerOrdenesCompra();
     } else {
       this.ordenCompraService.getOrdenesCompra('buscar.php?texto=' + this.textoBusqueda).pipe(catchError(error => {
-        if(error.status === 404) {
+        if (error.status === 404) {
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -78,12 +78,12 @@ export class OrdenesCompraComponent {
         }
         return of([]);
       })
-    ).subscribe((data) => {
+      ).subscribe((data) => {
         this.ordenesCompra = data.items;
       });
     }
   }
-  
+
   mostrarInput(orden: any) {
     orden.editando = true;
   }
@@ -104,7 +104,7 @@ export class OrdenesCompraComponent {
           cancelButton: "btn btn-secondary"
         }
       });
-  
+
       swalWithBootstrapButtons.fire({
         title: "¿Está seguro?",
         icon: "warning",
@@ -112,13 +112,13 @@ export class OrdenesCompraComponent {
         confirmButtonText: '¡Sí, cambiar!',
         cancelButtonText: 'No, cancelar',
       }).then((result) => {
-        if(result.isConfirmed) {
+        if (result.isConfirmed) {
           let formData = new FormData();
           formData.append('id', orden.id.toString());
           formData.append('facturaNo', orden.facturaNo.toUpperCase());
-  
+
           this.ordenCompraService.agregarOrdenCompra('factura.php', formData).subscribe((event: any) => {
-            if(event.status == 'success') {
+            if (event.status == 'success') {
               swalWithBootstrapButtons.fire({
                 title: "¡Actualizado!",
                 text: "El número de factura de la orden ha sido cambiado exitosamente.",
@@ -135,9 +135,9 @@ export class OrdenesCompraComponent {
           });
         }
       });
-    }    
+    }
   }
-  
+
 
   getClaseEstado(status: string): string {
     switch (status) {
@@ -158,7 +158,7 @@ export class OrdenesCompraComponent {
     formData.append('status', nuevoStatus);
 
     this.ordenCompraService.agregarOrdenCompra('status.php', formData).subscribe((event: any) => {
-      if(event.status == 'success') {
+      if (event.status == 'success') {
         Swal.fire({
           title: "¡Actualizado!",
           text: "El status de la orden ha sido cambiado exitosamente.",
@@ -178,7 +178,7 @@ export class OrdenesCompraComponent {
     const selectElement = event.target as HTMLSelectElement;
     const nuevoEstado = selectElement.value;
     const mensaje = `¿Desea cambiar el status de ${orden.status} a ${nuevoEstado}?`;
-        
+
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-warning",
@@ -187,7 +187,7 @@ export class OrdenesCompraComponent {
     });
 
     if ((orden.status === 'EN ENTREGA' && nuevoEstado === 'EN PRODUCCIÓN') ||
-        (orden.status === 'FACTURADO' && (nuevoEstado === 'EN PRODUCCIÓN' || nuevoEstado === 'EN ENTREGA'))) {
+      (orden.status === 'FACTURADO' && (nuevoEstado === 'EN PRODUCCIÓN' || nuevoEstado === 'EN ENTREGA'))) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
@@ -196,31 +196,31 @@ export class OrdenesCompraComponent {
       selectElement.value = orden.status;
       return;
     } else {
-        swalWithBootstrapButtons.fire({
-          title: "¿Está seguro?",
-          icon: "warning",
-          text: mensaje,
-          showCancelButton: true,
-          confirmButtonText: '¡Sí, cambiar!',
-          cancelButtonText: 'No, cancelar',
-        }).then((result) => {
-          if(result.isConfirmed) {
-            orden.status = nuevoEstado;
-            this.editarStatus(orden.id, nuevoEstado);
-          } else {
-            selectElement.value = orden.status;
-          }
-        });
+      swalWithBootstrapButtons.fire({
+        title: "¿Está seguro?",
+        icon: "warning",
+        text: mensaje,
+        showCancelButton: true,
+        confirmButtonText: '¡Sí, cambiar!',
+        cancelButtonText: 'No, cancelar',
+      }).then((result) => {
+        if (result.isConfirmed) {
+          orden.status = nuevoEstado;
+          this.editarStatus(orden.id, nuevoEstado);
+        } else {
+          selectElement.value = orden.status;
+        }
+      });
     }
   }
-    
+
   verDetalles(ordenId: any) {
     this.router.navigate(['/home/detalles', ordenId]);
   }
 
   remisionar() {
-    
-    const clienteHTML = this.detalle.items1.map((encabezado: {razonSocial: any; direccion: any; telefono: any;}) => `
+
+    const clienteHTML = this.detalle.items1.map((encabezado: { razonSocial: any; direccion: any; telefono: any; }) => `
     <div class="cliente-info">
       <p>CLIENTE</p>
       <p class="razon-social">${encabezado.razonSocial || ''}</p>
@@ -235,9 +235,9 @@ export class OrdenesCompraComponent {
     `).join('');
 
     let fecha = this.formatoDate(new Date());
-    const remisionHTML = this.detalle.items1.map((remision: {remision: any; cliente_id: any;}) => `
+    const remisionHTML = this.detalle.items1.map((remision: { remision: any; cliente_id: any; }) => `
     <div class="remision-info">
-      <p><strong>REMISIÓN:</strong> ${remision.remision || ''}</p>
+      <p><strong>NOTA:</strong> ${remision.remision || ''}</p>
       <p> ${fecha}</p>
       <p><strong>CLIENTE NO.:</strong> ${remision.cliente_id || ''}</p>
     </div>
@@ -269,18 +269,19 @@ export class OrdenesCompraComponent {
       centSingular: 'CENTAVO'
     });
 
-    const hormaHTML = this.detalle.items1.map((hormas: {horma: any; precio: any; total_pares: any;}) => `
+    const hormaHTML = this.detalle.items1.map((hormas: { horma: any; precio: any; total_pares: any; }) => `
     <div class="horma-container">
     <table>
         <thead>
           <tr>
-            <th>CANT.</th>
-            <th>UNID.</th>
+            <th class='cantidad'>CANT.</th>
+            <th class='unidad'>UNID.</th>
             <th>DESCRIPCIÓN</th>
-            <th>PRECIO</th>
-            <th>IMPORTE</th>
+            <th class='precio'>PRECIO</th>
+            <th class='importe'>IMPORTE</th>
           </tr>
         </thead>
+
         <tbody>
           <tr>
             <td>${hormas.total_pares || ''}</td>
@@ -317,20 +318,8 @@ export class OrdenesCompraComponent {
       </div>
     </div>
   </div>
-  <div class="footer">
-      <p class="cantidad-letra">(${numeroEnLetras.toUpperCase()})</p>
-      <p class="leyenda">
-        Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., 
-        o en cualquier otra que me sea requerido su pago el día ${fechaFormatoLeyenda} la cantidad de 
-        $${total.toFixed(2)} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
-        Este pagaré es mercantil y está regido por la ley general de títulos y operaciones de crédito 
-        en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.
-      </p>
-      <p class="numero-remision">${remision || ''}</p>
-    </div>
 
-
- <style>
+  <style>
   body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 20px;
@@ -348,46 +337,42 @@ export class OrdenesCompraComponent {
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     border-radius: 8px;
   }
-
-  .cliente-info {
+  
+  
+ .cliente-info {
     border: 1px solid #ddd;
     padding: 20px;
     width: 66.66%;
-    text-align: right;
     background-color: #fdfdfe;
     border-radius: 8px;
+    text-align: left;
   }
 
-  .cliente-info h2, .remision-info h2 {
-    margin-bottom: 10px;
-    text-align: right;
+  .cliente-info p {
+    margin: 0 0 10px 0;
+    text-align: left;
   }
-
+  
   .razon-social {
     margin-bottom: 10px;
-    text-align: justify;
-    text-align-last: right;
+    text-align: left;
   }
 
   .direccion-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; 
+    justify-content: flex-start; 
+    align-items: flex-start; 
   }
 
-  .direccion {
-    width: 33.33%;
-    text-align: justify;
-    text-align-last: right;
+  .direccion, .localidad-cp-telefono {
+    width: 100%;
+    text-align: left;
   }
 
-  .localidad-cp-telefono {
-    width: 66.66%;
-    text-align: justify;
-    text-align-last: right;
-  }
-
-  .localidad, .cp, .telefono {
+  .localidad, .telefono {
     margin-bottom: 5px;
+    text-align: left;
   }
 
   .remision-info {
@@ -397,6 +382,10 @@ export class OrdenesCompraComponent {
     justify-content: flex-start;
     align-items: flex-end;
     text-align: right;
+  }
+
+  .remision-info p {
+    margin: 0 0 10px 0;
   }
 
   .horma-container {
@@ -430,9 +419,27 @@ export class OrdenesCompraComponent {
   .horma-table tr:nth-child(even) {
     background-color: #f9f9f9;
   }
-
+  
+    
   .horma-table tr:hover {
     background-color: #f1f1f1;
+  }
+
+  .cantidad {
+    padding-right: 15px
+  }
+
+  .unidad{
+   padding-left: 15px; 
+   
+  }
+  
+  precio {
+    padding-right: 20px; /* Add padding to the right of the price column */
+  }
+
+  .importe {
+    padding-left: 20px; /* Add padding to the left of the importe column */
   }
 
   .puntos-table {
@@ -490,6 +497,19 @@ export class OrdenesCompraComponent {
     font-size: 0.8em;
   }
 </style>
+
+  <div class="footer">
+      <p class="cantidad-letra">(${numeroEnLetras.toUpperCase()})</p>
+      <p class="leyenda">
+        Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., 
+        o en cualquier otra que me sea requerido su pago el día ${fechaFormatoLeyenda} la cantidad de 
+        $${total.toFixed(2)} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
+        Este pagaré es mercantil y está regido por la ley general de títulos y operaciones de crédito 
+        en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.
+      </p>
+      <p class="numero-remision">${remision || ''}</p>
+    </div>
+
   `;
 
     printJS({
@@ -507,7 +527,7 @@ export class OrdenesCompraComponent {
     let fechaFin: string = '';
     let temp: string = '';
 
-    switch(this.temporalidad) {
+    switch (this.temporalidad) {
       case 1:
         fechaInicio = this.formatDate(new Date());
         fechaFin = this.formatDate(new Date());
@@ -542,7 +562,7 @@ export class OrdenesCompraComponent {
         fechaFin = this.formatDate(ultimoDiaQuincena2);
         temp = 'Segunda Quincena';
         break;
-      case 5: 
+      case 5:
         const hoy5 = new Date();
         const fechaInicioMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), 1);
         const ultimoDMes = new Date(hoy5.getFullYear(), hoy5.getMonth() + 1, 0);
@@ -562,10 +582,10 @@ export class OrdenesCompraComponent {
     }
 
     this.ordenCompraService.getOrdenesCompra('reporte.php?fecha_inicio=' + fechaInicio + '&fecha_fin=' + fechaFin)
-    .subscribe((data) => {
-      this.ordenesCompraR = data.items;
+      .subscribe((data) => {
+        this.ordenesCompraR = data.items;
 
-      const ordenesHTML = this.ordenesCompraR.map((orden: {folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any;}) => `
+        const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any; }) => `
         <tr>
           <td>${orden.folio || ''}</td>
           <td>${orden.codigo || ''}</td>
@@ -579,7 +599,7 @@ export class OrdenesCompraComponent {
 
 
 
-      const tablaHTML = `
+        const tablaHTML = `
         <h1> Reporte de Órdenes de Compra </h1>
         <h2> ${temp}: ${fechaInicio} - ${fechaFin} </h2>
         <table>
@@ -652,12 +672,12 @@ export class OrdenesCompraComponent {
         </style>
       `;
 
-      printJS({
-        printable: tablaHTML,
-        type: 'raw-html',
-        style: '@page { size: landscape; }'
+        printJS({
+          printable: tablaHTML,
+          type: 'raw-html',
+          style: '@page { size: landscape; }'
+        });
       });
-    });
   }
 
   private formatDate(date: Date): string {
@@ -666,11 +686,11 @@ export class OrdenesCompraComponent {
 
   private formatoDate(date: Date): string {
     const day = date.getDate().toString().padStart(2, '0');
-  const year = date.getFullYear();
-  const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-  const month = months[date.getMonth()];
+    const year = date.getFullYear();
+    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+    const month = months[date.getMonth()];
 
-  return `${day}/${month}/${year}`;
+    return `${day}/${month}/${year}`;
   }
 
   private formatoDateLeyenda(date: Date): string {
