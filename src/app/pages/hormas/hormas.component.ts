@@ -30,7 +30,7 @@ export class HormasComponent {
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
       this.clientes = data.items;
-    })
+    });
   }
 
   obtenerHormas() {
@@ -132,7 +132,7 @@ export class HormasComponent {
     });
 
     swalWithBootstrapButtons.fire({
-      title: "¿Desea eliminar el usuario?",
+      title: "¿Desea eliminar la horma?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "¡Sí, eliminar!",

@@ -49,7 +49,11 @@ export class OrdenesCompraComponent {
   }
 
   obtenerDetalles(ordenId: any) {
-    this.ordenCompraService.detallesOrdenCompra(ordenId)
+    let formData = new FormData();
+    formData.append('id', ordenId.toString());
+    this.ordenCompraService.agregarOrdenCompra('remision.php', formData).subscribe((res: any) => {
+      if (res.status === 'success') {
+        this.ordenCompraService.detallesOrdenCompra(ordenId)
       .subscribe((resp: any) => {
         this.detalle = resp;
 
@@ -62,6 +66,14 @@ export class OrdenesCompraComponent {
         });
         this.remisionar();
       });
+    } else {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Hubo un error, inténtelo más tarde."
+      });
+    }
+  });
   }
 
   buscarOrdenesCompra() {
@@ -222,7 +234,7 @@ export class OrdenesCompraComponent {
 
     const clienteHTML = this.detalle.items1.map((encabezado: { razonSocial: any; direccion: any; telefono: any; }) => `
     <div class="cliente-info">
-      <p>CLIENTE</p>
+      <p style="text-align: center;">CLIENTE</p>
       <p class="razon-social">${encabezado.razonSocial || ''}</p>
       <div class="direccion-container">
         <p class="direccion">${encabezado.direccion || ''}</p>
@@ -237,7 +249,7 @@ export class OrdenesCompraComponent {
     let fecha = this.formatoDate(new Date());
     const remisionHTML = this.detalle.items1.map((remision: { remision: any; cliente_id: any; }) => `
     <div class="remision-info">
-      <p><strong>NOTA:</strong> ${remision.remision || ''}</p>
+      <p><strong>REMISIÓN:</strong> ${remision.remision || ''}</p>
       <p> ${fecha}</p>
       <p><strong>CLIENTE NO.:</strong> ${remision.cliente_id || ''}</p>
     </div>
@@ -307,14 +319,19 @@ export class OrdenesCompraComponent {
     </div>
     ${hormaHTML}
     <div class="totales">
-      <div class="sumatoria-cantidad">
+      <div class="sumatoria-cantidad" style="align-self: flex-start; margin-right: auto;">
+      <hr style="width: 100%; border-top: 1px solid #000;">
         <p>${total_pares}</p>
       </div>
       <div class="subtotal-total">
-        <p><strong>Subtotal</strong></p>
-        <p>$${subtotal.toFixed(2)}</p>
-        <p><strong>Total</strong></p>
-        <p>$${total.toFixed(2)}</p>
+        <div class="line-item">
+          <p><strong>Subtotal</strong></p>
+          <p><strong>Total</strong></p>
+        </div>
+        <div class="line-item">
+          <p>$${subtotal.toFixed(2)}</p>
+          <p>$${total.toFixed(2)}</p>
+        </div>
       </div>
     </div>
   </div>
@@ -459,19 +476,34 @@ export class OrdenesCompraComponent {
 
   .totales {
     display: flex;
-    justify-content: flex-end;
-    align-items: baseline;
-    margin-top: 20px;
+    flex-direction: column
+    align-items: flex-end;
+    margin-top: 200px;
   }
 
   .sumatoria-cantidad {
-    text-align: right;
+    text-align: flex-start;
     margin-right: 20px;
   }
 
   .subtotal-total {
-    text-align: right;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-top: 10px;
+}
+
+.line-item {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+}
+
+.line-item p {
+  text-align: center;
+}
+
+
 
   .footer {
     position: fixed;
@@ -597,8 +629,6 @@ export class OrdenesCompraComponent {
           <td>${orden.facturaNo || ''}</td>
       `).join('');
 
-
-
         const tablaHTML = `
         <h1> Reporte de Órdenes de Compra </h1>
         <h2> ${temp}: ${fechaInicio} - ${fechaFin} </h2>
@@ -677,7 +707,17 @@ export class OrdenesCompraComponent {
           type: 'raw-html',
           style: '@page { size: landscape; }'
         });
-      });
+      },
+      (error) => {
+        if (error.status === 404) {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "No hay órdenes de compra para generar un reporte en esa temporalidad."
+        });
+      }
+    });
+  
   }
 
   private formatDate(date: Date): string {

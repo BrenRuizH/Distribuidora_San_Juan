@@ -113,12 +113,12 @@ export class DetallesComponent implements OnInit{
     let fila = [];
 
     if(this.detalle.items1[0].cliente_id == 37) {
-      for (let i = 33; i <= 38; i ++) {
+      for (let i = 25; i <= 38; i ++) {
         let vista = i;
         let punto = i.toFixed(2);
         let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : 0;
         fila.push({punto: punto, vista: vista, cantidad: cantidad});
-        if (fila.length === 6) {
+        if (fila.length === 14) {
           nuevosPuntosYcantidadesEditar.push(fila);
           fila = [];
         }
@@ -160,9 +160,9 @@ export class DetallesComponent implements OnInit{
       this.puntosYcantidades = [];
 
       console.log(this.detalle.items1[0].cliente_id);
-      if(this.detalle.items1[0].cliente_id == 37) {
-        for (let i = 33; i <= 38; i ++) {
-          let vista = i;
+      if(this.detalle.items1[0].cliente_id === 37) {
+        for (let i = 25; i <= 38; i ++) {
+          let vista = i % 1 === 0 ? i.toString() : '1/2';
           let punto = i.toFixed(2);
           let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
           this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});

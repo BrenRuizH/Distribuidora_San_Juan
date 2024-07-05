@@ -40,6 +40,7 @@
                                         <th>Fecha de Orden</th>
                                         <th>Fecha de Entrega</th>
                                         <th>Total de Pares</th>
+                                        <th>Precio</th>
                                         <th>No. Factura</th>
                                         <th>Status</th>
                                         <th>Ver más</th>
@@ -54,6 +55,7 @@
                                         <td>{{orden.fecha_orden}}</td>
                                         <td>{{orden.fecha_entrega}}</td>
                                         <td>{{orden.total_pares}}</td>
+                                        <td>$ {{orden.precio}}</td>
                                         <td (dblclick)="mostrarInput(orden)" *ngIf="!orden.editando">
                                             {{ orden.facturaNo || 'Doble clic para editar' }}
                                         </td>

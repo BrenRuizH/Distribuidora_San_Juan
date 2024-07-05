@@ -14,7 +14,8 @@ import { CrearOrdenCompraComponent } from './crear-orden-compra/crear-orden-comp
 import { OrdenesCompraComponent } from './ordenes-compra/ordenesCompra.component';
 import { DetallesComponent } from './detalles/detalles.component';
 import { NgxPaginationModule } from 'ngx-pagination';
-
+import { CrearRemisionComponent } from './crear-remision/crear-remision.component';
+import { RemisionesComponent } from './remision/remisiones.component';
 
 @NgModule({
   declarations: [
@@ -24,11 +25,13 @@ import { NgxPaginationModule } from 'ngx-pagination';
     CrearClienteComponent,
     CrearHormaComponent,
     CrearOrdenCompraComponent,
+    CrearRemisionComponent,
     UsuariosComponent,
     ClientesComponent,
     HormasComponent,    
     OrdenesCompraComponent,
-    DetallesComponent
+    DetallesComponent,
+    RemisionesComponent
   ],
   imports: [
     CommonModule,

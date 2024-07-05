@@ -2,10 +2,8 @@ import { formatDate } from '@angular/common';
 import { ChangeDetectorRef, Component, NgZone, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { CambrillonesService } from 'src/app/services/cambrillones.service';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { HormasService } from 'src/app/services/hormas.service';
-import { MaterialesService } from 'src/app/services/materiales.service';
 import { OrdenesCompraService } from 'src/app/services/ordenesCompra.service';
 import Swal from 'sweetalert2';
 
@@ -88,12 +86,22 @@ export class CrearOrdenCompraComponent implements OnInit{
   puntosYcantidadesCondorin =
   [
     [
-      { vista:'33',  punto: 33, cantidad: 0},
+      
+      { vista:'25', punto: 25, cantidad: 0},
+      { vista:'26', punto: 26, cantidad: 0},
+      { vista:'27', punto: 27, cantidad: 0},
+      { vista:'28', punto: 28, cantidad: 0},
+      { vista:'29', punto: 29, cantidad: 0},
+      { vista:'30', punto: 30, cantidad: 0},
+      { vista:'31', punto: 31, cantidad: 0},
+
+      { vista:'32', punto: 32, cantidad: 0},
+      { vista:'33', punto: 33, cantidad: 0},
       { vista:'34', punto: 34, cantidad: 0},
       { vista:'35', punto: 35, cantidad: 0},
       { vista:'36', punto: 36, cantidad: 0},
       { vista:'37', punto: 37, cantidad: 0},
-      { vista:'38',  punto: 38, cantidad: 0},
+      { vista:'38', punto: 38, cantidad: 0},
     ],
   ];
   

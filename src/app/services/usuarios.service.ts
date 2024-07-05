@@ -36,10 +36,18 @@ export class UsuariosService {
         },
         {
             title: 'Órdenes de Compra',
-            icon: 'mdi mdi-receipt',
+            icon: 'mdi mdi-clipboard-outline',
             submenu: [
                 { title: 'Crear Orden Compra', url: 'crear-orden-compra' },
                 { title: 'Datos Órdenes de Compra', url: 'ordenes-compra' }
+            ]
+        },
+        {
+            title: 'Remisiones',
+            icon: 'mdi mdi-receipt',
+            submenu: [
+                { title: 'Crear Remisión', url: 'crear-remision' },
+                { title: 'Datos Remsiones', url: 'remisiones' }
             ]
         }
     ]

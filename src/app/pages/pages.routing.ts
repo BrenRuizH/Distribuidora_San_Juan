@@ -11,6 +11,8 @@ import { HormasComponent } from "./hormas/hormas.component";
 import { CrearOrdenCompraComponent } from "./crear-orden-compra/crear-orden-compra.component";
 import { OrdenesCompraComponent } from "./ordenes-compra/ordenesCompra.component";
 import { DetallesComponent } from "./detalles/detalles.component";
+import { CrearRemisionComponent } from "./crear-remision/crear-remision.component";
+import { RemisionesComponent } from "./remision/remisiones.component";
 
 const routes: Routes = [
     {
@@ -24,8 +26,9 @@ const routes: Routes = [
             { path: 'hormas', component: HormasComponent },
             { path: 'crear-orden-compra', component: CrearOrdenCompraComponent },
             { path: 'ordenes-compra', component: OrdenesCompraComponent },
-            { path: 'detalles/:id', component: DetallesComponent }
-
+            { path: 'detalles/:id', component: DetallesComponent },
+            { path: 'crear-remision', component: CrearRemisionComponent },
+            { path: 'remisiones', component: RemisionesComponent }
         ]
     }
 ];
