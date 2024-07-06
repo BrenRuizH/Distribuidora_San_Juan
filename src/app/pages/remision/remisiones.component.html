@@ -77,7 +77,7 @@
                                     <tr *ngFor="let datos of remisiones | paginate: {itemsPerPage: 10, currentPage: p}">
                                         <td>{{datos.id}}</td>
                                         <td>{{datos.codigo}}</td>
-                                        <td>{{datos.total_pares}}</td>
+                                        <td>{{datos.total_pares | number}}</td>
                                         <td>${{datos.precio_final | number}}</td>
                                         <td> 
                                             <a (click)="seleccionarRemision(datos.id);" class="btn btn-warning" data-toggle="modal" data-target=".example2-modal-lg">

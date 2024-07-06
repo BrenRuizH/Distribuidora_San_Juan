@@ -314,32 +314,42 @@ seleccionarTemporalidad(opcion: string) {
       this.fechaImpresion = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric'});
 
       const clienteHTML = `
+      <div class="cliente-info-container">
         <div class="cliente-info">
-          <p style="text-align: center;">CLIENTE</p>
-          <p class="razon-social">${this.clienteInfo.razonSocial}</p>
-          <div class="direccion-container">
-            <p class="direccion">${this.clienteInfo.direccion}</p>
-            <div class="localidad-cp-telefono">
-              <p class="localidad">MÉXICO, LEÓN GTO.</p>
-              <p class="telefono">Tel.: ${this.clienteInfo.telefono || ''}</p>
+          <div class="cliente-header">
+            <p>CLIENTE</p>
+          </div>
+          <div class="cliente-content">
+            <div class="razon-social-container">
+              <p class="razon-social">${this.clienteInfo.razonSocial}</p>
+            </div>
+            <div class="direccion-telefono-container">
+              <div class="direccion">
+                <p>${this.clienteInfo.direccion}</p>
+              </div>
+              <div class="localidad-telefono">
+                <p>MÉXICO, LEÓN GTO.</p>
+                <p>Tel.: ${this.clienteInfo.telefono || ''}</p>
+              </div>
             </div>
           </div>
-          <div class="cliente-details">
-            <p>No. Remisión: ${this.remisionInfo.id}</p>
-            <p>Fecha de impresión: ${this.fechaImpresion}</p>
-            <p>No. Cliente: ${this.clienteInfo.id}</p>
-          </div>
-        </div>`;
+        </div>
+        <div class="cliente-details">
+          <p>REMISIÓN ${this.remisionInfo.id}</p>
+          <p>${this.fechaImpresion}</p>
+          <p>CLIENTE NO. ${this.clienteInfo.id}</p>
+        </div>
+      </div>`;
 
       const ordenCompraHTML = `
         <table class="orden-compra-table">
           <thead>
             <tr>
-              <th>Cantidad</th>
-              <th>Unidad</th>
-              <th>Descripción</th>
-              <th>Precio</th>
-              <th>Importe</th>
+              <th>CANT.</th>
+              <th>UNID.</th>
+              <th>D E S C R I P C I Ó N</th>
+              <th>PRECIO</th>
+              <th>IMPORTE</th>
             </tr>
           </thead>
           <tbody>
@@ -366,23 +376,37 @@ seleccionarTemporalidad(opcion: string) {
                 <td>$${((Number(orden.horma.precio) || 0) * orden.total_pares).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
               </tr>
             `).join('')}
+            <tr>
+              <td class="total-pares">
+                <div class="linea-total"></div>
+                ${totalPares.toLocaleString()}
+              </td>
+              <td></td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
           </tbody>
         </table>`;
 
       const subtotalTotalHTML = `
         <div class="subtotal-total">
-          <p>Total pares: ${totalPares.toLocaleString()}</p>
-          <p class="subtotal">Subtotal: $${this.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
-          <p class="total">Total: $${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</p>
-          <p class="total-letras">Total en letras: (${this.totalEnLetras.toUpperCase()})</p>
+          <div class="subtotal-total-values">
+            <div class="subtotal">SUBTOTAL</div>
+            <div class="total">TOTAL</div>
+          </div>
+          <div class="subtotal-total-amounts">
+            <div class="subtotal-amount">$${this.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+            <div class="total-amount">$${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+          </div>
+          <p class="total-letras">(${this.totalEnLetras.toUpperCase()})</p>
         </div>`;
-
       const footerHTML = `
         <div class="footer">
           <p>Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., o en cualquier otra que me sea requerido su pago el día ${this.convertirFechaTexto(new Date())} 
           la cantidad de $${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${this.totalEnLetras.toUpperCase()}) valor de la mercancía que he recibido a mi entera satisfacción. Este pagaré es mercantil y está regido por la ley 
           general de títulos y operaciones de crédito en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.</p>
-          <p>Número de remisión: ${this.remisionInfo.id}</p>
+          <p class="no-remision">${this.remisionInfo.id}</p>
         </div>`;
 
       const remisionHTML = `
@@ -396,7 +420,130 @@ seleccionarTemporalidad(opcion: string) {
       printJS({
         printable: remisionHTML,
         type: 'raw-html',
-        style: '@page { size: portrait; }'
+        style: `@page { size: portrait; }
+        .remision-container { width: 100%; display: flex; flex-direction: column; align-items: flex-start; }
+        .cliente-info-container {
+          display: flex;
+          width: 100%;
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        .cliente-info {
+          width: 66.66%;
+          border: 1px solid black;
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        .cliente-header p {
+          text-align: center;
+          margin: 0;
+          font-weight: bold;
+          font-size: 16px;
+        }
+        .cliente-content {
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        .razon-social-container {
+          text-align: left;
+          margin-bottom: 10px;
+        }
+        .razon-social {
+          font-weight: bold;
+          font-size: 18px;
+          margin: 0;
+        }
+        .direccion-telefono-container {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        }
+        .direccion { width: 50%; }
+        .localidad-telefono {
+          width: 50%;
+          text-align: right;
+        }
+        .localidad-telefono p { margin: 0; }
+        .cliente-details {
+          width: 33.33%;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          padding-left: 20px;
+          margin-left: 20px;
+        }
+        .cliente-details p {
+          text-align: right;
+          margin: 25px 0;
+        }
+        .orden-compra-table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 20px;
+        }
+        .orden-compra-table th, .orden-compra-table td {
+          text-align: center;
+        }
+        .orden-compra-table thead th {
+          border-bottom: 1px solid black;
+        }
+        .detalle-puntos-table {
+          width: auto;
+          margin-left: auto;
+          margin-right: auto;
+        }
+        .detalle-puntos-table th, .detalle-puntos-table td {
+          text-align: center;
+        }
+        .total-pares {
+          text-align: center;
+          font-weight: bold;
+          border-top: 1px solid black; /* Línea delgada */
+        }
+        .subtotal-total {
+          margin-top: 20px;
+          width: 100%;
+        }
+        .subtotal-total p {
+          margin: 5px 0;
+        }
+        .subtotal-total-values {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 5px;
+          padding-right: 10%;
+        }
+        .subtotal-total-values .subtotal {
+          text-align: right;
+          padding-right: 80px;
+        }
+        .subtotal-total-values .total {
+          text-align: left;
+          padding-left: 0px;
+        }
+        .subtotal-total-amounts {
+          display: flex;
+          justify-content: flex-end;
+          margin-bottom: 10px;
+          padding-right: 10%;
+        }
+        .subtotal-total-amounts .subtotal-amount {
+          text-align: right;
+          padding-right: 50px;
+          font-weight: bold;
+        }
+        .subtotal-total-amounts .total-amount {
+          text-align: left;
+          padding-left: 20px;
+          font-weight: bold;
+        }
+        .total-letras {
+          margin-top: 10px;
+          text-align: center;
+        }
+        .no-remision {
+          text-align: center;
+        } `
       });
     });
   }
