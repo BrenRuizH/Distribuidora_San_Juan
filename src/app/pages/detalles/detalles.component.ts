@@ -118,7 +118,7 @@ export class DetallesComponent implements OnInit{
         let punto = i.toFixed(2);
         let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : 0;
         fila.push({punto: punto, vista: vista, cantidad: cantidad});
-        if (fila.length === 14) {
+        if (fila.length === 7) {
           nuevosPuntosYcantidadesEditar.push(fila);
           fila = [];
         }
@@ -159,30 +159,37 @@ export class DetallesComponent implements OnInit{
 
       this.puntosYcantidades = [];
 
-      console.log(this.detalle.items1[0].cliente_id);
-      if(this.detalle.items1[0].cliente_id === 37) {
+      if(this.detalle.items1[0].cliente_id == 37) {
         for (let i = 25; i <= 38; i ++) {
-          let vista = i % 1 === 0 ? i.toString() : '1/2';
           let punto = i.toFixed(2);
           let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
-          this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});
+          this.puntosYcantidades.push({punto: punto, vista: i.toString(), cantidad: cantidad});
         }
       } else {
         for (let i = 15; i <= 32.5; i += 0.5) {
-          let vista = i % 1 === 0 ? i.toString() : '1/2';
           let punto = i.toFixed(2);
+          let vista = i % 1 === 0 ? i.toString() : '1/2';
           let cantidad = datosObj.hasOwnProperty(punto) ? datosObj[punto] : '-';
           this.puntosYcantidades.push({punto: punto, vista: vista, cantidad: cantidad});
         }
       }
       
-
       if (this.detalle.items1[0]) {
         this.getHormas(this.detalle.items1[0].cliente_id);
         this.seleccionarHorma(this.detalle.items1[0].horma_id);
       }
     });
   }
+
+  getRows(array: any[]): any[] {
+    const rows = [];
+    const groupSize = this.detalle.items1[0].cliente_id == 37 ? 7 : 6;
+    for (let i = 0; i < array.length; i += groupSize) {
+      rows.push(array.slice(i, i + groupSize));
+    }
+    return rows;
+  }
+  
   
   editarOrdenYdetalles() {
     if(this.detalle.items1[0].fecha_orden && this.detalle.items1[0].cliente_id && this.detalle.items1[0].horma_id) {
@@ -285,7 +292,7 @@ export class DetallesComponent implements OnInit{
 
   obtenerEscala(elemento: { scrollHeight: any; }) {
     const alturaContenido = elemento.scrollHeight;
-    const alturaHoja = 1122; // Altura de una hoja A4 en píxeles a 96dpi
+    const alturaHoja = 1122;
     return alturaHoja / alturaContenido;
   }
 

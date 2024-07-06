@@ -12,7 +12,7 @@
                             </div>
                             <div class="ml-auto">
                                 <div class="form-group">
-                                    <button type="button" (click)="imprimirDetalles()" class="btn btn-primary"><i class="fa fa-print"></i>  Imprimir Detalles</button>                                                                              
+                                    <button type="button" (click)="imprimirDetalles()" class="btn btn-success"><i class="fa fa-print"></i>  Imprimir Detalles</button>                                                                              
                                 </div>
                             </div>
                         </div>
@@ -41,16 +41,17 @@
                         </table>
 
                         <table class="miTabla">
-                            <tr *ngFor="let item of (puntosYcantidades); let i = index">
-                                <ng-container *ngIf="i % 6 === 0">
-                                    <td *ngFor="let j of [0, 1, 2, 3, 4, 5]">
-                                        <div class="punto">{{puntosYcantidades[i + j].vista}}</div>
-                                        <hr class="linea">
-                                        <div class="cantidad">{{puntosYcantidades[i + j].cantidad}}</div>
-                                    </td>
-                                </ng-container>
+                            <tr *ngFor="let row of getRows(puntosYcantidades)">
+                              <ng-container *ngFor="let item of row">
+                                <td>
+                                  <div class="punto">{{ item.vista }}</div>
+                                  <hr class="linea">
+                                  <div class="cantidad">{{ item.cantidad }}</div>
+                                </td>
+                              </ng-container>
                             </tr>
-                        </table>
+                          </table>
+                          
                     </div>
                     <br>
                     

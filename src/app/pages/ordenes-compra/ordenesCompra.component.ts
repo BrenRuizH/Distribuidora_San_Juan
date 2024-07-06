@@ -98,32 +98,6 @@ seleccionarTemporalidad(opcion: string) {
     });
   }
 
-  obtenerDetalles(ordenId: any) {
-    let formData = new FormData();
-    formData.append('id', ordenId.toString());
-    this.ordenCompraService.agregarOrdenCompra('remision.php', formData).subscribe((res: any) => {
-      if (res.status === 'success') {
-        this.ordenCompraService.detallesOrdenCompra(ordenId)
-      .subscribe((resp: any) => {
-        this.detalle = resp;
-
-        let datos = this.detalle.items2;
-
-        let datosObj: { [key: string]: string } = {};
-        datos.forEach((dato: { punto: string, cantidad: string }) => {
-          datosObj[dato.punto] = dato.cantidad;
-        });
-      });
-    } else {
-      Swal.fire({
-        icon: "error",
-        title: "Oops...",
-        text: "Hubo un error, inténtelo más tarde."
-      });
-    }
-  });
-  }
-
   buscarOrdenesCompra() {
     if (!this.textoBusqueda) {
       this.obtenerOrdenesCompra();
