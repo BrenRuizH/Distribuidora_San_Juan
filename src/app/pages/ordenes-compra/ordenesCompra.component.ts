@@ -5,8 +5,6 @@ import { catchError, of } from 'rxjs';
 import { ClientesService } from 'src/app/services/clientes.service';
 import { OrdenesCompraService } from 'src/app/services/ordenesCompra.service';
 import Swal from 'sweetalert2';
-import { NumerosALetras } from 'numero-a-letras';
-
 
 @Component({
   selector: 'app-ordenesCompra',
@@ -36,6 +34,58 @@ export class OrdenesCompraComponent {
     this.obtenerOrdenesCompra();
   }
 
+  temporalidadSeleccionada: string = '';
+  temporalidadPersonalizado: boolean = false;
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  temp: string = '';
+
+seleccionarTemporalidad(opcion: string) {
+    this.temporalidadSeleccionada = opcion;
+
+    switch(opcion) {
+      case '1': 
+        this.fechaInicio = this.formatDate(new Date());
+        this.fechaFin = this.formatDate(new Date());
+        this.temp = 'Hoy';
+        break;
+      case '2':
+        const hoy2 = new Date();
+        const primerDiaSemana = new Date(hoy2.setDate(hoy2.getDate() - hoy2.getDay()));
+        const ultimoDiaSemana = new Date(primerDiaSemana);
+        ultimoDiaSemana.setDate(ultimoDiaSemana.getDate() + 6);
+
+        this.fechaInicio = this.formatDate(primerDiaSemana);
+        this.fechaFin = this.formatDate(ultimoDiaSemana);
+        this.temp = 'Esta semana';
+        break;
+      case '3':
+        const hoy5 = new Date();
+        const fechaInicioMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), 1);
+        const ultimoDMes = new Date(hoy5.getFullYear(), hoy5.getMonth() + 1, 0);
+        const fechaFinMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), ultimoDMes.getDate());
+
+        this.fechaInicio = this.formatDate(fechaInicioMes);
+        this.fechaFin = this.formatDate(fechaFinMes);
+        this.temp = 'Este mes';
+        break;
+      case '4':
+        this.temporalidadPersonalizado = true;
+        this.fechaInicio;
+        this.fechaFin;
+        this.temp = 'Personalizado';
+        break;
+      default:
+        this.temporalidadPersonalizado = false;
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Selecciona una temporalidad para generar el reporte."
+        });
+        break;
+    }
+}
+
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
       this.clientes = data.items;
@@ -58,13 +108,11 @@ export class OrdenesCompraComponent {
         this.detalle = resp;
 
         let datos = this.detalle.items2;
-        console.log(this.detalle)
 
         let datosObj: { [key: string]: string } = {};
         datos.forEach((dato: { punto: string, cantidad: string }) => {
           datosObj[dato.punto] = dato.cantidad;
         });
-        this.remisionar();
       });
     } else {
       Swal.fire({
@@ -92,7 +140,7 @@ export class OrdenesCompraComponent {
       })
       ).subscribe((data) => {
         this.ordenesCompra = data.items;
-      });
+    });
     }
   }
 
@@ -149,7 +197,6 @@ export class OrdenesCompraComponent {
       });
     }
   }
-
 
   getClaseEstado(status: string): string {
     switch (status) {
@@ -230,390 +277,8 @@ export class OrdenesCompraComponent {
     this.router.navigate(['/home/detalles', ordenId]);
   }
 
-  remisionar() {
-
-    const clienteHTML = this.detalle.items1.map((encabezado: { razonSocial: any; direccion: any; telefono: any; }) => `
-    <div class="cliente-info">
-      <p style="text-align: center;">CLIENTE</p>
-      <p class="razon-social">${encabezado.razonSocial || ''}</p>
-      <div class="direccion-container">
-        <p class="direccion">${encabezado.direccion || ''}</p>
-        <div class="localidad-cp-telefono">
-          <p class="localidad">MÉXICO, LEÓN GTO.</p>
-          <p class="telefono">Tel.: ${encabezado.telefono || ''}</p>
-        </div>
-      </div>
-    </div>
-    `).join('');
-
-    let fecha = this.formatoDate(new Date());
-    const remisionHTML = this.detalle.items1.map((remision: { remision: any; cliente_id: any; }) => `
-    <div class="remision-info">
-      <p><strong>REMISIÓN:</strong> ${remision.remision || ''}</p>
-      <p> ${fecha}</p>
-      <p><strong>CLIENTE NO.:</strong> ${remision.cliente_id || ''}</p>
-    </div>
-    `).join('');
-
-    const puntosHTML = `
-      <tr>
-        ${this.detalle.items2.map((punto: { punto: any; }) => `
-          <th>${punto.punto || ''}</th>`)
-        .join('')}
-      </tr>
-      <tr>
-        ${this.detalle.items2.map((punto: { cantidad: any; }) => `
-          <td>${punto.cantidad || ''}</td>`)
-        .join('')}
-      </tr>
-    `;
-
-    let remision = this.detalle.items1[0].remision;
-    let total_pares = parseInt(this.detalle.items1.reduce((sum: any, item: { total_pares: any; }) => sum + item.total_pares, 0));
-    let subtotal = total_pares * this.detalle.items1[0].precio;
-    let total = subtotal;
-    let fechaFormatoLeyenda = this.formatoDateLeyenda(new Date());
-
-    let numeroEnLetras = NumerosALetras(total, {
-      plural: 'PESOS',
-      singular: 'PESO',
-      centPlural: 'CENTAVOS',
-      centSingular: 'CENTAVO'
-    });
-
-    const hormaHTML = this.detalle.items1.map((hormas: { horma: any; precio: any; total_pares: any; }) => `
-    <div class="horma-container">
-    <table>
-        <thead>
-          <tr>
-            <th class='cantidad'>CANT.</th>
-            <th class='unidad'>UNID.</th>
-            <th>DESCRIPCIÓN</th>
-            <th class='precio'>PRECIO</th>
-            <th class='importe'>IMPORTE</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr>
-            <td>${hormas.total_pares || ''}</td>
-            <td>PAR</td>
-            <td>
-              ${hormas.horma || ''}
-              <table class="puntos-table">
-                ${puntosHTML}
-              </table>
-            </td>
-            <td>$${hormas.precio || ''}</td>
-            <td>$${total.toFixed(2)}</td>
-          </tr>
-        </tbody>
-      </table>
-      </div>
-    `).join('');
-
-    const infoCliente = `
-    <div class="info-cliente-container">
-      ${clienteHTML}
-      ${remisionHTML}
-    </div>
-    ${hormaHTML}
-    <div class="totales">
-      <div class="sumatoria-cantidad" style="align-self: flex-start; margin-right: auto;">
-      <hr style="width: 100%; border-top: 1px solid #000;">
-        <p>${total_pares}</p>
-      </div>
-      <div class="subtotal-total">
-        <div class="line-item">
-          <p><strong>Subtotal</strong></p>
-          <p><strong>Total</strong></p>
-        </div>
-        <div class="line-item">
-          <p>$${subtotal.toFixed(2)}</p>
-          <p>$${total.toFixed(2)}</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <style>
-  body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
-    color: #333;
-    background-color: #f8f9fa;
-  }
-
-  .info-cliente-container {
-    display: flex;
-    justify-content: space-between;
-    page-break-inside: avoid;
-    margin-bottom: 20px;
-    padding: 20px;
-    background-color: #fff;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-    border-radius: 8px;
-  }
-  
-  
- .cliente-info {
-    border: 1px solid #ddd;
-    padding: 20px;
-    width: 66.66%;
-    background-color: #fdfdfe;
-    border-radius: 8px;
-    text-align: left;
-  }
-
-  .cliente-info p {
-    margin: 0 0 10px 0;
-    text-align: left;
-  }
-  
-  .razon-social {
-    margin-bottom: 10px;
-    text-align: left;
-  }
-
-  .direccion-container {
-    display: flex;
-    flex-direction: column; 
-    justify-content: flex-start; 
-    align-items: flex-start; 
-  }
-
-  .direccion, .localidad-cp-telefono {
-    width: 100%;
-    text-align: left;
-  }
-
-  .localidad, .telefono {
-    margin-bottom: 5px;
-    text-align: left;
-  }
-
-  .remision-info {
-    width: 33.33%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: flex-end;
-    text-align: right;
-  }
-
-  .remision-info p {
-    margin: 0 0 10px 0;
-  }
-
-  .horma-container {
-    width: 100%;
-    margin-bottom: 20px;
-  }
-
-  .horma-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 10px;
-    table-layout: fixed;
-  }
-
-  .horma-table, .horma-table th, .horma-table td {
-    border: 1px solid #ddd;
-  }
-
-  .horma-table th, .horma-table td {
-    padding: 8px;
-    text-align: left;
-    word-wrap: break-word;
-  }
-
-  .horma-table th {
-    background-color: #f4f4f4;
-    font-weight: bold;
-    text-transform: uppercase;
-  }
-
-  .horma-table tr:nth-child(even) {
-    background-color: #f9f9f9;
-  }
-  
-    
-  .horma-table tr:hover {
-    background-color: #f1f1f1;
-  }
-
-  .cantidad {
-    padding-right: 15px
-  }
-
-  .unidad{
-   padding-left: 15px; 
-   
-  }
-  
-  precio {
-    padding-right: 20px; /* Add padding to the right of the price column */
-  }
-
-  .importe {
-    padding-left: 20px; /* Add padding to the left of the importe column */
-  }
-
-  .puntos-table {
-    margin-top: 10px;
-    width: 100%;
-  }
-
-  .puntos-table th, .puntos-table td {
-    border: none;
-    padding: 5px;
-    text-align: center;
-  }
-
-  .puntos-table th {
-    background-color: #f0f0f0;
-  }
-
-  .totales {
-    display: flex;
-    flex-direction: column
-    align-items: flex-end;
-    margin-top: 200px;
-  }
-
-  .sumatoria-cantidad {
-    text-align: flex-start;
-    margin-right: 20px;
-  }
-
-  .subtotal-total {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  margin-top: 10px;
-}
-
-.line-item {
-  display: flex;
-  justify-content: space-around;
-  width: 100%;
-}
-
-.line-item p {
-  text-align: center;
-}
-
-
-
-  .footer {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    text-align: center;
-    border-top: 1px solid #000;
-    padding: 10px 0;
-    background-color: #fdfdfe;
-  }
-
-  .numero-remision {
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-
-  .cantidad-letra {
-    font-size: 1.2em;
-    margin-bottom: 5px;
-  }
-
-  .leyenda {
-    font-size: 0.8em;
-  }
-</style>
-
-  <div class="footer">
-      <p class="cantidad-letra">(${numeroEnLetras.toUpperCase()})</p>
-      <p class="leyenda">
-        Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., 
-        o en cualquier otra que me sea requerido su pago el día ${fechaFormatoLeyenda} la cantidad de 
-        $${total.toFixed(2)} (${numeroEnLetras.toUpperCase()}) recibido a mi entera satisfacción. 
-        Este pagaré es mercantil y está regido por la ley general de títulos y operaciones de crédito 
-        en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.
-      </p>
-      <p class="numero-remision">${remision || ''}</p>
-    </div>
-
-  `;
-
-    printJS({
-      printable: infoCliente,
-      type: 'raw-html',
-      style: '@page { size: portrait; }'
-    });
-  }
-
   imprimirReporte() {
-    const selectorTemporalidad = document.getElementById('selectorTemporalidad') as HTMLSelectElement;
-    this.temporalidad = parseInt(selectorTemporalidad.value);
-
-    let fechaInicio: string = '';
-    let fechaFin: string = '';
-    let temp: string = '';
-
-    switch (this.temporalidad) {
-      case 1:
-        fechaInicio = this.formatDate(new Date());
-        fechaFin = this.formatDate(new Date());
-        temp = 'Hoy';
-        break;
-      case 2:
-        const hoy2 = new Date();
-        const primerDiaSemana = new Date(hoy2.setDate(hoy2.getDate() - hoy2.getDay()));
-        const ultimoDiaSemana = new Date(primerDiaSemana);
-        ultimoDiaSemana.setDate(ultimoDiaSemana.getDate() + 6);
-
-        fechaInicio = this.formatDate(primerDiaSemana);
-        fechaFin = this.formatDate(ultimoDiaSemana);
-        temp = 'Esta semana';
-        break;
-      case 3:
-        const hoy3 = new Date();
-        const primerDiaQuincena1 = new Date(hoy3.getFullYear(), hoy3.getMonth(), 1);
-        const ultimoDiaQuincena1 = new Date(hoy3.getFullYear(), hoy3.getMonth(), 15);
-
-        fechaInicio = this.formatDate(primerDiaQuincena1);
-        fechaFin = this.formatDate(ultimoDiaQuincena1);
-        temp = 'Primer Quincena';
-        break;
-      case 4:
-        const hoy4 = new Date();
-        const primerDiaQuincena2 = new Date(hoy4.getFullYear(), hoy4.getMonth(), 16);
-        const ultimoDiaMes = new Date(hoy4.getFullYear(), hoy4.getMonth() + 1, 0);
-        const ultimoDiaQuincena2 = new Date(hoy4.getFullYear(), hoy4.getMonth(), Math.min(ultimoDiaMes.getDate(), 30));
-
-        fechaInicio = this.formatDate(primerDiaQuincena2);
-        fechaFin = this.formatDate(ultimoDiaQuincena2);
-        temp = 'Segunda Quincena';
-        break;
-      case 5:
-        const hoy5 = new Date();
-        const fechaInicioMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), 1);
-        const ultimoDMes = new Date(hoy5.getFullYear(), hoy5.getMonth() + 1, 0);
-        const fechaFinMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), ultimoDMes.getDate());
-
-        fechaInicio = this.formatDate(fechaInicioMes);
-        fechaFin = this.formatDate(fechaFinMes);
-        temp = 'Este mes';
-        break;
-      default:
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Selecciona una temporalidad para generar el reporte."
-        });
-        break;
-    }
-
-    this.ordenCompraService.getOrdenesCompra('reporte.php?fecha_inicio=' + fechaInicio + '&fecha_fin=' + fechaFin)
+    this.ordenCompraService.getOrdenesCompra('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
       .subscribe((data) => {
         this.ordenesCompraR = data.items;
 
@@ -624,14 +289,14 @@ export class OrdenesCompraComponent {
           <td>${orden.orden_compra_c || ''}</td>
           <td>${orden.fecha_orden || ''}</td>
           <td>${orden.fecha_entrega || ''}</td>
-          <td>${orden.total_pares || ''}</td>
+          <td>${Number(orden.total_pares).toLocaleString() || ''}</td>
           <td>${orden.status || ''}</td>
           <td>${orden.facturaNo || ''}</td>
       `).join('');
 
         const tablaHTML = `
         <h1> Reporte de Órdenes de Compra </h1>
-        <h2> ${temp}: ${fechaInicio} - ${fechaFin} </h2>
+        <h2> ${this.temp}: ${this.fechaInicio} - ${this.fechaFin} </h2>
         <table>
           <thead>
             <tr>
@@ -722,23 +387,5 @@ export class OrdenesCompraComponent {
 
   private formatDate(date: Date): string {
     return date.toISOString().split('T')[0];
-  }
-
-  private formatoDate(date: Date): string {
-    const day = date.getDate().toString().padStart(2, '0');
-    const year = date.getFullYear();
-    const months = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
-    const month = months[date.getMonth()];
-
-    return `${day}/${month}/${year}`;
-  }
-
-  private formatoDateLeyenda(date: Date): string {
-    const options: Intl.DateTimeFormatOptions = {
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric'
-    };
-    return new Intl.DateTimeFormat('es-ES', options).format(date).toUpperCase();
   }
 }

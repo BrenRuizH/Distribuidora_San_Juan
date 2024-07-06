@@ -12,6 +12,8 @@ import Swal from 'sweetalert2';
   styleUrls: ['./remisiones.component.css']
 })
 export class RemisionesComponent implements OnInit {
+  remisionesReporte: any = [];
+
   remisiones: any = [];
   remision: any = {cliente_id: ''};
 
@@ -48,6 +50,60 @@ export class RemisionesComponent implements OnInit {
     this.obtenerRemisiones();
     
   }
+
+  
+
+  temporalidadSeleccionada: string = '';
+  temporalidadPersonalizado: boolean = false;
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  temp: string = '';
+
+seleccionarTemporalidad(opcion: string) {
+    this.temporalidadSeleccionada = opcion;
+
+    switch(opcion) {
+      case '1': 
+        this.fechaInicio = this.formatDate(new Date());
+        this.fechaFin = this.formatDate(new Date());
+        this.temp = 'Hoy';
+        break;
+      case '2':
+        const hoy2 = new Date();
+        const primerDiaSemana = new Date(hoy2.setDate(hoy2.getDate() - hoy2.getDay()));
+        const ultimoDiaSemana = new Date(primerDiaSemana);
+        ultimoDiaSemana.setDate(ultimoDiaSemana.getDate() + 6);
+
+        this.fechaInicio = this.formatDate(primerDiaSemana);
+        this.fechaFin = this.formatDate(ultimoDiaSemana);
+        this.temp = 'Esta semana';
+        break;
+      case '3':
+        const hoy5 = new Date();
+        const fechaInicioMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), 1);
+        const ultimoDMes = new Date(hoy5.getFullYear(), hoy5.getMonth() + 1, 0);
+        const fechaFinMes = new Date(hoy5.getFullYear(), hoy5.getMonth(), ultimoDMes.getDate());
+
+        this.fechaInicio = this.formatDate(fechaInicioMes);
+        this.fechaFin = this.formatDate(fechaFinMes);
+        this.temp = 'Este mes';
+        break;
+      case '4':
+        this.temporalidadPersonalizado = true;
+        this.fechaInicio;
+        this.fechaFin;
+        this.temp = 'Personalizado';
+        break;
+      default:
+        this.temporalidadPersonalizado = false;
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "Selecciona una temporalidad para generar el reporte."
+        });
+        break;
+    }
+}
 
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
@@ -237,8 +293,6 @@ export class RemisionesComponent implements OnInit {
     return `${dia} de ${mes} de ${anio}`;
   }
 
-  
-
   remisionar(id: any) {
     this.remisionesService.imprimirRemision(id).subscribe((resp: any) => {
       this.clienteInfo = resp.cliente[0] || {};
@@ -345,5 +399,107 @@ export class RemisionesComponent implements OnInit {
         style: '@page { size: portrait; }'
       });
     });
+  }
+
+  imprimirReporte() {
+    this.remisionesService.getRemisiones('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
+    .subscribe((data) => {
+      this.remisionesReporte = data.items;
+
+      const remisionesHTML = this.remisionesReporte.map((remision: { id: any; codigo: any; total_pares: any; precio_final: any; }) => `
+      <tr>
+        <td>${remision.id || ''}</td>
+        <td>${remision.codigo || ''}</td>
+        <td>${Number(remision.total_pares).toLocaleString() || ''}</td>
+        <td>$${Number(remision.precio_final).toLocaleString() || ''}</td>
+    `).join('');
+
+    const tablaHTML = `
+        <h1> Reporte de Remisiones </h1>
+        <h2> ${this.temp}: ${this.fechaInicio} - ${this.fechaFin} </h2>
+        <table>
+          <thead>
+            <tr>
+              <th>No. Remisión</th>
+              <th>Cliente</th>
+              <th>Pares</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${remisionesHTML}
+          </tbody>
+        </table>
+
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+          }
+          .reporte-ordenes {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+          }
+          h1 {
+            font-size: 24px;
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+          }
+          h2 {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+            margin-bottom: 20px;
+          }
+          table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            table-layout: fixed;
+          }
+          table, th, td {
+            border: 1px solid #ddd;
+          }
+          th, td {
+            padding: 10px;
+            text-align: left;
+            font-size: 14px;
+            word-wrap: break-word;
+          }
+          th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            text-transform: uppercase;
+          }
+          tr:nth-child(even) {
+            background-color: #f9f9f9;
+          }
+          tr:hover {
+            background-color: #f1f1f1;
+          }
+        </style>
+      `;
+
+      printJS({
+        printable: tablaHTML,
+        type: 'raw-html',
+        style: '@page { size: landscape; }'
+      });
+    },
+    (error) => {
+      if (error.status === 404) {
+        Swal.fire({
+          icon: "error",
+          title: "Oops...",
+          text: "No hay remisiones para generar un reporte en esa temporalidad."
+      });
+    }
+  });
+  }
+
+  private formatDate(date: Date): string {
+    return date.toISOString().split('T')[0];
   }
 }
