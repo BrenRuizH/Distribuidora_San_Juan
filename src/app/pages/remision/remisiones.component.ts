@@ -15,7 +15,7 @@ export class RemisionesComponent implements OnInit {
   remisionesReporte: any = [];
 
   remisiones: any = [];
-  remision: any = {cliente_id: ''};
+  remision: any = { cliente_id: '' };
 
   remisionEditada: any = {};
   remisionEditada2: any = {};
@@ -28,7 +28,7 @@ export class RemisionesComponent implements OnInit {
   noFolios: boolean = false;
   totalParesSum: any;
   formattedPrecioSum: any;
-  
+
   p: number = 1;
 
   clienteInfo: any = {};
@@ -38,7 +38,7 @@ export class RemisionesComponent implements OnInit {
   total: number = 0;
   totalEnLetras: string = '';
   fechaImpresion: string = this.convertirFechaTexto(new Date());
-  fechaHoy: string = new Date().toLocaleDateString('es-ES', {day: '2-digit', month: '2-digit', year: 'numeric'});
+  fechaHoy: string = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
 
   constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef) {
@@ -48,10 +48,10 @@ export class RemisionesComponent implements OnInit {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerRemisiones();
-    
+
   }
 
-  
+
 
   temporalidadSeleccionada: string = '';
   temporalidadPersonalizado: boolean = false;
@@ -59,11 +59,11 @@ export class RemisionesComponent implements OnInit {
   fechaFin: string = '';
   temp: string = '';
 
-seleccionarTemporalidad(opcion: string) {
+  seleccionarTemporalidad(opcion: string) {
     this.temporalidadSeleccionada = opcion;
 
-    switch(opcion) {
-      case '1': 
+    switch (opcion) {
+      case '1':
         this.fechaInicio = this.formatDate(new Date());
         this.fechaFin = this.formatDate(new Date());
         this.temp = 'Hoy';
@@ -103,7 +103,7 @@ seleccionarTemporalidad(opcion: string) {
         });
         break;
     }
-}
+  }
 
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
@@ -122,7 +122,7 @@ seleccionarTemporalidad(opcion: string) {
       this.obtenerRemisiones();
     } else {
       this.remisionesService.getRemisiones('buscar.php?id=' + this.remision.cliente_id).pipe(catchError(error => {
-        if(error.status === 404) {
+        if (error.status === 404) {
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -172,13 +172,13 @@ seleccionarTemporalidad(opcion: string) {
         this.noFolios = false;
       }
     },
-    (error) => {
-      this.noFolios = true;
-    });
+      (error) => {
+        this.noFolios = true;
+      });
   }
 
   isSelected(folio: string): boolean {
-    
+
     return this.selectedFolios.includes(folio);
   }
 
@@ -188,9 +188,9 @@ seleccionarTemporalidad(opcion: string) {
 
   toggleSelection(folio: string): void {
     if (this.isSelected(folio)) {
-        this.selectedFolios = this.selectedFolios.filter(f => f !== folio);
+      this.selectedFolios = this.selectedFolios.filter(f => f !== folio);
     } else {
-        this.selectedFolios.push(folio);
+      this.selectedFolios.push(folio);
     }
     this.calcularSumatoria();
   }
@@ -227,7 +227,7 @@ seleccionarTemporalidad(opcion: string) {
       cancelButtonText: "No, cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-      
+
         let formData = new FormData();
         formData.append('id', this.remisionEditada.id);
         formData.append('fecha', this.remisionEditada.fecha);
@@ -274,7 +274,7 @@ seleccionarTemporalidad(opcion: string) {
         });
 
         this.remisionesService.eliminarRemision(id).subscribe((resp: any) => {
-          if(resp['status'] == 'success') {
+          if (resp['status'] == 'success') {
             this.obtenerRemisiones();
           }
         });
@@ -284,7 +284,7 @@ seleccionarTemporalidad(opcion: string) {
 
   convertirFechaTexto(fecha: Date): string {
     const meses = [
-      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO', 
+      'ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
       'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE'
     ];
     const dia = fecha.getDate().toString().padStart(2, '0');
@@ -311,249 +311,263 @@ seleccionarTemporalidad(opcion: string) {
         centSingular: 'CENTAVO'
       });
 
-      this.fechaImpresion = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric'});
+      this.fechaImpresion = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
 
       const clienteHTML = `
-      <div class="cliente-info-container">
-        <div class="cliente-info">
-          <div class="cliente-header">
-            <p>CLIENTE</p>
+  <div class="cliente-info-container">
+    <div class="cliente-info">
+      <div class="cliente-header">
+        <p>CLIENTE</p>
+      </div>
+      <div class="cliente-content">
+        <div class="razon-social-container">
+          <p class="razon-social">${this.clienteInfo.razonSocial}</p>
+        </div>
+        <div class="direccion-telefono-container">
+          <div class="direccion">
+            <p>${this.clienteInfo.direccion}</p>
           </div>
-          <div class="cliente-content">
-            <div class="razon-social-container">
-              <p class="razon-social">${this.clienteInfo.razonSocial}</p>
-            </div>
-            <div class="direccion-telefono-container">
-              <div class="direccion">
-                <p>${this.clienteInfo.direccion}</p>
-              </div>
-              <div class="localidad-telefono">
-                <p>MÉXICO, LEÓN GTO.</p>
-                <p>Tel.: ${this.clienteInfo.telefono || ''}</p>
-              </div>
-            </div>
+          <div class="localidad-telefono">
+            <p>MÉXICO, LEÓN GTO.</p>
+            <p>Tel.: ${this.clienteInfo.telefono || ''}</p>
           </div>
         </div>
-        <div class="cliente-details">
-          <p>REMISIÓN ${this.remisionInfo.id}</p>
-          <p>${this.fechaImpresion}</p>
-          <p>CLIENTE NO. ${this.clienteInfo.id}</p>
-        </div>
-      </div>`;
+      </div>
+    </div>
+    <div class="cliente-details">
+      <p>REMISIÓN ${this.remisionInfo.id}</p>
+      <p>${this.fechaImpresion}</p>
+      <p>CLIENTE NO. ${this.clienteInfo.id}</p>
+    </div>
+  </div>`;
 
-      const ordenCompraHTML = `
-        <table class="orden-compra-table">
-          <thead>
-            <tr>
-              <th>CANT.</th>
-              <th>UNID.</th>
-              <th>D E S C R I P C I Ó N</th>
-              <th>PRECIO</th>
-              <th>IMPORTE</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${this.ordenCompraInfo.map((orden: { total_pares: number; horma: { nombre: any; precio: any; }; detalles: any[]; }) => `
-              <tr>
-                <td>${Number(orden.total_pares).toLocaleString()}</td>
-                <td>PAR</td>
-                <td>
-                  <p>${orden.horma.nombre}</p>
-                  <table class="detalle-puntos-table">
-                    <thead>
-                      <tr>
-                        ${orden.detalles.map(detalle => `<th>${detalle.punto}</th>`).join('')}
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        ${orden.detalles.map(detalle => `<td>${Number(detalle.cantidad).toLocaleString()}</td>`).join('')}
-                      </tr>
-                    </tbody>
-                  </table>
-                </td>
-                <td>$${(Number(orden.horma.precio) || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
-                <td>$${((Number(orden.horma.precio) || 0) * orden.total_pares).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
-              </tr>
-            `).join('')}
-            <tr>
-              <td class="total-pares">
-                <div class="linea-total"></div>
-                ${totalPares.toLocaleString()}
-              </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>`;
+const ordenCompraHTML = `
+  <table class="orden-compra-table">
+    <thead>
+      <tr>
+        <th>CANT.</th>
+        <th>UNID.</th>
+        <th>D E S C R I P C I Ó N</th>
+        <th>PRECIO</th>
+        <th>IMPORTE</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${this.ordenCompraInfo.map((orden: { total_pares: number; horma: { nombre: any; precio: any; }; detalles: any[]; }) => `
+        <tr>
+          <td>${Number(orden.total_pares).toLocaleString()}</td>
+          <td>PAR</td>
+          <td>
+            <p>${orden.horma.nombre}</p>
+            <table class="detalle-puntos-table">
+              <thead>
+                <tr>
+                  ${orden.detalles.map(detalle => `<th>${detalle.punto}</th>`).join('')}
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  ${orden.detalles.map(detalle => `<td>${Number(detalle.cantidad).toLocaleString()}</td>`).join('')}
+                </tr>
+              </tbody>
+            </table>
+          </td>
+          <td>$${(Number(orden.horma.precio) || 0).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
+          <td>$${((Number(orden.horma.precio) || 0) * orden.total_pares).toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</td>
+        </tr>
+      `).join('')}
+      <tr>
+        <td class="total-pares">
+          <div class="linea-total"></div>
+          ${totalPares.toLocaleString()}
+        </td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>`;
 
-      const subtotalTotalHTML = `
-        <div class="subtotal-total">
-          <div class="subtotal-total-values">
-            <div class="subtotal">SUBTOTAL</div>
-            <div class="total">TOTAL</div>
-          </div>
-          <div class="subtotal-total-amounts">
-            <div class="subtotal-amount">$${this.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-            <div class="total-amount">$${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
-          </div>
-          <p class="total-letras">(${this.totalEnLetras.toUpperCase()})</p>
-        </div>`;
-      const footerHTML = `
-        <div class="footer">
-          <p>Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., o en cualquier otra que me sea requerido su pago el día ${this.convertirFechaTexto(new Date())} 
-          la cantidad de $${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${this.totalEnLetras.toUpperCase()}) valor de la mercancía que he recibido a mi entera satisfacción. Este pagaré es mercantil y está regido por la ley 
-          general de títulos y operaciones de crédito en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.</p>
-          <p class="no-remision">${this.remisionInfo.id}</p>
-        </div>`;
+  const subtotalTotalHTML = `
+  <div class="subtotal-total">
+    <div class="subtotal-total-values">
+      <div class="subtotal">SUBTOTAL</div>
+      <div class="total">TOTAL</div>
+    </div>
+    <div class="subtotal-total-amounts">
+      <div class="subtotal-amount">$${this.subtotal.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+      <div class="total-amount">$${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</div>
+    </div>
+    <p class="total-letras">(${this.totalEnLetras.toUpperCase()})</p>
+  </div>`;
 
-      const remisionHTML = `
-        <div class="remision-container">
-          ${clienteHTML}
-          ${ordenCompraHTML}
-          ${subtotalTotalHTML}
-          ${footerHTML}
-        </div>`;
+
+const footerHTML = `
+  <div class="footer">
+    <p>Debo(emos) y pagaré(mos) a la orden de Jorge Hernández Hernández, en la ciudad de León, Gto., o en cualquier otra que me sea requerido su pago el día ${this.convertirFechaTexto(new Date())} 
+    la cantidad de $${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${this.totalEnLetras.toUpperCase()}) valor de la mercancía que he recibido a mi entera satisfacción. Este pagaré es mercantil y está regido por la ley 
+    general de títulos y operaciones de crédito en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.</p>
+    <p class="no-remision">${this.remisionInfo.id}</p>
+  </div>`;
+
+const remisionHTML = `
+  <div class="remision-container">
+    ${clienteHTML}
+    ${ordenCompraHTML}
+    ${subtotalTotalHTML}
+    ${footerHTML}
+  </div>`;
 
       printJS({
         printable: remisionHTML,
         type: 'raw-html',
         style: `@page { size: portrait; }
-        .remision-container { width: 100%; display: flex; flex-direction: column; align-items: flex-start; }
-        .cliente-info-container {
-          display: flex;
-          width: 100%;
-          padding: 10px;
-          box-sizing: border-box;
-        }
-        .cliente-info {
-          width: 66.66%;
-          border: 1px solid black;
-          padding: 10px;
-          box-sizing: border-box;
-        }
-        .cliente-header p {
-          text-align: center;
-          margin: 0;
-          font-weight: bold;
-          font-size: 16px;
-        }
-        .cliente-content {
-          padding: 10px;
-          box-sizing: border-box;
-        }
-        .razon-social-container {
-          text-align: left;
-          margin-bottom: 10px;
-        }
-        .razon-social {
-          font-weight: bold;
-          font-size: 18px;
-          margin: 0;
-        }
-        .direccion-telefono-container {
-          display: flex;
-          justify-content: space-between;
-          margin-bottom: 10px;
-        }
-        .direccion { width: 50%; }
-        .localidad-telefono {
-          width: 50%;
-          text-align: right;
-        }
-        .localidad-telefono p { margin: 0; }
-        .cliente-details {
-          width: 33.33%;
-          display: flex;
-          flex-direction: column;
-          align-items: flex-end;
-          padding-left: 20px;
-          margin-left: 20px;
-        }
-        .cliente-details p {
-          text-align: right;
-          margin: 25px 0;
-        }
-        .orden-compra-table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-top: 20px;
-        }
-        .orden-compra-table th, .orden-compra-table td {
-          text-align: center;
-        }
-        .orden-compra-table thead th {
-          border-bottom: 1px solid black;
-        }
-        .detalle-puntos-table {
-          width: auto;
-          margin-left: auto;
-          margin-right: auto;
-        }
-        .detalle-puntos-table th, .detalle-puntos-table td {
-          text-align: center;
-        }
-        .total-pares {
-          text-align: center;
-          font-weight: bold;
-          border-top: 1px solid black; /* Línea delgada */
-        }
-        .subtotal-total {
-          margin-top: 20px;
-          width: 100%;
-        }
-        .subtotal-total p {
-          margin: 5px 0;
-        }
-        .subtotal-total-values {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 5px;
-          padding-right: 10%;
-        }
-        .subtotal-total-values .subtotal {
-          text-align: right;
-          padding-right: 80px;
-        }
-        .subtotal-total-values .total {
-          text-align: left;
-          padding-left: 0px;
-        }
-        .subtotal-total-amounts {
-          display: flex;
-          justify-content: flex-end;
-          margin-bottom: 10px;
-          padding-right: 10%;
-        }
-        .subtotal-total-amounts .subtotal-amount {
-          text-align: right;
-          padding-right: 50px;
-          font-weight: bold;
-        }
-        .subtotal-total-amounts .total-amount {
-          text-align: left;
-          padding-left: 20px;
-          font-weight: bold;
-        }
-        .total-letras {
-          margin-top: 10px;
-          text-align: center;
-        }
-        .no-remision {
-          text-align: center;
-        } `
+  .remision-container { 
+    display: flex; 
+    flex-direction: column; 
+    min-height: 100vh; /* Asegura que el contenedor ocupe al menos la altura de la página */
+  }
+  .cliente-info-container {
+    display: flex;
+    width: 100%;
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .cliente-info {
+    width: 66.66%;
+    border: 1px solid black;
+    padding: 8px;
+    box-sizing: border-box;
+  }
+  .cliente-header p {
+    text-align: center;
+    margin: 0;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  .cliente-content {
+    padding: 10px;
+    box-sizing: border-box;
+  }
+  .razon-social-container {
+    text-align: left;
+    margin-bottom: 5px;
+  }
+  .razon-social {
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0;
+  }
+  .direccion-telefono-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+  }
+  .direccion { width: 50%; }
+  
+  .localidad-telefono {
+    width: 50%;
+    text-align: right;
+  }
+    
+  .localidad-telefono p { margin: 10px; }
+
+  .cliente-details {
+    width: 33.33%;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding-left: 20px;
+    margin-left: 20px;
+  }
+  .cliente-details p {
+    text-align: right;
+    margin: 15px;
+  }
+  .orden-compra-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+  .orden-compra-table th, .orden-compra-table td {
+    text-align: center;
+  }
+  .orden-compra-table thead th {
+    border-bottom: 1px solid black;
+  }
+  .detalle-puntos-table {
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .detalle-puntos-table th, .detalle-puntos-table td {
+    text-align: center;
+  }
+  .total-pares {
+    text-align: center;
+    font-weight: bold;
+    border-top: 1px solid black; /* Línea delgada */
+  }
+  .subtotal-total {
+    margin-top: auto; /* Empuja el subtotal al final del contenedor */
+    width: 100%;
+  }
+  .subtotal-total p {
+    margin: 5px 0;
+  }
+  .subtotal-total-values {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 5px;
+    padding-right: 10%;
+  }
+  .subtotal-total-values .subtotal {
+    text-align: right;
+    padding-right: 80px;
+  }
+  .subtotal-total-values .total {
+    text-align: left;
+    padding-left: 0px;
+  }
+  .subtotal-total-amounts {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 10px;
+    padding-right: 10%;
+  }
+  .subtotal-total-amounts .subtotal-amount {
+    text-align: right;
+    padding-right: 50px;
+    font-weight: bold;
+  }
+  .subtotal-total-amounts .total-amount {
+    text-align: left;
+    padding-left: 20px;
+    font-weight: bold;
+  }
+  .total-letras {
+    margin-top: 10px;
+    text-align: center;
+  }
+  .no-remision {
+    text-align: center;
+  }
+  .footer {
+    width: 100%;
+    text-align: justify;
+    padding: 5px 0;
+  }`
       });
     });
   }
 
   imprimirReporte() {
     this.remisionesService.getRemisiones('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
-    .subscribe((data) => {
-      this.remisionesReporte = data.items;
+      .subscribe((data) => {
+        this.remisionesReporte = data.items;
 
-      const remisionesHTML = this.remisionesReporte.map((remision: { id: any; codigo: any; total_pares: any; precio_final: any; }) => `
+        const remisionesHTML = this.remisionesReporte.map((remision: { id: any; codigo: any; total_pares: any; precio_final: any; }) => `
       <tr>
         <td>${remision.id || ''}</td>
         <td>${remision.codigo || ''}</td>
@@ -561,7 +575,7 @@ seleccionarTemporalidad(opcion: string) {
         <td>$${Number(remision.precio_final).toLocaleString() || ''}</td>
     `).join('');
 
-    const tablaHTML = `
+        const tablaHTML = `
         <h1> Reporte de Remisiones </h1>
         <h2> ${this.temp}: ${this.fechaInicio} - ${this.fechaFin} </h2>
         <table>
@@ -629,21 +643,21 @@ seleccionarTemporalidad(opcion: string) {
         </style>
       `;
 
-      printJS({
-        printable: tablaHTML,
-        type: 'raw-html',
-        style: '@page { size: landscape; }'
-      });
-    },
-    (error) => {
-      if (error.status === 404) {
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "No hay remisiones para generar un reporte en esa temporalidad."
-      });
-    }
-  });
+        printJS({
+          printable: tablaHTML,
+          type: 'raw-html',
+          style: '@page { size: landscape; }'
+        });
+      },
+        (error) => {
+          if (error.status === 404) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "No hay remisiones para generar un reporte en esa temporalidad."
+            });
+          }
+        });
   }
 
   private formatDate(date: Date): string {
