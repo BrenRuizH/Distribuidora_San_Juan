@@ -341,13 +341,13 @@ export class RemisionesComponent implements OnInit {
     </div>
   </div>`;
 
-const ordenCompraHTML = `
+  const ordenCompraHTML = `
   <table class="orden-compra-table">
     <thead>
       <tr>
         <th>CANT.</th>
         <th>UNID.</th>
-        <th>D E S C R I P C I Ó N</th>
+        <th>PLANTA</th>
         <th>PRECIO</th>
         <th>IMPORTE</th>
       </tr>
@@ -362,12 +362,20 @@ const ordenCompraHTML = `
             <table class="detalle-puntos-table">
               <thead>
                 <tr>
-                  ${orden.detalles.map(detalle => `<th>${detalle.punto}</th>`).join('')}
+                  ${orden.detalles.map(detalle => {
+                    const punto = Number(detalle.punto);
+                    const puntoFormatted = punto % 1 === 0 ? punto.toLocaleString() : punto.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                    return `<th>${puntoFormatted}</th>`;
+                  }).join('')}
                 </tr>
               </thead>
               <tbody>
                 <tr>
-                  ${orden.detalles.map(detalle => `<td>${Number(detalle.cantidad).toLocaleString()}</td>`).join('')}
+                  ${orden.detalles.map(detalle => {
+                    const cantidad = Number(detalle.cantidad);
+                    const cantidadFormatted = cantidad % 1 === 0 ? cantidad.toLocaleString() : cantidad.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+                    return `<td>${cantidadFormatted}</td>`;
+                  }).join('')}
                 </tr>
               </tbody>
             </table>
@@ -411,12 +419,19 @@ const footerHTML = `
     <p class="no-remision">${this.remisionInfo.id}</p>
   </div>`;
 
+  const firmaHTML = `
+  <div class="firma">
+    <p>______________________________</p>
+    <p>Firma del Cliente</p>
+  </div>`;
+
 const remisionHTML = `
   <div class="remision-container">
     ${clienteHTML}
     ${ordenCompraHTML}
     ${subtotalTotalHTML}
     ${footerHTML}
+    ${firmaHTML}
   </div>`;
 
       printJS({
@@ -496,14 +511,21 @@ const remisionHTML = `
   .orden-compra-table thead th {
     border-bottom: 1px solid black;
   }
+
   .detalle-puntos-table {
-    width: auto;
-    margin-left: auto;
-    margin-right: auto;
-  }
-  .detalle-puntos-table th, .detalle-puntos-table td {
-    text-align: center;
-  }
+  width: auto;
+  margin-left: auto;
+  margin-right: auto;
+  border-collapse: separate; /* Asegura que el padding se respete */
+  border-spacing: 10px; /* Aumenta el espacio entre celdas */
+}
+
+.detalle-puntos-table th, .detalle-puntos-table td {
+  text-align: center;
+  padding: 10px; /* Añade más espacio alrededor del contenido de cada celda */
+  font-size: 16px; /* Aumenta el tamaño de la fuente */
+}
+
   .total-pares {
     text-align: center;
     font-weight: bold;
@@ -557,6 +579,17 @@ const remisionHTML = `
     width: 100%;
     text-align: justify;
     padding: 5px 0;
+  }
+    
+  .firma {
+  text-align: center;
+  margin-top: 10px;
+
+  }
+  
+  .firma p {
+  margin: 5px 0;
+  font-size: 16px;
   }`
       });
     });
@@ -574,10 +607,12 @@ const remisionHTML = `
         <td>${Number(remision.total_pares).toLocaleString() || ''}</td>
         <td>$${Number(remision.precio_final).toLocaleString() || ''}</td>
     `).join('');
+    const totalPares = this.remisionesReporte.reduce((sum: number, remision: { total_pares: any; }) => sum + Number(remision.total_pares), 0);
+      const totalGanado = this.remisionesReporte.reduce((sum: number, remision: { precio_final: any; }) => sum + Number(remision.precio_final), 0);
 
         const tablaHTML = `
-        <h1> Reporte de Remisiones </h1>
-        <h2> ${this.temp}: ${this.fechaInicio} - ${this.fechaFin} </h2>
+        <h1>Reporte de Remisiones</h1>
+        <h2>${this.temp}: ${this.fechaInicio} - ${this.fechaFin}</h2>
         <table>
           <thead>
             <tr>
@@ -590,6 +625,13 @@ const remisionHTML = `
           <tbody>
             ${remisionesHTML}
           </tbody>
+          <tfoot>
+            <tr>
+              <td colspan="2"><strong>Total</strong></td>
+              <td><strong>${totalPares.toLocaleString()}</strong></td>
+              <td><strong>$${totalGanado.toLocaleString()}</strong></td>
+            </tr>
+          </tfoot>
         </table>
 
         <style>
