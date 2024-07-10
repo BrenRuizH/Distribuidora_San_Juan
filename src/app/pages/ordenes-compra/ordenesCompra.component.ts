@@ -180,6 +180,8 @@ seleccionarTemporalidad(opcion: string) {
         return 'estado-entrega';
       case 'FACTURADO':
         return 'estado-facturado';
+      case 'REMISIONADO':
+        return 'estado-remisionado';
       default:
         return '';
     }
@@ -220,7 +222,7 @@ seleccionarTemporalidad(opcion: string) {
     });
 
     if ((orden.status === 'EN ENTREGA' && nuevoEstado === 'EN PRODUCCIÓN') ||
-      (orden.status === 'FACTURADO' && (nuevoEstado === 'EN PRODUCCIÓN' || nuevoEstado === 'EN ENTREGA'))) {
+      (orden.status === 'FACTURADO'|| orden.status === 'REMISIONADO' && (nuevoEstado === 'EN PRODUCCIÓN' || nuevoEstado === 'EN ENTREGA'))) {
       Swal.fire({
         icon: "error",
         title: "Oops...",
