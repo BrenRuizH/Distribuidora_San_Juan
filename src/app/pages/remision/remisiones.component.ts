@@ -417,12 +417,10 @@ const footerHTML = `
     la cantidad de $${this.total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')} (${this.totalEnLetras.toUpperCase()}) valor de la mercancía que he recibido a mi entera satisfacción. Este pagaré es mercantil y está regido por la ley 
     general de títulos y operaciones de crédito en su artículo 173 parte final y artículos correlativos por no ser un pagaré domiciliado.</p>
     <p class="no-remision">${this.remisionInfo.id}</p>
-  </div>`;
-
-  const firmaHTML = `
-  <div class="firma">
-    <p>______________________________</p>
-    <p>Firma del Cliente</p>
+    <div class="firma">
+      <p>______________________________</p>
+      <p>Firma del Cliente</p>
+    </div>
   </div>`;
 
 const remisionHTML = `
@@ -431,7 +429,6 @@ const remisionHTML = `
     ${ordenCompraHTML}
     ${subtotalTotalHTML}
     ${footerHTML}
-    ${firmaHTML}
   </div>`;
 
       printJS({
@@ -480,14 +477,11 @@ const remisionHTML = `
     margin-bottom: 5px;
   }
   .direccion { width: 50%; }
-  
   .localidad-telefono {
     width: 50%;
     text-align: right;
   }
-    
   .localidad-telefono p { margin: 10px; }
-
   .cliente-details {
     width: 33.33%;
     display: flex;
@@ -511,21 +505,18 @@ const remisionHTML = `
   .orden-compra-table thead th {
     border-bottom: 1px solid black;
   }
-
   .detalle-puntos-table {
-  width: auto;
-  margin-left: auto;
-  margin-right: auto;
-  border-collapse: separate; /* Asegura que el padding se respete */
-  border-spacing: 10px; /* Aumenta el espacio entre celdas */
-}
-
-.detalle-puntos-table th, .detalle-puntos-table td {
-  text-align: center;
-  padding: 10px; /* Añade más espacio alrededor del contenido de cada celda */
-  font-size: 16px; /* Aumenta el tamaño de la fuente */
-}
-
+    width: auto;
+    margin-left: auto;
+    margin-right: auto;
+    border-collapse: separate; /* Asegura que el padding se respete */
+    border-spacing: 10px; /* Aumenta el espacio entre celdas */
+  }
+  .detalle-puntos-table th, .detalle-puntos-table td {
+    text-align: center;
+    padding: 10px; /* Añade más espacio alrededor del contenido de cada celda */
+    font-size: 16px; /* Aumenta el tamaño de la fuente */
+  }
   .total-pares {
     text-align: center;
     font-weight: bold;
@@ -580,16 +571,13 @@ const remisionHTML = `
     text-align: justify;
     padding: 5px 0;
   }
-    
   .firma {
-  text-align: center;
-  margin-top: 10px;
-
+    text-align: center;
+    margin-top: 10px;
   }
-  
   .firma p {
-  margin: 5px 0;
-  font-size: 16px;
+    margin: 5px 0;
+    font-size: 16px;
   }`
       });
     });

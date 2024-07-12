@@ -86,7 +86,6 @@ export class CrearOrdenCompraComponent implements OnInit{
   puntosYcantidadesCondorin =
   [
     [
-      
       { vista:'25', punto: 25, cantidad: 0},
       { vista:'26', punto: 26, cantidad: 0},
       { vista:'27', punto: 27, cantidad: 0},
@@ -104,7 +103,6 @@ export class CrearOrdenCompraComponent implements OnInit{
       { vista:'38', punto: 38, cantidad: 0},
     ],
   ];
-  
   
   constructor(private clientesService: ClientesService,
               private hormasService: HormasService,
@@ -166,7 +164,6 @@ export class CrearOrdenCompraComponent implements OnInit{
       console.log(this.horma);
     })
   }
-  
 
   obtenerOrdenesCompra() {
     this.ordenesCompraService.getOrdenesCompra('leer.php').subscribe((data) => {
@@ -175,23 +172,23 @@ export class CrearOrdenCompraComponent implements OnInit{
     });
   }
 
-calcularTotalPares() {
-  let totalPares = 0;
-  if(this.cliente_id != 37) {
-    for (let fila of this.puntosYcantidades) {
-      for (let item of fila) {
-        totalPares += item.cantidad;
+  calcularTotalPares() {
+    let totalPares = 0;
+    if(this.cliente_id != 37) {
+      for (let fila of this.puntosYcantidades) {
+        for (let item of fila) {
+          totalPares += item.cantidad;
+        }
+      }
+    } else {
+      for (let fila of this.puntosYcantidadesCondorin) {
+        for (let item of fila) {
+          totalPares += item.cantidad;
+        }
       }
     }
-  } else {
-    for (let fila of this.puntosYcantidadesCondorin) {
-      for (let item of fila) {
-        totalPares += item.cantidad;
-      }
-    }
+    this.total =  String(totalPares);
   }
-  this.total =  String(totalPares);
-}
 
   agregarOrdenCompra() {
     if (this.ordenesForm.valid) {

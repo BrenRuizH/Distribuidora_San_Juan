@@ -4,8 +4,6 @@
             <div class="col-md-5 align-self-center">
                 <h3 class="text-themecolor">Registrar Remisión</h3>
             </div>
-            <div class="">
-            </div>
         </div>
         <div class="row">
             <div class="col-lg-12">
@@ -29,20 +27,105 @@
                                         <div class="form-group">
                                             <label class="control-label">Cliente</label>
                                             <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id"
-                                                (change)="getFolios(remisionForm.get('cliente_id')?.value);">
+                                                (change)="getFolios(remisionForm.get('cliente_id')?.value); getHormas(remisionForm.get('cliente_id')?.value);">
                                                 <option value="" disabled>Seleccione un cliente</option>
                                                 <option *ngFor="let datos of clientes" [value]="datos.id">
                                                     {{datos.codigo}}
                                                 </option>
                                             </select>
-                                            <div *ngIf="!isClienteSelected() && (remisionForm.get('cliente_id')?.dirty || remisionForm.get('cliente_id')?.touched)" class="text-danger">
+                                            <div *ngIf="!isClienteSelected() && (remisionForm.get('cliente_id')?.dirty || remisionForm.get('cliente_id')?.touched)"
+                                                class="text-danger">
                                                 Falta rellenar cliente
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div class="row p-t-20">
+                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-9">
+                                        <p>Resumen de Puntos y Cantidades Anteriores</p>
+                                        <hr>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Horma</th>
+                                                    <th>Puntos</th>
+                                                    <th>Total de Pares</th>
+                                                    <th>Precio</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container *ngFor="let elemento of elementosAgregados">
+                                                    <tr>
+                                                        <td>{{ elemento.horma }}</td>
+                                                        <td>
+                                                            <table class="detalle-puntos-table">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <ng-container *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="punto">{{ puntoCantidad.punto }}</td>
+                                                                        </ng-container>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <ng-container *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="cantidad">{{ puntoCantidad.cantidad }}</td>
+                                                                        </ng-container>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td>{{ elemento.totalPares }}</td>
+                                                        <td>$ {{ elemento.precio }}</td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    
+                                    
+                                    
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <div class="form-actions">
+                                                <button type="button" class="btn btn-primary" (click)="agregarElemento()">
+                                                    <i class="fa fa-plus"></i> Agregar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Horma</label>
+                                            <select class="form-control text-uppercase" name="horma_id" formControlName="horma_id"
+                                                (change)="seleccionarHorma(remisionForm.get('horma_id')?.value);"
+                                                [disabled]="!remisionForm.get('cliente_id')?.value || noHormas">
+                                                <option value="" disabled>Seleccione una horma</option>
+                                                <option *ngFor="let datos of hormas" [value]="datos.id">
+                                                    {{datos.nombre}}
+                                                </option>
+                                            </select>
+                                            <div *ngIf="noHormas" class="text-danger">
+                                                No hay hormas que coincidan con el cliente
+                                            </div>
+                                            <div *ngIf="remisionForm.get('horma_id')?.invalid && (remisionForm.get('horma_id')?.dirty || remisionForm.get('horma_id')?.touched)"
+                                                class="text-danger">
+                                                Falta rellenar horma
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Total de Pares</label>
+                                            <input type="text" class="form-control" name="total" [(ngModel)]="total"
+                                                [ngModelOptions]="{standalone: true}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value != 36">
                                     <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="control-label">Folios</label>
@@ -58,9 +141,24 @@
                                     </div>
                                 </div>
 
+                                <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-12">
+                                        <table class="miTabla">
+                                            <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                                <td *ngFor="let item of fila">
+                                                    <div class="punto">{{item.vista}}</div>
+                                                    <hr class="linea">
+                                                    <input [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"
+                                                        type="number" min="0" class="cantidad" (change)="calcularTotalPares()">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-success" (click)="agregarRemision();">
-                                        <i class="fa fa-check"></i> Guardar
+                                        <i class="fa fa-check"></i> Terminar
                                     </button>
                                 </div>
                             </form>
