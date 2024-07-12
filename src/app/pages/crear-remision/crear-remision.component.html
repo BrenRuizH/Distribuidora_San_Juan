@@ -42,6 +42,29 @@
                                         </div>
                                     </div>
                                 </div>
+                                <div class="row p-t-20">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                <label for="extra">Extra</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Cantidad</label>
+                                                    <input type="number" class="form-control text-uppercase" name="cantidad" formControlName="cantidad">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Descripción</label>
+                                                    <input type="text" class="form-control text-uppercase" name="descripcion" formControlName="descripcion">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
 
                                 <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
                                     <div class="col-md-9">
@@ -150,34 +173,8 @@
                                         </div>
                                     </div>
 
-                                    <div class="row">
-                                        <div class="col-md-6">
-                                            <div class="form-group align-items-center">
-                                                <label for="suajes">Suajes</label>
-                                                <label class="custom-checkbox ml-2">
-                                                    <input type="checkbox" id="suajesCheckbox" [checked]="suajes" (change)="seleccionar($event)">
-                                                    <span class="checkmark"></span>
-                                                </label>
-                                            </div>
-                                            <div *ngIf="suajes" id="additionalInputs" class="hidden mt-3">
-                                                <div class="form-row justify-end">
-                                                    <div class="col-auto">
-                                                        <label for="cantidad">Cantidad:</label>
-                                                        <input type="number" class="form-control text-uppercase" id="cantidad" name="cantidad">
-                                                    </div>
-                                                    <div class="col-auto">
-                                                        <label for="descripcion">Descripción:</label>
-                                                        <input type="text" class="form-control text-uppercase" id="descripcion" name="descripcion">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-
+                                    
                                 </div>
-
-
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">
                                     <div class="col-md-12">

@@ -19,7 +19,7 @@ export class CrearRemisionComponent {
   noHormas: boolean = false;
   total: string = '';
   elementosAgregados: any[] = [];
-  suajes: boolean = false;
+  mostrarInputs: boolean = false;
 
   fechaRemision: string = '';
 
@@ -93,6 +93,8 @@ export class CrearRemisionComponent {
       cliente_id: ['', Validators.required],
       horma_id: ['', Validators.required],
       folios: ['', Validators.required],
+      cantidad: [''],
+      descripcion: ['']
     });
   }
 
@@ -103,7 +105,7 @@ export class CrearRemisionComponent {
 
   seleccionar(event : Event ){
     const check = event.target as HTMLInputElement;
-    this.suajes = check.checked;
+    this.mostrarInputs = check.checked;
   }
 
   agregarElemento() {
@@ -263,6 +265,12 @@ export class CrearRemisionComponent {
             formData.append('precio_final', this.formattedPrecioSum);
             formData.append('folio', this.selectedFolios.join(','));
 
+            if (this.remisionForm.get('cantidad')?.value) {
+              formData.append('extra', this.remisionForm.get('cantidad')?.value);
+            }
+            if (this.remisionForm.get('descripcion')?.value) {
+              formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
+            }
             console.log(this.remisionForm);
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
@@ -285,8 +293,7 @@ export class CrearRemisionComponent {
             });
           }
         });
-      } 
-      if (this.fechaRemision && this.remisionForm.get('cliente_id')?.value && this.remisionForm.get('cliente_id')?.value == 36) {
+      } else if (this.fechaRemision && this.remisionForm.get('cliente_id')?.value && this.remisionForm.get('cliente_id')?.value == 36) {
         const swalWithBootstrapButtons = Swal.mixin({
           customClass: {
             confirmButton: "btn btn-success",

@@ -39,6 +39,8 @@ export class RemisionesComponent implements OnInit {
   totalEnLetras: string = '';
   fechaImpresion: string = this.convertirFechaTexto(new Date());
   fechaHoy: string = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  mostrarExtra: any;
+  extra: String = '';
 
 
   constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef) {
@@ -300,7 +302,7 @@ export class RemisionesComponent implements OnInit {
       this.ordenCompraInfo = resp.orden_compra;
 
       this.subtotal = this.ordenCompraInfo.reduce((acc: number, orden: { horma: { precio: any; }; total_pares: number; }) => acc + (Number(orden.horma.precio) || 0) * orden.total_pares, 0);
-      this.total = this.subtotal;
+      this.total = Number(this.subtotal + this.remisionInfo.extra);
 
       const totalPares = this.ordenCompraInfo.reduce((acc: any, orden: { total_pares: any; }) => acc + Number(orden.total_pares), 0);
 
@@ -321,11 +323,11 @@ export class RemisionesComponent implements OnInit {
       </div>
       <div class="cliente-content">
         <div class="razon-social-container">
-          <p class="razon-social">${this.clienteInfo.razonSocial}</p>
+          <p class="razon-social">${this.clienteInfo.razonSocial || ''}</p>
         </div>
         <div class="direccion-telefono-container">
           <div class="direccion">
-            <p>${this.clienteInfo.direccion}</p>
+            <p>${this.clienteInfo.direccion || ''}</p>
           </div>
           <div class="localidad-telefono">
             <p>MÉXICO, LEÓN GTO.</p>
@@ -397,8 +399,20 @@ export class RemisionesComponent implements OnInit {
     </tbody>
   </table>`;
 
+  this.mostrarExtra = this.remisionInfo.extra !== null && this.remisionInfo.extra !== undefined && this.remisionInfo.extra !== '';
+
+  if (this.mostrarExtra) {
+    this.extra = '$ ' + this.remisionInfo.extra;
+  } else {
+    this.extra = '';
+  }
+
   const subtotalTotalHTML = `
   <div class="subtotal-total">
+    <div class="extra">
+      ${this.extra}
+      ${this.remisionInfo.descripcion || ''}
+    </div>
     <div class="subtotal-total-values">
       <div class="subtotal">SUBTOTAL</div>
       <div class="total">TOTAL</div>
@@ -438,7 +452,8 @@ const remisionHTML = `
   .remision-container { 
     display: flex; 
     flex-direction: column; 
-    min-height: 100vh; /* Asegura que el contenedor ocupe al menos la altura de la página */
+    min-height: 99vh;
+    page-break-inside: avoid;
   }
   .cliente-info-container {
     display: flex;
@@ -520,10 +535,16 @@ const remisionHTML = `
   .total-pares {
     text-align: center;
     font-weight: bold;
-    border-top: 1px solid black; /* Línea delgada */
+    border-top: 1px solid black;
+  }
+  .extra {
+    text-align: center;
+    border-bottom: 1px solid #ccc;
+    padding-bottom: 10px;
+    margin-bottom: 20px;
   }
   .subtotal-total {
-    margin-top: auto; /* Empuja el subtotal al final del contenedor */
+    margin-top: auto;
     width: 100%;
   }
   .subtotal-total p {
