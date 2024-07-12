@@ -19,14 +19,16 @@
                                         <div class="form-group">
                                             <label class="control-label">Fecha de Remisión</label>
                                             <input type="text" class="form-control" name="fecha_remision"
-                                                [(ngModel)]="fechaRemision" [ngModelOptions]="{standalone: true}" readonly>
+                                                [(ngModel)]="fechaRemision" [ngModelOptions]="{standalone: true}"
+                                                readonly>
                                         </div>
                                     </div>
 
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Cliente</label>
-                                            <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id"
+                                            <select class="form-control text-uppercase" name="cliente_id"
+                                                formControlName="cliente_id"
                                                 (change)="getFolios(remisionForm.get('cliente_id')?.value); getHormas(remisionForm.get('cliente_id')?.value);">
                                                 <option value="" disabled>Seleccione un cliente</option>
                                                 <option *ngFor="let datos of clientes" [value]="datos.id">
@@ -62,13 +64,17 @@
                                                             <table class="detalle-puntos-table">
                                                                 <tbody>
                                                                     <tr>
-                                                                        <ng-container *ngFor="let puntoCantidad of elemento.puntosYcantidades">
-                                                                            <td class="punto">{{ puntoCantidad.punto }}</td>
+                                                                        <ng-container
+                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="punto">{{ puntoCantidad.punto }}
+                                                                            </td>
                                                                         </ng-container>
                                                                     </tr>
                                                                     <tr>
-                                                                        <ng-container *ngFor="let puntoCantidad of elemento.puntosYcantidades">
-                                                                            <td class="cantidad">{{ puntoCantidad.cantidad }}</td>
+                                                                        <ng-container
+                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="cantidad">{{
+                                                                                puntoCantidad.cantidad }}</td>
                                                                         </ng-container>
                                                                     </tr>
                                                                 </tbody>
@@ -81,13 +87,14 @@
                                             </tbody>
                                         </table>
                                     </div>
-                                    
-                                    
-                                    
+
+
+
                                     <div class="col-md-3">
                                         <div class="form-group">
                                             <div class="form-actions">
-                                                <button type="button" class="btn btn-primary" (click)="agregarElemento()">
+                                                <button type="button" class="btn btn-primary"
+                                                    (click)="agregarElemento()">
                                                     <i class="fa fa-plus"></i> Agregar
                                                 </button>
                                             </div>
@@ -99,7 +106,8 @@
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Horma</label>
-                                            <select class="form-control text-uppercase" name="horma_id" formControlName="horma_id"
+                                            <select class="form-control text-uppercase" name="horma_id"
+                                                formControlName="horma_id"
                                                 (change)="seleccionarHorma(remisionForm.get('horma_id')?.value);"
                                                 [disabled]="!remisionForm.get('cliente_id')?.value || noHormas">
                                                 <option value="" disabled>Seleccione una horma</option>
@@ -126,11 +134,13 @@
                                 </div>
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value != 36">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Folios</label>
                                             <div class="tags-container" formArrayName="folios">
-                                                <div *ngFor="let datos of folios" class="tag" [class.selected]="isSelected(datos.folio)" (click)="toggleSelection(datos.folio)">
+                                                <div *ngFor="let datos of folios" class="tag"
+                                                    [class.selected]="isSelected(datos.folio)"
+                                                    (click)="toggleSelection(datos.folio)">
                                                     {{ datos.folio }}
                                                 </div>
                                             </div>
@@ -139,7 +149,35 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group align-items-center">
+                                                <label for="suajes">Suajes</label>
+                                                <label class="custom-checkbox ml-2">
+                                                    <input type="checkbox" id="suajesCheckbox" [checked]="suajes" (change)="seleccionar($event)">
+                                                    <span class="checkmark"></span>
+                                                </label>
+                                            </div>
+                                            <div *ngIf="suajes" id="additionalInputs" class="hidden mt-3">
+                                                <div class="form-row justify-end">
+                                                    <div class="col-auto">
+                                                        <label for="cantidad">Cantidad:</label>
+                                                        <input type="number" class="form-control text-uppercase" id="cantidad" name="cantidad">
+                                                    </div>
+                                                    <div class="col-auto">
+                                                        <label for="descripcion">Descripción:</label>
+                                                        <input type="text" class="form-control text-uppercase" id="descripcion" name="descripcion">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
                                 </div>
+
+
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">
                                     <div class="col-md-12">
@@ -148,8 +186,9 @@
                                                 <td *ngFor="let item of fila">
                                                     <div class="punto">{{item.vista}}</div>
                                                     <hr class="linea">
-                                                    <input [(ngModel)]="item.cantidad" [ngModelOptions]="{standalone: true}"
-                                                        type="number" min="0" class="cantidad" (change)="calcularTotalPares()">
+                                                    <input [(ngModel)]="item.cantidad"
+                                                        [ngModelOptions]="{standalone: true}" type="number" min="0"
+                                                        class="cantidad" (change)="calcularTotalPares()">
                                                 </td>
                                             </tr>
                                         </table>

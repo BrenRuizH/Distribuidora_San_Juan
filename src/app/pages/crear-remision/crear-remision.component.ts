@@ -19,6 +19,7 @@ export class CrearRemisionComponent {
   noHormas: boolean = false;
   total: string = '';
   elementosAgregados: any[] = [];
+  suajes: boolean = false;
 
   fechaRemision: string = '';
 
@@ -98,6 +99,11 @@ export class CrearRemisionComponent {
   ngOnInit(): void {
     this.getClientes();
     this.fechaRemision = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+  }
+
+  seleccionar(event : Event ){
+    const check = event.target as HTMLInputElement;
+    this.suajes = check.checked;
   }
 
   agregarElemento() {
