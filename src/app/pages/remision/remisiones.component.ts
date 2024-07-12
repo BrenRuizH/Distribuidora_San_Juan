@@ -360,7 +360,7 @@ export class RemisionesComponent implements OnInit {
           <td>${Number(orden.total_pares).toLocaleString()}</td>
           <td>PAR</td>
           <td>
-            <p>${orden.horma.nombre}</p>
+            <p>${orden.horma.nombre} ${this.remisionInfo.oc || ''}</p>
             <table class="detalle-puntos-table">
               <thead>
                 <tr>

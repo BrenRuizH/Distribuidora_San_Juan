@@ -42,8 +42,16 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="row p-t-20">
-                                    <div class="col-md-12">
+
+                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Orden de Compra</label>
+                                            <input type="text" class="form-control text-uppercase" name="oc" formControlName="oc">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <div class="checkbox">
                                                 <input type="checkbox" id="extra" (change)="seleccionar($event)">
@@ -173,7 +181,26 @@
                                         </div>
                                     </div>
 
-                                    
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                <label for="extra">Extra</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Cantidad</label>
+                                                    <input type="number" class="form-control text-uppercase" name="cantidad" formControlName="cantidad">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Descripción</label>
+                                                    <input type="text" class="form-control text-uppercase" name="descripcion" formControlName="descripcion">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">

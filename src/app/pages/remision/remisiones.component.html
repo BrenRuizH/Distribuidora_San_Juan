@@ -65,6 +65,7 @@
                                     <tr>
                                         <th>No. Remisión</th>
                                         <th>Cliente</th>
+                                        <th>Orden de Compra</th>
                                         <th>Pares</th>
                                         <th>Total</th>
                                         <th>Editar</th>
@@ -77,6 +78,7 @@
                                     <tr *ngFor="let datos of remisiones | paginate: {itemsPerPage: 10, currentPage: p}">
                                         <td>{{datos.id}}</td>
                                         <td>{{datos.codigo}}</td>
+                                        <td>{{datos.oc}}</td>
                                         <td>{{datos.total_pares | number}}</td>
                                         <td>${{datos.precio_final | number}}</td>
                                         <td> 

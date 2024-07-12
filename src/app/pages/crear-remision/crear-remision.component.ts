@@ -94,7 +94,8 @@ export class CrearRemisionComponent {
       horma_id: ['', Validators.required],
       folios: ['', Validators.required],
       cantidad: [''],
-      descripcion: ['']
+      descripcion: [''],
+      oc: ['']
     });
   }
 
@@ -271,6 +272,7 @@ export class CrearRemisionComponent {
             if (this.remisionForm.get('descripcion')?.value) {
               formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
             }
+            
             console.log(this.remisionForm);
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
@@ -317,6 +319,10 @@ export class CrearRemisionComponent {
             formData.append('precio_final', this.formattedPrecioSum);
             formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
 
+            if (this.remisionForm.get('oc')?.value) {
+              formData.append('oc', this.remisionForm.get('oc')?.value.toUpperCase());
+            }
+            
             console.log(this.remisionForm);
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
