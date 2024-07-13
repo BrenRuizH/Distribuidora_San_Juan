@@ -26,14 +26,12 @@ export class CrearRemisionComponent {
   clientes: any[] = [];
   folios: any[] = [];
   cliente_id: number | null = null;
-  selectedFolios: string[] = [];
+  selectedFolios: { folio: string, oc: string }[] = [];
   noFolios: boolean = false;
   remisionForm:FormGroup;
 
   totalParesSum: any;
   formattedPrecioSum: any;
-
-  selectedFoliosByCliente: Record<number, string[]> = {};
 
   puntosYcantidades = [
     [
@@ -119,6 +117,7 @@ export class CrearRemisionComponent {
     const elementos = {
       horma_id: this.horma.id,
       horma: this.horma.nombre,
+      oc: this.remisionForm.get('oc')?.value.toUpperCase(),
       puntosYcantidades: puntosYCantidadesFiltrados,
       totalPares: Number(this.total).toLocaleString(),
       precio: (Number(this.total) * this.horma.precio).toLocaleString()
@@ -180,9 +179,11 @@ export class CrearRemisionComponent {
     this.remisionesService.consultarFolio(cliente_id).subscribe((data) => {
       this.folios = data.items.map((folio: any) => ({
         folio: folio.folio,
+        oc: folio.orden_compra_c,
         total_pares: folio.total_pares,
         precio: folio.precio
       }));
+      console.log(this.folios);
       if (this.folios.length === 0) {
         this.noFolios = true;
       } else {
@@ -195,21 +196,23 @@ export class CrearRemisionComponent {
   }
 
   isSelected(folio: string): boolean {
-    return this.selectedFolios.includes(folio);
+    return this.selectedFolios.some(f => f.folio === folio);
   }
 
   isClienteSelected(): boolean {
     return !!this.remisionForm.get('cliente_id')?.value;
   }
 
-  toggleSelection(folio: string): void {
-    if (this.isSelected(folio)) {
-        this.selectedFolios = this.selectedFolios.filter(f => f !== folio);
+  toggleSelection(folio: string, oc: string): void {
+    const index = this.selectedFolios.findIndex(f => f.folio === folio);
+    if (index > -1) {
+        this.selectedFolios.splice(index, 1);
     } else {
-        this.selectedFolios.push(folio);
+        this.selectedFolios.push({ folio, oc });
     }
+    console.log(this.selectedFolios);
     this.calcularSumatoria();
-  }
+}
 
   calcularTotalPares() {
     let totalPares = 0;
@@ -237,8 +240,9 @@ export class CrearRemisionComponent {
 
       this.formattedPrecioSum = precioSum.toFixed(2);
     } else {
-      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => sum + elem.totalPares, 0);
-      this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => sum + elem.precio, 0);
+      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => sum + parseInt(elem.totalPares, 10), 0);
+      this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => sum + parseFloat(elem.precio), 0);
+
     }
   }
     agregarRemision() {
@@ -319,8 +323,11 @@ export class CrearRemisionComponent {
             formData.append('precio_final', this.formattedPrecioSum);
             formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
 
-            if (this.remisionForm.get('oc')?.value) {
-              formData.append('oc', this.remisionForm.get('oc')?.value.toUpperCase());
+            if (this.remisionForm.get('cantidad')?.value) {
+              formData.append('extra', this.remisionForm.get('cantidad')?.value);
+            }
+            if (this.remisionForm.get('descripcion')?.value) {
+              formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
             }
             
             console.log(this.remisionForm);

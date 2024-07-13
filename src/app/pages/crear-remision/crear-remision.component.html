@@ -13,7 +13,6 @@
                             <h3 class="card-title">Solicitud de Datos de la Remisión</h3>
                             <form [formGroup]="remisionForm" (ngSubmit)="agregarRemision()">
                                 <hr>
-
                                 <div class="row p-t-20">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -43,15 +42,8 @@
                                     </div>
                                 </div>
 
-                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <label class="control-label">Orden de Compra</label>
-                                            <input type="text" class="form-control text-uppercase" name="oc" formControlName="oc">
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
+                                <div class="row p-t-20">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <div class="checkbox">
                                                 <input type="checkbox" id="extra" (change)="seleccionar($event)">
@@ -73,7 +65,6 @@
                                     </div>
                                 </div>
 
-
                                 <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
                                     <div class="col-md-9">
                                         <p>Resumen de Puntos y Cantidades Anteriores</p>
@@ -82,6 +73,7 @@
                                             <thead>
                                                 <tr>
                                                     <th>Horma</th>
+                                                    <th>Orden de Compra</th>
                                                     <th>Puntos</th>
                                                     <th>Total de Pares</th>
                                                     <th>Precio</th>
@@ -91,6 +83,7 @@
                                                 <ng-container *ngFor="let elemento of elementosAgregados">
                                                     <tr>
                                                         <td>{{ elemento.horma }}</td>
+                                                        <td>{{ elemento.oc }}</td>
                                                         <td>
                                                             <table class="detalle-puntos-table">
                                                                 <tbody>
@@ -118,8 +111,6 @@
                                             </tbody>
                                         </table>
                                     </div>
-
-
 
                                     <div class="col-md-3">
                                         <div class="form-group">
@@ -155,7 +146,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    
                                     <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Orden de Compra</label>
+                                            <input type="text" class="form-control text-uppercase" name="oc" formControlName="oc">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="control-label">Total de Pares</label>
                                             <input type="text" class="form-control" name="total" [(ngModel)]="total"
@@ -171,33 +170,12 @@
                                             <div class="tags-container" formArrayName="folios">
                                                 <div *ngFor="let datos of folios" class="tag"
                                                     [class.selected]="isSelected(datos.folio)"
-                                                    (click)="toggleSelection(datos.folio)">
+                                                    (click)="toggleSelection(datos.folio, datos.oc)">
                                                     {{ datos.folio }}
                                                 </div>
                                             </div>
                                             <div *ngIf="noFolios" class="text-danger">
                                                 No hay folios que coincidan con el cliente
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="col-md-6">
-                                        <div class="form-group">
-                                            <div class="checkbox">
-                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
-                                                <label for="extra">Extra</label>
-                                            </div>
-                                        </div>
-                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <label class="control-label">Cantidad</label>
-                                                    <input type="number" class="form-control text-uppercase" name="cantidad" formControlName="cantidad">
-                                                </div>
-                                                <div class="col-md-6">
-                                                    <label class="control-label">Descripción</label>
-                                                    <input type="text" class="form-control text-uppercase" name="descripcion" formControlName="descripcion">
-                                                </div>
                                             </div>
                                         </div>
                                     </div>

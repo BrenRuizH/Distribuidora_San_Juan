@@ -40,7 +40,8 @@ export class RemisionesComponent implements OnInit {
   fechaImpresion: string = this.convertirFechaTexto(new Date());
   fechaHoy: string = new Date().toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' });
   mostrarExtra: any;
-  extra: String = '';
+  extraS: String = '';
+  extra: number = 0;
 
 
   constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef) {
@@ -222,7 +223,7 @@ export class RemisionesComponent implements OnInit {
     });
 
     swalWithBootstrapButtons.fire({
-      title: "¿Desea editar la horma?",
+      title: "¿Desea editar la remisión?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonText: "¡Sí, editar!",
@@ -296,13 +297,29 @@ export class RemisionesComponent implements OnInit {
   }
 
   remisionar(id: any) {
+    
     this.remisionesService.imprimirRemision(id).subscribe((resp: any) => {
+      console.log(resp);
       this.clienteInfo = resp.cliente[0] || {};
       this.remisionInfo = resp.remision[0] || {};
       this.ordenCompraInfo = resp.orden_compra;
 
+      this.mostrarExtra = this.remisionInfo.extra !== null && this.remisionInfo.extra !== undefined && this.remisionInfo.extra !== '';
+
+      if (this.mostrarExtra) {
+        this.extraS = '$ ' + this.remisionInfo.extra;
+      } else {
+        this.extraS = '';
+      }
+
+      if (this.mostrarExtra) {
+        this.extra = Number(this.remisionInfo.extra);
+      } else {
+        this.extra = 0;
+      }
+      
       this.subtotal = this.ordenCompraInfo.reduce((acc: number, orden: { horma: { precio: any; }; total_pares: number; }) => acc + (Number(orden.horma.precio) || 0) * orden.total_pares, 0);
-      this.total = Number(this.subtotal + this.remisionInfo.extra);
+      this.total = this.subtotal + this.extra;
 
       const totalPares = this.ordenCompraInfo.reduce((acc: any, orden: { total_pares: any; }) => acc + Number(orden.total_pares), 0);
 
@@ -399,18 +416,10 @@ export class RemisionesComponent implements OnInit {
     </tbody>
   </table>`;
 
-  this.mostrarExtra = this.remisionInfo.extra !== null && this.remisionInfo.extra !== undefined && this.remisionInfo.extra !== '';
-
-  if (this.mostrarExtra) {
-    this.extra = '$ ' + this.remisionInfo.extra;
-  } else {
-    this.extra = '';
-  }
-
   const subtotalTotalHTML = `
   <div class="subtotal-total">
     <div class="extra">
-      ${this.extra}
+      ${this.extraS}
       ${this.remisionInfo.descripcion || ''}
     </div>
     <div class="subtotal-total-values">
