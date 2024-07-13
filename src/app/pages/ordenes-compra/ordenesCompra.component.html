@@ -70,6 +70,7 @@
                                         <th>Precio</th>
                                         <th>No. Factura</th>
                                         <th>Status</th>
+                                        <th>Remision</th>
                                         <th>Ver más</th>
                                     </tr>
                                 </thead>
@@ -103,7 +104,7 @@
                                                 <option [selected]="orden.status === 'REMISIONADO'" value="REMISIONADO">REMISIONADO</option>
                                             </select>
                                         </td>
-
+                                        <td>{{orden.remision_id}}</td>
                                         <td> 
                                             <a (click)="verDetalles(orden.id);" class="btn btn-info">
                                                 <i class="fa fa-eye"></i>
