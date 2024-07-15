@@ -12,10 +12,7 @@
                             </div>
                             <div class="ml-auto">
                                 <div class="form-group">
-                                    <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="remision.cliente_id" (change)="buscarRemisiones()" required>
-                                        <option value="">Seleccione un cliente</option>
-                                        <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
-                                    </select>
+                                    <input id="input-search" type="text" class="form-control text-uppercase" name="texto_busqueda" [(ngModel)]="remisionBusqueda" (input)="buscarRemisiones()" placeholder="Buscar Remisiones" autocomplete="on">
                                 </div>
                             </div>
                         </div>
@@ -49,6 +46,14 @@
                                             <input type="date" class="form-control" id="fechaFin" [(ngModel)]="fechaFin" [disabled]="temporalidadSeleccionada !== '4'">
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="clienteSeleccionado"  required>
+                                        <option value="">Seleccione un cliente</option>
+                                        <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="ml-auto">
@@ -139,7 +144,30 @@
                                                         </select>
                                                     </div>
                                                 </div>
-                        
+                                                
+                                                
+                                                    <div class="col-md-12">
+                                                        <div class="form-group">
+                                                            <div class="checkbox">
+                                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                                <label for="extra">Extra</label>
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                                            <div class="row">
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">Cantidad</label>
+                                                                    <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra">
+                                                                </div>
+                                                                <div class="col-md-6">
+                                                                    <label class="control-label">Descripción</label>
+                                                                    <input type="text" class="form-control text-uppercase" name="descripcion" [(ngModel)]="remisionEditada.descripcion">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                
+
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="control-label">Folios</label>
@@ -155,6 +183,8 @@
                                                 </div>
                                             </div>
                                         </div>
+
+
                         
                                         <div class="form-actions">
                                             <button class="btn btn-success" (click)="editarRemision();">

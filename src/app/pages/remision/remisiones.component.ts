@@ -1,4 +1,5 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { FormGroup } from '@angular/forms';
 import { NumerosALetras } from 'numero-a-letras';
 import * as printJS from 'print-js';
 import { catchError, of } from 'rxjs';
@@ -20,6 +21,10 @@ export class RemisionesComponent implements OnInit {
   remisionEditada: any = {};
   remisionEditada2: any = {};
   clientes: any[] = [];
+  remisionBusqueda : string ='';
+  clienteSeleccionado : string ='';
+  mostrarInputs: boolean = false;
+
 
   folios: any[] = [];
   cliente_id: number | null = null;
@@ -54,7 +59,10 @@ export class RemisionesComponent implements OnInit {
 
   }
 
-
+  seleccionar(event : Event ){
+    const check = event.target as HTMLInputElement;
+    this.mostrarInputs = check.checked;
+  }
 
   temporalidadSeleccionada: string = '';
   temporalidadPersonalizado: boolean = false;
@@ -121,10 +129,10 @@ export class RemisionesComponent implements OnInit {
   }
 
   buscarRemisiones() {
-    if (!this.remision.cliente_id) {
+    if (!this.remisionBusqueda) {
       this.obtenerRemisiones();
     } else {
-      this.remisionesService.getRemisiones('buscar.php?id=' + this.remision.cliente_id).pipe(catchError(error => {
+      this.remisionesService.getRemisiones('buscar.php?texto=' + this.remisionBusqueda).pipe(catchError(error => {
         if (error.status === 404) {
           Swal.fire({
             icon: "error",
@@ -238,6 +246,13 @@ export class RemisionesComponent implements OnInit {
         formData.append('total_pares', this.totalParesSum);
         formData.append('precio_final', this.formattedPrecioSum);
         formData.append('folio', this.selectedFolios.join(','));
+
+        if (this.remisionEditada.extra) {
+          formData.append('extra', this.remisionEditada.extra);
+        }
+        if (this.remisionEditada.descripcion) {
+          formData.append('descripcion', this.remisionEditada.descripcion);
+        }
 
         this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
           swalWithBootstrapButtons.fire({
@@ -623,7 +638,13 @@ const remisionHTML = `
       return;
     }
 
-    this.remisionesService.getRemisiones('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
+    let url = 'reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin;
+    console.log(this.clienteSeleccionado);
+    if (this.clienteSeleccionado) {
+      url += '&cliente_id=' + this.clienteSeleccionado;
+    }
+
+    this.remisionesService.getRemisiones(url)
       .subscribe((data) => {
         this.remisionesReporte = data.items;
 
