@@ -269,7 +269,7 @@ export class OrdenesCompraComponent {
         this.ordenesCompraR = data.items;
         console.log(this.ordenesCompraR);
 
-        const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any; }) => `
+        const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; remision_id:any; status: any; }) => `
         <tr>
           <td>${orden.folio || ''}</td>
           <td>${orden.codigo || ''}</td>
@@ -277,8 +277,9 @@ export class OrdenesCompraComponent {
           <td>${orden.fecha_orden || ''}</td>
           <td>${orden.fecha_entrega || ''}</td>
           <td>${Number(orden.total_pares).toLocaleString() || ''}</td>
+          <td>${orden.remision_id || ''}</td>
           <td>${orden.status || ''}</td>
-          <td>${orden.facturaNo || ''}</td>
+          <td>${orden.facturaNo || ''}</td> 
       `).join('');
 
         const tablaHTML = `
@@ -293,6 +294,7 @@ export class OrdenesCompraComponent {
               <th>Fecha de Orden</th>
               <th>Fecha de Entrega</th>
               <th>Total de Pares</th>
+              <th>Remision</th>
               <th>Status</th>
               <th>No. Factura</th>
             </tr>
