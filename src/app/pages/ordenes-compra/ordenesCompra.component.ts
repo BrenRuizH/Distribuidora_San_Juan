@@ -21,6 +21,9 @@ export class OrdenesCompraComponent {
   p: number = 1;
   textoBusqueda: string = '';
   temporalidad: number = 0;
+  clienteSeleccionado: string = '';
+  clienteString: String = '';
+
 
   detalle: any = { items1: [{}], items2: [{}] };
 
@@ -40,7 +43,7 @@ export class OrdenesCompraComponent {
   fechaFin: string = '';
   temp: string = '';
 
-seleccionarTemporalidad(opcion: string) {
+  seleccionarTemporalidad(opcion: string) {
     this.temporalidadSeleccionada = opcion;
 
     switch(opcion) {
@@ -84,7 +87,7 @@ seleccionarTemporalidad(opcion: string) {
         });
         break;
     }
-}
+  }
 
   getClientes() {
     this.clientesService.getClientes('leer.php').subscribe((data) => {
@@ -254,9 +257,17 @@ seleccionarTemporalidad(opcion: string) {
   }
 
   imprimirReporte() {
-    this.ordenCompraService.getOrdenesCompra('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
+    let url = 'reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin;
+    console.log(this.clienteSeleccionado);
+    if (this.clienteSeleccionado) {
+      url += '&cliente_id=' + this.clienteSeleccionado;
+    }
+
+    console.log(url);
+    this.ordenCompraService.getOrdenesCompra(url)
       .subscribe((data) => {
         this.ordenesCompraR = data.items;
+        console.log(this.ordenesCompraR);
 
         const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; status: any; }) => `
         <tr>

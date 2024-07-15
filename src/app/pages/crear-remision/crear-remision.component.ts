@@ -183,7 +183,6 @@ export class CrearRemisionComponent {
         total_pares: folio.total_pares,
         precio: folio.precio
       }));
-      console.log(this.folios);
       if (this.folios.length === 0) {
         this.noFolios = true;
       } else {
@@ -195,12 +194,12 @@ export class CrearRemisionComponent {
     });
   }
 
-  isSelected(folio: string): boolean {
-    return this.selectedFolios.some(f => f.folio === folio);
-  }
-
   isClienteSelected(): boolean {
     return !!this.remisionForm.get('cliente_id')?.value;
+  }
+
+  isSelected(folio: string): boolean {
+    return this.selectedFolios.some(f => f.folio === folio);
   }
 
   toggleSelection(folio: string, oc: string): void {
@@ -210,9 +209,8 @@ export class CrearRemisionComponent {
     } else {
         this.selectedFolios.push({ folio, oc });
     }
-    console.log(this.selectedFolios);
     this.calcularSumatoria();
-}
+  }
 
   calcularTotalPares() {
     let totalPares = 0;
@@ -226,14 +224,14 @@ export class CrearRemisionComponent {
 
   calcularSumatoria() {
     if(this.remisionForm.get('cliente_id')?.value != 36) {
-      this.totalParesSum = this.selectedFolios.reduce((sum, folio) => {
-        const selectedFolio = this.folios.find(f => f.folio === folio);
+      this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
+        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
         const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
         return sum + totalPares;
       }, 0);
 
-      const precioSum = this.selectedFolios.reduce((sum, folio) => {
-        const selectedFolio = this.folios.find(f => f.folio === folio);
+      const precioSum = this.selectedFolios.reduce((sum, folioObj) => {
+        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
         const precio = parseFloat(selectedFolio?.precio || '0');
         return sum + precio;
       }, 0);
@@ -245,6 +243,7 @@ export class CrearRemisionComponent {
 
     }
   }
+
     agregarRemision() {
       if (this.fechaRemision && this.remisionForm.get('cliente_id')?.value && this.selectedFolios.join(',') && this.remisionForm.get('cliente_id')?.value != 36) {
         const swalWithBootstrapButtons = Swal.mixin({
@@ -268,7 +267,9 @@ export class CrearRemisionComponent {
             formData.append('cliente_id', this.remisionForm.get('cliente_id')?.value.toUpperCase());
             formData.append('total_pares', this.totalParesSum);
             formData.append('precio_final', this.formattedPrecioSum);
-            formData.append('folio', this.selectedFolios.join(','));
+            formData.append('folios', JSON.stringify(this.selectedFolios));
+
+            console.log(JSON.stringify(this.selectedFolios));
 
             if (this.remisionForm.get('cantidad')?.value) {
               formData.append('extra', this.remisionForm.get('cantidad')?.value);
@@ -276,8 +277,6 @@ export class CrearRemisionComponent {
             if (this.remisionForm.get('descripcion')?.value) {
               formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
             }
-            
-            console.log(this.remisionForm);
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
               swalWithBootstrapButtons.fire({

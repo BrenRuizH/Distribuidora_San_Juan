@@ -366,18 +366,18 @@ export class RemisionesComponent implements OnInit {
       <tr>
         <th>CANT.</th>
         <th>UNID.</th>
-        <th>PLANTA</th>
+        <th>P L A N T A</th>
         <th>PRECIO</th>
         <th>IMPORTE</th>
       </tr>
     </thead>
     <tbody>
-      ${this.ordenCompraInfo.map((orden: { total_pares: number; horma: { nombre: any; precio: any; }; detalles: any[]; }) => `
+      ${this.ordenCompraInfo.map((orden: { total_pares: number; horma: { nombre: any; precio: any; }; oc: any; detalles: any[]; }) => `
         <tr>
           <td>${Number(orden.total_pares).toLocaleString()}</td>
           <td>PAR</td>
           <td>
-            <p>${orden.horma.nombre} ${this.remisionInfo.oc || ''}</p>
+            <p>${orden.horma.nombre} - ${orden.oc || ''}</p>
             <table class="detalle-puntos-table">
               <thead>
                 <tr>

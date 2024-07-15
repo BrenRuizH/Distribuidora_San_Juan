@@ -30,7 +30,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="mx-4">
+                            <div class="mx-3">
                                 <div class="form-group">
                                     <div class="custom-radio">
                                         <input type="radio" id="temporalidadMes" name="temporalidad" value="3" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('3')">
@@ -46,6 +46,14 @@
                                             <input type="date" class="form-control" id="fechaFin" [(ngModel)]="fechaFin" [disabled]="temporalidadSeleccionada !== '4'">
                                         </div>
                                     </div>
+                                </div>
+                            </div>
+                            <div class="mx-3">
+                                <div class="form-group">
+                                    <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="clienteSeleccionado" required>
+                                        <option value="">Seleccione un cliente</option>
+                                        <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="ml-auto">
