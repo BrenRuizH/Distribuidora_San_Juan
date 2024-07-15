@@ -63,7 +63,6 @@
                             </div>
                         </div>
                         
-                        
                         <div class="table-responsive animated fadeInDown">
                             <table class="table full-color-table full-primary-table hover-table">
                                 <thead>
@@ -157,7 +156,7 @@
                                                             <div class="row">
                                                                 <div class="col-md-6">
                                                                     <label class="control-label">Cantidad</label>
-                                                                    <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra">
+                                                                    <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra" (change)="calcularSumatoria();">
                                                                 </div>
                                                                 <div class="col-md-6">
                                                                     <label class="control-label">Descripción</label>
@@ -172,7 +171,7 @@
                                                     <div class="form-group">
                                                         <label class="control-label">Folios</label>
                                                         <div class="tags-container">
-                                                            <div *ngFor="let dato of folios" class="tag" [class.selected]="isSelected(dato.folio)" (click)="toggleSelection(dato.folio)">
+                                                            <div *ngFor="let dato of folios" class="tag" [class.selected]="isSelected(dato.folio)" (click)="toggleSelection(dato.folio, dato.oc)">
                                                                 {{ dato.folio }}
                                                             </div>
                                                         </div>

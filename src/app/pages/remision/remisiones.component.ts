@@ -29,7 +29,7 @@ export class RemisionesComponent implements OnInit {
   folios: any[] = [];
   cliente_id: number | null = null;
   remision_id: number | null = null;
-  selectedFolios: string[] = [];
+  selectedFolios: { folio: string, oc: string }[] = [];
   noFolios: boolean = false;
   totalParesSum: any;
   formattedPrecioSum: any;
@@ -56,7 +56,6 @@ export class RemisionesComponent implements OnInit {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerRemisiones();
-
   }
 
   seleccionar(event : Event ){
@@ -158,11 +157,16 @@ export class RemisionesComponent implements OnInit {
       if (Array.isArray(this.remisionEditada2) && this.remisionEditada2.length > 0) {
         this.folios = this.remisionEditada2.map(folio => ({
           id: folio.id,
-          folio: folio.folio
+          folio: folio.folio,
+          oc: folio.oc
         }));
-
-        this.selectedFolios = this.folios.map(folio => folio.folio);
-      }
+      
+        this.selectedFolios = this.folios.map(folio => ({
+          folio: folio.folio,
+          oc: folio.oc
+        }));
+        console.log("Seleccionar Remision: ",this.selectedFolios);
+      }      
     });
   }
 
@@ -174,6 +178,7 @@ export class RemisionesComponent implements OnInit {
     this.remisionesService.consultarFolioEditar(cliente_id, remision_id).subscribe((data) => {
       this.folios = data.items.map((folio: any) => ({
         folio: folio.folio,
+        oc: folio.oc,
         total_pares: folio.total_pares,
         precio: folio.precio
       }));
@@ -190,38 +195,43 @@ export class RemisionesComponent implements OnInit {
 
   isSelected(folio: string): boolean {
 
-    return this.selectedFolios.includes(folio);
+    return this.selectedFolios.some(f => f.folio === folio);
   }
 
   isClienteSelected(): boolean {
     return !!this.remisionEditada.cliente_id;
   }
 
-  toggleSelection(folio: string): void {
-    if (this.isSelected(folio)) {
-      this.selectedFolios = this.selectedFolios.filter(f => f !== folio);
+  toggleSelection(folio: string, oc: string): void {
+    const index = this.selectedFolios.findIndex(f => f.folio === folio);
+    if (index > -1) {
+        this.selectedFolios.splice(index, 1);
     } else {
-      this.selectedFolios.push(folio);
+        this.selectedFolios.push({ folio, oc });
+        console.log(this.selectedFolios);
     }
     this.calcularSumatoria();
   }
 
   calcularSumatoria() {
-    this.totalParesSum = this.selectedFolios.reduce((sum, folio) => {
-      const selectedFolio = this.folios.find(f => f.folio === folio);
+    this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
+      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
       const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
       return sum + totalPares;
     }, 0);
 
-    const precioSum = this.selectedFolios.reduce((sum, folio) => {
-      const selectedFolio = this.folios.find(f => f.folio === folio);
+    let precioSum = this.selectedFolios.reduce((sum, folioObj) => {
+      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
       const precio = parseFloat(selectedFolio?.precio || '0');
       return sum + precio;
     }, 0);
 
+    precioSum += parseFloat(this.remisionEditada.extra || '0');
+
     this.formattedPrecioSum = precioSum.toFixed(2);
   }
 
+  
   editarRemision() {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -245,13 +255,14 @@ export class RemisionesComponent implements OnInit {
         formData.append('cliente_id', this.remisionEditada.cliente_id.toUpperCase());
         formData.append('total_pares', this.totalParesSum);
         formData.append('precio_final', this.formattedPrecioSum);
-        formData.append('folio', this.selectedFolios.join(','));
+        formData.append('folios', JSON.stringify(this.selectedFolios));
+        console.log("formData", JSON.stringify(this.selectedFolios));
 
         if (this.remisionEditada.extra) {
-          formData.append('extra', this.remisionEditada.extra);
+          formData.append('extra', this.remisionEditada.extra.toFixed(2));
         }
         if (this.remisionEditada.descripcion) {
-          formData.append('descripcion', this.remisionEditada.descripcion);
+          formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
         }
 
         this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
@@ -314,7 +325,6 @@ export class RemisionesComponent implements OnInit {
   remisionar(id: any) {
     
     this.remisionesService.imprimirRemision(id).subscribe((resp: any) => {
-      console.log(resp);
       this.clienteInfo = resp.cliente[0] || {};
       this.remisionInfo = resp.remision[0] || {};
       this.ordenCompraInfo = resp.orden_compra;
@@ -639,7 +649,6 @@ const remisionHTML = `
     }
 
     let url = 'reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin;
-    console.log(this.clienteSeleccionado);
     if (this.clienteSeleccionado) {
       url += '&cliente_id=' + this.clienteSeleccionado;
     }
