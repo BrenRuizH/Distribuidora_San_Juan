@@ -614,6 +614,15 @@ const remisionHTML = `
   }
 
   imprimirReporte() {
+    if (!this.temporalidadSeleccionada) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Selecciona una temporalidad para generar el reporte."
+      });
+      return;
+    }
+
     this.remisionesService.getRemisiones('reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin)
       .subscribe((data) => {
         this.remisionesReporte = data.items;
@@ -714,7 +723,7 @@ const remisionHTML = `
             Swal.fire({
               icon: "error",
               title: "Oops...",
-              text: "No hay remisiones para generar un reporte en esa temporalidad."
+              text: "No hay remisiones para generar un reporte en esa temporalidad y/o cliente."
             });
           }
         });

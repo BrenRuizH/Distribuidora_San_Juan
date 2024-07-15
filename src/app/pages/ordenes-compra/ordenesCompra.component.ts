@@ -257,6 +257,15 @@ export class OrdenesCompraComponent {
   }
 
   imprimirReporte() {
+    if (!this.temporalidadSeleccionada) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Selecciona una temporalidad para generar el reporte."
+      });
+      return;
+    }
+
     let url = 'reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin;
     console.log(this.clienteSeleccionado);
     if (this.clienteSeleccionado) {
@@ -367,7 +376,7 @@ export class OrdenesCompraComponent {
           Swal.fire({
             icon: "error",
             title: "Oops...",
-            text: "No hay órdenes de compra para generar un reporte en esa temporalidad."
+            text: "No hay órdenes de compra para generar un reporte en esa temporalidad y/o cliente."
         });
       }
     });
