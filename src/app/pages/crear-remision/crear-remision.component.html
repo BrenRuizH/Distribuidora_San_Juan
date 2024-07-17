@@ -120,7 +120,7 @@
                                                         <td>{{ elemento.totalPares }}</td>
                                                         <td>$ {{ elemento.precio }}</td>
                                                         <td> 
-                                                            <a class="btn btn-warning">
+                                                            <a (click)="cargarElementoParaEditar(index)"class="btn btn-warning">
                                                                 <i class="fa fa-edit"></i>
                                                             </a>
                                                             <a (click)="eliminarElemento(index)" class="btn btn-danger">
@@ -207,6 +207,7 @@
                                         </table>
                                     </div>
                                 </div>
+                                
 
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-success" (click)="agregarRemision();">

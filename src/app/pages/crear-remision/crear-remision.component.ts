@@ -207,16 +207,17 @@ export class CrearRemisionComponent {
         puntosTableHtml += `
             <tr>
                 <td>${puntoInicio}</td>
-                  <td><input type="number" value="${this.getPuntoCantidad(elemento.puntosYcantidades, puntoInicio)}" /></td>
+                <td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${this.getPuntoCantidad(elemento.puntosYcantidades, puntoInicio)}" /></td>
             </tr>
         `;
         puntoInicio += 0.5;
+
         // Agregar línea adicional para punto 1/2
         if (puntoInicio <= 32.5) {
             puntosTableHtml += `
                 <tr>
                     <td>1/2</td>
-                  <td><input type="number" value="${this.getPuntoCantidad(elemento.puntosYcantidades, puntoInicio)}" /></td>
+                    <td><input type="number" class="form-control" id="punto_1/2_${puntoInicio}" value="${this.getPuntoCantidad(elemento.puntosYcantidades, puntoInicio)}" /></td>
                 </tr>
             `;
             puntoInicio += 0.5;
@@ -224,8 +225,8 @@ export class CrearRemisionComponent {
 
         // Agregar fila de separación cada 6 puntos
         if ((puntoInicio - 15) % 3 === 0 && puntoInicio <= 32.5) {
-          puntosTableHtml += `<tr><td colspan="2"><hr></td></tr>`;
-      }
+            puntosTableHtml += `<tr><td colspan="2"><hr></td></tr>`;
+        }
     }
 
     // Abrir SweetAlert con el formulario y la tabla de puntos
@@ -233,90 +234,92 @@ export class CrearRemisionComponent {
         title: 'Editar Elemento',
         html: `
             <form>
-                <div class="form-group">
-                    <label for="horma_id">Horma</label>
-                    <select class="form-control" id="horma_id" formControlName="horma_id">
+                <div class="form-group mb-3">
+                    <label for="horma_id" class="form-label">Horma</label>
+                    <select class="form-select" id="horma_id" formControlName="horma_id">
                         ${opcionesHormas}
                     </select>
                 </div>
-                <div class="form-group">
-                    <label for="oc">Orden de Compra</label>
+                <div class="form-group mb-3">
+                    <label for="oc" class="form-label">Orden de Compra</label>
                     <input type="text" class="form-control" id="oc" formControlName="oc" value="${elemento.oc}">
                 </div>
             </form>
             <hr>
-            <h5>Tabla de Puntos</h5>
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th>Punto</th>
-                        <th>Cantidad</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${puntosTableHtml}
-                </tbody>
-            </table>
+            <h5 class="mt-4">Tabla de Puntos</h5>
+            <div style="overflow-x: auto;">
+                <table class="table table-bordered table-striped mt-2">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Punto</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${puntosTableHtml}
+                    </tbody>
+                </table>
+            </div>
         `,
         showCancelButton: true,
         confirmButtonColor: '#FFA500',
         confirmButtonText: 'Actualizar',
         cancelButtonText: 'Cancelar',
         preConfirm: () => {
-          return this.obtenerPuntosYCantidadesActualizados();
+            const hormaId = (document.getElementById('horma_id') as HTMLSelectElement).value;
+            const oc = (document.getElementById('oc') as HTMLInputElement).value.toUpperCase();
+            const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+
+            return { hormaId, oc, puntosYcantidadesActualizados };
         }
     }).then((result) => {
         if (result.isConfirmed) {
-          const hormaId = this.remisionForm.get('horma_id')?.value;
-          const oc = this.remisionForm.get('oc')?.value.toUpperCase();
-          const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+            const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
 
-          this.elementosAgregados[index] = {
-              horma_id: hormaId,
-              horma: this.hormas.find(horma => horma.id === hormaId)?.nombre || '',
-              oc: oc,
-              puntosYcantidades: puntosYcantidadesActualizados,
-              totalPares: this.calcularTotalParesA(puntosYcantidadesActualizados),
-              precio: this.calcularPrecioTotal(puntosYcantidadesActualizados)
-          };
-
-          // Mostrar mensaje de éxito
-            Swal.fire('Actualizado', 'El elemento ha sido actualizado correctamente.', 'success');
+            this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
         }
     });
 }
 
-actualizarElemento(index: number): void {
-    // Obtener valores actualizados del formulario y la tabla de puntos
-    const hormaId = this.remisionForm.get('horma_id')?.value;
-    const oc = this.remisionForm.get('oc')?.value.toUpperCase();
-    const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
 
-    // Calcular total de pares
-    let totalPares = 0;
-    puntosYcantidadesActualizados.forEach(item => {
+
+
+
+
+actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidadesActualizados: any[]): void {
+  // Calcular total de pares
+  let totalPares = 0;
+  puntosYcantidadesActualizados.forEach(item => {
       totalPares += item.cantidad;
-    });
+  });
 
-    // Calcular precio total
-    const precio = (totalPares * this.horma.precio).toLocaleString();
+  // Calcular precio total
+  const precio = (totalPares * this.hormas.find(horma => horma.id === hormaId)?.precio || 0).toLocaleString();
 
-    // Actualizar el elemento en el array
-    this.elementosAgregados[index] = {
+  // Actualizar el elemento en el array
+  this.elementosAgregados[index] = {
       horma_id: hormaId,
-      horma: this.horma.nombre, // Ajusta según tu lógica
+      horma: this.hormas.find(horma => horma.id === hormaId)?.nombre || '',
       oc: oc,
       puntosYcantidades: puntosYcantidadesActualizados,
-      totalPares: totalPares.toLocaleString(), // Ajusta el formato si es necesario
+      totalPares: totalPares.toLocaleString(), // Ajustar el formato si es necesario
       precio: precio
-    };
+  };
 
-    // Mostrar mensaje de éxito
-    Swal.fire('Actualizado', 'El elemento ha sido actualizado correctamente.', 'success');
+  // Mostrar mensaje de éxito
+  Swal.fire('Actualizado', 'El elemento ha sido actualizado correctamente.', 'success');
 
-    // Recalcular sumatoria si es necesario
-    this.calcularSumatoria();
+  // Recalcular sumatoria si es necesario
+  this.calcularSumatoria();
+
+  // Resetear formulario y puntos y cantidades si es necesario
+  this.remisionForm.get('horma_id')?.reset();
+  this.resetearPuntosYCantidades();
 }
+
+
+
+
 
 // Función para obtener los puntos y cantidades actualizados desde la tabla del SweetAlert
 obtenerPuntosYCantidadesActualizados(): any[] {
@@ -324,27 +327,27 @@ obtenerPuntosYCantidadesActualizados(): any[] {
 
   let puntoInicio = 15;
   while (puntoInicio <= 32.5) {
-    const inputPunto = document.getElementById(`${puntoInicio}`) as HTMLInputElement;
-    if (inputPunto) {
-      const cantidad = parseFloat(inputPunto.value);
-      if (!isNaN(cantidad)) {
-        puntosYCantidadesActualizados.push({ punto: puntoInicio, cantidad: cantidad });
+      const inputPunto = document.getElementById(`punto_${puntoInicio}`) as HTMLInputElement;
+      if (inputPunto) {
+          const cantidad = parseFloat(inputPunto.value);
+          if (!isNaN(cantidad) && cantidad !== 0) {
+              puntosYCantidadesActualizados.push({ vista: '', punto: puntoInicio, cantidad: cantidad });
+          }
       }
-    }
 
-    puntoInicio += 0.5;
-
-    // Agregar línea adicional para punto 1/2
-    if (puntoInicio <= 32.5) {
-      const inputPuntoMedio = document.getElementById(`1/2_${puntoInicio}`) as HTMLInputElement;
-      if (inputPuntoMedio) {
-        const cantidadMedio = parseFloat(inputPuntoMedio.value);
-        if (!isNaN(cantidadMedio)) {
-          puntosYCantidadesActualizados.push({ punto: `1/2 ${puntoInicio}`, cantidad: cantidadMedio });
-        }
-      }
       puntoInicio += 0.5;
-    }
+
+      // Agregar línea adicional para punto 1/2
+      if (puntoInicio <= 32.5) {
+          const inputPuntoMedio = document.getElementById(`punto_1/2_${puntoInicio}`) as HTMLInputElement;
+          if (inputPuntoMedio) {
+              const cantidadMedio = parseFloat(inputPuntoMedio.value);
+              if (!isNaN(cantidadMedio) && cantidadMedio !== 0) {
+                  puntosYCantidadesActualizados.push({ vista: '1/2', punto: puntoInicio, cantidad: cantidadMedio });
+              }
+          }
+          puntoInicio += 0.5;
+      }
   }
 
   return puntosYCantidadesActualizados;
