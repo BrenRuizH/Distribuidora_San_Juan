@@ -1,9 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { FormGroup } from '@angular/forms';
 import { NumerosALetras } from 'numero-a-letras';
 import * as printJS from 'print-js';
 import { catchError, of } from 'rxjs';
 import { ClientesService } from 'src/app/services/clientes.service';
+import { HormasService } from 'src/app/services/hormas.service';
 import { RemisionesService } from 'src/app/services/remisiones.service';
 import Swal from 'sweetalert2';
 
@@ -13,6 +13,13 @@ import Swal from 'sweetalert2';
   styleUrls: ['./remisiones.component.css']
 })
 export class RemisionesComponent implements OnInit {
+
+  puntosYcantidades: any[][] = [];
+  elementosAgregados: any[] = [];
+  hormas: any[] = [];
+  noHormas: boolean = false;
+  totalA: string = '';
+
   remisionesReporte: any = [];
 
   remisiones: any = [];
@@ -24,7 +31,6 @@ export class RemisionesComponent implements OnInit {
   remisionBusqueda : string ='';
   clienteSeleccionado : string ='';
   mostrarInputs: boolean = false;
-
 
   folios: any[] = [];
   cliente_id: number | null = null;
@@ -48,9 +54,17 @@ export class RemisionesComponent implements OnInit {
   extraS: String = '';
   extra: number = 0;
 
+  temporalidadSeleccionada: string = '';
+  temporalidadPersonalizado: boolean = false;
+  fechaInicio: string = '';
+  fechaFin: string = '';
+  temp: string = '';
 
-  constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef) {
+  constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef,
+    private hormasService: HormasService
+  ) {
     this.obtenerRemisiones();
+    this.inicializarPuntosYCantidades();
   }
 
   ngOnInit(): void {
@@ -58,16 +72,63 @@ export class RemisionesComponent implements OnInit {
     this.obtenerRemisiones();
   }
 
+  inicializarPuntosYCantidades(): void {
+    this.puntosYcantidades = [
+      [
+        { vista:'15', punto: 15, cantidad: 0},
+        { vista:'1/2', punto: 15.5, cantidad: 0},
+        { vista:'16', punto: 16, cantidad: 0},
+        { vista:'1/2', punto: 16.5, cantidad: 0},
+        { vista:'17', punto: 17, cantidad: 0},
+        { vista:'1/2', punto: 17.5, cantidad: 0},
+      ],
+      [
+        { vista:'18',  punto: 18, cantidad: 0},
+        { vista:'1/2', punto: 18.5, cantidad: 0},
+        { vista:'19', punto: 19, cantidad: 0},
+        { vista:'1/2', punto: 19.5, cantidad: 0},
+        { vista:'20', punto: 20, cantidad: 0},
+        { vista:'1/2',  punto: 20.5, cantidad: 0},
+      ],
+      [
+        { vista:'21', punto: 21, cantidad: 0},
+        { vista:'1/2', punto: 21.5, cantidad: 0},
+        { vista:'22', punto: 22, cantidad: 0},
+        { vista:'1/2', punto: 22.5, cantidad: 0},
+        { vista:'23', punto: 23, cantidad: 0},
+        { vista:'1/2', punto: 23.5, cantidad: 0},
+      ],
+      [
+        { vista:'24', punto: 24, cantidad: 0},
+        { vista:'1/2', punto: 24.5, cantidad: 0},
+        { vista:'25', punto: 25, cantidad: 0},
+        { vista:'1/2', punto: 25.5, cantidad: 0},
+        { vista:'26', punto: 26, cantidad: 0},
+        { vista:'1/2', punto: 26.5, cantidad: 0},
+      ],
+      [
+        { vista:'27',  punto: 27, cantidad: 0},
+        { vista:'1/2', punto: 27.5, cantidad: 0},
+        { vista:'28', punto: 28, cantidad: 0},
+        { vista:'1/2', punto: 28.5, cantidad: 0},
+        { vista:'29', punto: 29, cantidad: 0},
+        { vista:'1/2', punto: 29.5, cantidad: 0},
+      ],
+      [
+        { vista:'30', punto: 30, cantidad: 0},
+        { vista:'1/2', punto: 30.5, cantidad: 0},
+        { vista:'31', punto: 31, cantidad: 0},
+        { vista:'1/2', punto: 31.5, cantidad: 0},
+        { vista:'32', punto: 32, cantidad: 0},
+        { vista:'1/2', punto: 32.5, cantidad: 0},
+      ]
+    ];
+  }
+
   seleccionar(event : Event ){
     const check = event.target as HTMLInputElement;
     this.mostrarInputs = check.checked;
   }
-
-  temporalidadSeleccionada: string = '';
-  temporalidadPersonalizado: boolean = false;
-  fechaInicio: string = '';
-  fechaFin: string = '';
-  temp: string = '';
 
   seleccionarTemporalidad(opcion: string) {
     this.temporalidadSeleccionada = opcion;
@@ -121,6 +182,22 @@ export class RemisionesComponent implements OnInit {
     });
   }
 
+  getHormas(cliente_id: any) {
+    this.cliente_id = cliente_id;
+    this.hormasService.consultarHorma(cliente_id).subscribe((data) => {
+      this.hormas = data.items;
+      if (this.hormas.length === 0) {
+        this.noHormas = true;
+      } else {
+        this.noHormas = false;
+      }
+    },
+    (error) => {
+      this.noHormas = true;
+    });
+    console.log(this.hormas);
+  }
+
   obtenerRemisiones() {
     this.remisionesService.getRemisiones('leer.php').subscribe((data) => {
       this.remisiones = data.items;
@@ -152,23 +229,294 @@ export class RemisionesComponent implements OnInit {
     this.remisionesService.seleccionarRemision(id).subscribe((resp: any) => {
       this.remisionEditada = resp.items1[0];
       this.remisionEditada2 = resp.items2;
+      this.getHormas(this.remisionEditada.cliente_id)
       this.getFolios(this.remisionEditada.cliente_id, this.remisionEditada.id);
 
       if (Array.isArray(this.remisionEditada2) && this.remisionEditada2.length > 0) {
-        this.folios = this.remisionEditada2.map(folio => ({
-          id: folio.id,
-          folio: folio.folio,
-          oc: folio.oc
-        }));
+        if (this.remisionEditada.cliente_id != 36) {
+          this.folios = this.remisionEditada2.map(folio => ({
+            id: folio.id,
+            folio: folio.folio,
+            oc: folio.oc
+          }));
       
-        this.selectedFolios = this.folios.map(folio => ({
-          folio: folio.folio,
-          oc: folio.oc
-        }));
-        console.log("Seleccionar Remision: ",this.selectedFolios);
+          this.selectedFolios = this.folios.map(folio => ({
+            folio: folio.folio,
+            oc: folio.oc
+          }));
+        } else {
+          this.elementosAgregados = this.remisionEditada2.reduce((acc, detalle) => {
+            let horma = acc.find((h: { horma_id: any; }) => h.horma_id === detalle.horma_id);
+            if (!horma) {
+              horma = {
+                horma_id: detalle.horma_id,
+                horma: detalle.horma,
+                oc: detalle.oc,
+                puntos: [],
+                totalPares: 0,
+                precio: 0
+              };
+              acc.push(horma);
+            }
+          
+            // Convertir el punto a un formato adecuado, por ejemplo, dos decimales
+            const punto = typeof detalle.punto === 'number' ? detalle.punto.toFixed(2) : detalle.punto.toString();
+          
+            // Verificar si el punto ya existe en la lista de puntos para evitar duplicados
+            const existingPunto = horma.puntos.find((p: { punto: string; }) => p.punto === punto);
+            if (existingPunto) {
+              existingPunto.cantidad += +detalle.cantidad;
+            } else {
+              horma.puntos.push({
+                punto: punto,
+                cantidad: +detalle.cantidad
+              });
+            }
+          
+            horma.totalPares += +detalle.cantidad;
+            horma.precio += (+detalle.cantidad * +detalle.precio);
+          
+            return acc;
+          }, []);
+          
+          console.log(this.elementosAgregados);
+        }
       }      
     });
   }
+
+  resetearPuntosYCantidades() {
+    this.puntosYcantidades.forEach(row => {
+      row.forEach(item => {
+        item.cantidad = 0;
+      });
+    });
+    this.calcularTotalPares();
+  }
+
+  calcularTotalPares() {
+    let totalPares = 0;
+      for (let fila of this.puntosYcantidades) {
+        for (let item of fila) {
+          totalPares += item.cantidad;
+        }
+      }
+    this.totalA =  String(totalPares);
+  }
+
+  agregarElemento() {
+    const hormaIdElement = document.getElementById('horma_id') as HTMLSelectElement;
+    const ocElement = document.getElementById('oc') as HTMLInputElement;
+
+    if (hormaIdElement && hormaIdElement.value) {
+        const hormaId = hormaIdElement.value;
+        const oc = ocElement ? ocElement.value.toUpperCase() : '';
+        const horma = this.hormas.find(h => h.id == hormaId);
+        const puntosYCantidadesFiltrados = this.puntosYcantidades.flatMap(row =>
+            row.filter(item => item.cantidad !== 0)
+                .map(item => ({ vista: item.vista, punto: item.punto, cantidad: +item.cantidad }))
+        );
+
+        const tieneCantidadValida = puntosYCantidadesFiltrados.length > 0;
+
+        if (tieneCantidadValida) {
+            const precioUnitario = horma ? +horma.precio : 0;
+
+            let hormaExistente = this.elementosAgregados.find(h => h.horma_id == hormaId);
+
+            if (!hormaExistente) {
+                hormaExistente = {
+                    horma_id: hormaId,
+                    horma: horma ? horma.nombre : '',
+                    oc: oc,
+                    puntos: [],
+                    totalPares: 0,
+                    precio: 0
+                };
+                this.elementosAgregados.push(hormaExistente);
+            }
+
+            puntosYCantidadesFiltrados.forEach(item => {
+                const puntoExistente = hormaExistente.puntos.find((p: { punto: any; }) => p.punto === item.punto);
+
+                if (puntoExistente) {
+                    puntoExistente.cantidad += item.cantidad;
+                } else {
+                    hormaExistente.puntos.push({
+                        punto: item.punto,
+                        cantidad: item.cantidad
+                    });
+                }
+
+                hormaExistente.totalPares += item.cantidad;
+                hormaExistente.precio += item.cantidad * precioUnitario;
+            });
+
+            this.calcularSumatoria();
+
+            // Reset the form elements
+            hormaIdElement.value = '';
+            if (ocElement) ocElement.value = '';
+            this.resetearPuntosYCantidades();
+        } else {
+            Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debe haber al menos un punto con cantidad diferente de 0.",
+            });
+        }
+    } else {
+        Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "El formulario está incompleto. Por favor, completa todos los campos.",
+        });
+    }
+}
+
+eliminarElemento(index: number): void {
+  const swalWithBootstrapButtons = Swal.mixin({
+    customClass: {
+      confirmButton: "btn btn-danger",
+      cancelButton: "btn btn-secondary"
+    }
+  });
+
+  swalWithBootstrapButtons.fire({
+    title: "¿Desea eliminar la orden de la remisión?",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonText: "¡Sí, eliminar!",
+    cancelButtonText: "No, cancelar"
+  }).then((result) => {
+    if (result.isConfirmed) {
+      swalWithBootstrapButtons.fire({
+        title: "¡Eliminada!",
+        text: "La orden ha sido eliminada de la remisión exitosamente.",
+        icon: "success"
+      });
+
+    this.elementosAgregados.splice(index, 1);
+    this.calcularSumatoria();
+    }
+  });
+}
+
+// ******************************************************************************************************
+
+cargarElementoParaEditar(index: number): void {
+  const elemento = this.elementosAgregados[index];
+  console.log('Elemento para editar:', elemento);  // Verifica los datos aquí
+
+  let opcionesHormas = '';
+  this.hormas.forEach(horma => {
+      opcionesHormas += `<option value="${horma.id}" ${horma.id === elemento.horma_id ? 'selected' : ''}>${horma.nombre}</option>`;
+  });
+
+  let puntosTableHtml = '';
+  let puntoInicio = 15;
+  while (puntoInicio <= 32.5) {
+      const cantidad = this.getPuntoCantidad(elemento.puntos, puntoInicio);
+      puntosTableHtml += `
+          <tr>
+              <td>${puntoInicio}</td>
+              <td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${cantidad}" /></td>
+          </tr>`;
+      puntoInicio += 0.5;
+  }
+
+  Swal.fire({
+      title: 'Editar Elemento',
+      html: `
+          <form>
+              <div class="form-group mb-3">
+                  <label for="horma_id" class="form-label">Horma</label>
+                  <select class="form-select" id="horma_id">
+                      ${opcionesHormas}
+                  </select>
+              </div>
+              <div class="form-group mb-3">
+                  <label for="oc" class="form-label">Orden de Compra</label>
+                  <input type="text" class="form-control" id="oc" value="${elemento.oc}">
+              </div>
+          </form>
+          <hr>
+          <h5 class="mt-4">Tabla de Puntos</h5>
+          <div style="overflow-x: auto;">
+              <table class="table table-bordered table-striped mt-2">
+                  <thead class="table-dark">
+                      <tr>
+                          <th>Punto</th>
+                          <th>Cantidad</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${puntosTableHtml}
+                  </tbody>
+              </table>
+          </div>
+      `,
+      showCancelButton: true,
+      confirmButtonColor: '#FFA500',
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar',
+      preConfirm: () => {
+          const hormaId = (document.getElementById('horma_id') as HTMLSelectElement).value;
+          const oc = (document.getElementById('oc') as HTMLInputElement).value.toUpperCase();
+          const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+
+          return { hormaId, oc, puntosYcantidadesActualizados };
+      }
+  }).then((result) => {
+      if (result.isConfirmed) {
+          const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
+          this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
+      }
+  });
+}
+
+getPuntoCantidad(puntos: any[], punto: number): number {
+  console.log('Buscando cantidad para punto:', punto, 'en puntos:', puntos);  // Verifica los datos aquí
+  const puntoStr = punto.toFixed(2); // Convierte el número a una cadena con dos decimales
+  const puntoObj = puntos.find(p => p.punto === puntoStr); // Busca por coincidencia exacta en cadena
+  console.log('Cantidad encontrada:', puntoObj ? puntoObj.cantidad : 0);
+  return puntoObj ? puntoObj.cantidad : 0;
+}
+
+obtenerPuntosYCantidadesActualizados(): any[] {
+  const puntosYcantidadesActualizados = [];
+  let puntoInicio = 15;
+  while (puntoInicio <= 32.5) {
+    const cantidad = +((document.getElementById(`punto_${puntoInicio}`) as HTMLInputElement).value || 0);
+    if (cantidad > 0) {
+      puntosYcantidadesActualizados.push({ punto: puntoInicio, cantidad: cantidad });
+    }
+    puntoInicio += 0.5;
+  }
+  return puntosYcantidadesActualizados;
+}
+
+actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidadesActualizados: any[]): void {
+  const horma = this.hormas.find(h => h.id === hormaId);
+  if (horma) {
+    const totalPares = puntosYcantidadesActualizados.reduce((total, item) => total + item.cantidad, 0);
+    const precio = totalPares * horma.precio;
+
+    this.elementosAgregados[index] = {
+      horma_id: hormaId,
+      horma: horma.nombre,
+      oc: oc,
+      puntos: puntosYcantidadesActualizados,
+      totalPares: totalPares,
+      precio: precio
+    };
+
+    this.calcularSumatoria();
+  }
+}
+
+
+// ******************************************************************************************************
 
   getFolios(cliente_id: any, remision_id: any) {
     this.folios = [];
@@ -214,25 +562,37 @@ export class RemisionesComponent implements OnInit {
   }
 
   calcularSumatoria() {
-    this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
-      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
-      const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
-      return sum + totalPares;
+    if(this.remisionEditada.cliente_id != 36) {
+      this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
+        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
+        const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
+        return sum + totalPares;
+      }, 0);
+
+      const precioSum = this.selectedFolios.reduce((sum, folioObj) => {
+        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
+        const precio = parseFloat(selectedFolio?.precio || '0');
+        return sum + precio;
+      }, 0);
+
+      this.formattedPrecioSum = precioSum.toFixed(2);
+    } else {
+      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => {
+        const totalPares = parseInt(elem.totalPares.toString().replace(/,/g, ''), 10);
+        return sum + totalPares;
     }, 0);
 
-    let precioSum = this.selectedFolios.reduce((sum, folioObj) => {
-      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
-      const precio = parseFloat(selectedFolio?.precio || '0');
-      return sum + precio;
-    }, 0);
-
-    precioSum += parseFloat(this.remisionEditada.extra || '0');
-
-    this.formattedPrecioSum = precioSum.toFixed(2);
+    this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => {
+        const precio = parseFloat(elem.precio.toString().replace(/,/g, ''));
+        return sum + precio;
+    }, 0).toFixed(2);
+      console.log("Precio final: ", this.formattedPrecioSum);
+      console.log("Total pares: ", this.totalParesSum);
+    }
   }
-
   
   editarRemision() {
+    if (this.remisionEditada.cliente_id != 36) {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
         confirmButton: "btn btn-warning",
@@ -248,35 +608,99 @@ export class RemisionesComponent implements OnInit {
       cancelButtonText: "No, cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
-
         let formData = new FormData();
-        formData.append('id', this.remisionEditada.id);
-        formData.append('fecha', this.remisionEditada.fecha);
-        formData.append('cliente_id', this.remisionEditada.cliente_id.toUpperCase());
-        formData.append('total_pares', this.totalParesSum);
-        formData.append('precio_final', this.formattedPrecioSum);
-        formData.append('folios', JSON.stringify(this.selectedFolios));
-        console.log("formData", JSON.stringify(this.selectedFolios));
+          formData.append('id', this.remisionEditada.id);
+          formData.append('fecha', this.remisionEditada.fecha);
+          formData.append('cliente_id', this.remisionEditada.cliente_id.toUpperCase());
+          formData.append('total_pares', this.totalParesSum);
+          formData.append('precio_final', this.formattedPrecioSum);
+          formData.append('folios', JSON.stringify(this.selectedFolios));
+          console.log("formData", JSON.stringify(this.selectedFolios));
 
-        if (this.remisionEditada.extra) {
-          formData.append('extra', this.remisionEditada.extra.toFixed(2));
-        }
-        if (this.remisionEditada.descripcion) {
-          formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
-        }
-
-        this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
-          swalWithBootstrapButtons.fire({
-            title: "¡Editada!",
-            text: "La remisión ha sido editada exitosamente.",
-            icon: "success"
-          });
-          if (event.status == 'success') {
-            this.obtenerRemisiones();
+          if (this.remisionEditada.extra) {
+            formData.append('extra', this.remisionEditada.extra.toFixed(2));
           }
-        });
-      }
-    });
+          if (this.remisionEditada.descripcion) {
+            formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
+          }
+
+          this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
+            swalWithBootstrapButtons.fire({
+              title: "¡Editada!",
+              text: "La remisión ha sido editada exitosamente.",
+              icon: "success"
+            });
+            if (event.status == 'success') {
+              this.obtenerRemisiones();
+            }
+          },
+          (error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Hubo un error al editar la remisión. Inténtalo más tarde."
+            });
+          });
+        }
+      });
+    } else if (this.remisionEditada.cliente_id == 36 && this.elementosAgregados && this.elementosAgregados.length > 0) {
+      const swalWithBootstrapButtons = Swal.mixin({
+        customClass: {
+          confirmButton: "btn btn-warning",
+          cancelButton: "btn btn-secondary"
+        }
+      });
+  
+      swalWithBootstrapButtons.fire({
+        title: "¿Desea editar la remisión?",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "¡Sí, editar!",
+        cancelButtonText: "No, cancelar",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          let formData = new FormData();
+          formData.append('id', this.remisionEditada.id);
+          formData.append('fecha', this.remisionEditada.fecha);
+          formData.append('cliente_id', this.remisionEditada.cliente_id.toUpperCase());
+          formData.append('total_pares', this.totalParesSum);
+          formData.append('precio_final', this.formattedPrecioSum);
+          formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
+          console.log("JSON elementosAgregados", JSON.stringify(this.elementosAgregados))
+
+          if (this.remisionEditada.extra) {
+            formData.append('extra', this.remisionEditada.extra.toFixed(2));
+          }
+          if (this.remisionEditada.descripcion) {
+            formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
+          }
+
+          this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
+            swalWithBootstrapButtons.fire({
+              title: "¡Editada!",
+              text: "La remisión ha sido editada exitosamente.",
+              icon: "success"
+            });
+            if (event.status == 'success') {
+              this.obtenerRemisiones();
+            }
+          },
+          (error) => {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Hubo un error al editar la remisión. Inténtalo más tarde."
+            });
+          });
+        }
+      });  
+    } else {
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            text: "El formulario está incompleto. Por favor, completa todos los campos.",
+          });
+        }
   }
 
   eliminarRemision(id: any) {

@@ -120,7 +120,7 @@
                                                         <td>{{ elemento.totalPares }}</td>
                                                         <td>$ {{ elemento.precio }}</td>
                                                         <td> 
-                                                            <a (click)="cargarElementoParaEditar(index)"class="btn btn-warning">
+                                                            <a (click)="cargarElementoParaEditar(index)" class="btn btn-warning">
                                                                 <i class="fa fa-edit"></i>
                                                             </a>
                                                             <a (click)="eliminarElemento(index)" class="btn btn-danger">
@@ -175,7 +175,7 @@
                                 </div>
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value != 36">
-                                    <div class="col-md-6">
+                                    <div class="col-md-12">
                                         <div class="form-group">
                                             <label class="control-label">Folios</label>
                                             <div class="tags-container" formArrayName="folios">

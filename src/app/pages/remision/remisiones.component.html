@@ -143,35 +143,133 @@
                                                         </select>
                                                     </div>
                                                 </div>
+                                            </div>
                                                 
-                                                
-                                                    <div class="col-md-12">
-                                                        <div class="form-group">
-                                                            <div class="checkbox">
-                                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
-                                                                <label for="extra">Extra</label>
-                                                            </div>
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <div class="checkbox">
+                                                            <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                            <label for="extra">Extra</label>
                                                         </div>
-                                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
-                                                            <div class="row">
-                                                                <div class="col-md-6">
-                                                                    <label class="control-label">Cantidad</label>
-                                                                    <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra" (change)="calcularSumatoria();">
-                                                                </div>
-                                                                <div class="col-md-6">
-                                                                    <label class="control-label">Descripción</label>
-                                                                    <input type="text" class="form-control text-uppercase" name="descripcion" [(ngModel)]="remisionEditada.descripcion">
-                                                                </div>
+                                                    </div>
+                                                    <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Cantidad</label>
+                                                                <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra" (change)="calcularSumatoria();">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Descripción</label>
+                                                                <input type="text" class="form-control text-uppercase" name="descripcion" [(ngModel)]="remisionEditada.descripcion">
                                                             </div>
                                                         </div>
                                                     </div>
-                                                
+                                                </div>
+                                            </div>
 
+                                            <div class="row" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-9">
+                                                    <p>Resumen de Puntos y Cantidades Anteriores</p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <div class="form-actions">
+                                                            <button type="button" class="btn btn-primary"
+                                                                (click)="agregarElemento()">
+                                                                <i class="fa fa-plus"></i> Agregar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Horma</th>
+                                                                <th>Orden de Compra</th>
+                                                                <th>Puntos</th>
+                                                                <th>Total de Pares</th>
+                                                                <th>Precio</th>
+                                                                <th>Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                    <tbody>
+                                                        <ng-container *ngFor="let elemento of elementosAgregados; let index = index">
+                                                            <tr>
+                                                                <td>{{elemento.horma}}</td>
+                                                                <td>{{elemento.oc}}</td>
+                                                                <td>
+                                                                    <table class="detalle-puntos-table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <ng-container>
+                                                                                    <td class="punto" *ngFor="let punto of elemento.puntos">{{punto.punto}}</td>
+                                                                                </ng-container>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <ng-container>
+                                                                                    <td class="cantidad" *ngFor="let punto of elemento.puntos">{{punto.cantidad}}</td>
+                                                                                </ng-container>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                <td>{{elemento.totalPares}}</td>
+                                                                <td>$ {{elemento.precio}}</td>
+                                                                <td> 
+                                                                    <a (click)="cargarElementoParaEditar(index)" class="btn btn-warning">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </a>
+                                                                    <a (click)="eliminarElemento(index)" class="btn btn-danger">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                    
+                                            <div class="row" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Horma</label>
+                                                        <select class="form-control text-uppercase" name="horma_id" id="horma_id">
+                                                            <option value="" disabled>Seleccione una horma</option>
+                                                            <option *ngFor="let datos of hormas" [value]="datos.id">
+                                                                {{datos.nombre}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="noHormas" class="text-danger">
+                                                            No hay hormas que coincidan con el cliente
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                        
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Orden de Compra</label>
+                                                        <input type="text" class="form-control text-uppercase" name="oc" id="oc">
+                                                    </div>
+                                                </div>
+                    
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Total de Pares</label>
+                                                        <input type="text" class="form-control" name="total" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                
+                                            <div class="row p-t-20" *ngIf="remisionEditada.cliente_id != 36">
                                                 <div class="col-md-12">
                                                     <div class="form-group">
                                                         <label class="control-label">Folios</label>
                                                         <div class="tags-container">
-                                                            <div *ngFor="let dato of folios" class="tag" [class.selected]="isSelected(dato.folio)" (click)="toggleSelection(dato.folio, dato.oc)">
+                                                            <div *ngFor="let dato of folios" class="tag" 
+                                                                [class.selected]="isSelected(dato.folio)" 
+                                                                (click)="toggleSelection(dato.folio, dato.oc)">
                                                                 {{ dato.folio }}
                                                             </div>
                                                         </div>
@@ -181,14 +279,28 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
 
+                                            <div class="row p-t-20" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-12">
+                                                    <table class="miTabla">
+                                                        <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                                            <td *ngFor="let item of fila">
+                                                                <div class="punto">{{item.vista}}</div>
+                                                                <hr class="linea">
+                                                                <input [(ngModel)]="item.cantidad"
+                                                                    [ngModelOptions]="{standalone: true}" type="number" min="0"
+                                                                    class="cantidad">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
 
-                        
-                                        <div class="form-actions">
-                                            <button class="btn btn-success" (click)="editarRemision();">
-                                                <i class="fa fa-check"></i> Guardar
-                                            </button>
+                                            <div class="form-actions">
+                                                <button class="btn btn-success" (click)="editarRemision();">
+                                                    <i class="fa fa-check"></i> Guardar
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>

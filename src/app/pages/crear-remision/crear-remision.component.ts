@@ -14,7 +14,7 @@ import Swal from 'sweetalert2';
 })
 export class CrearRemisionComponent {
 
-  puntosYcantidades: any[][] = []; // Matriz de puntos y cantidades
+  puntosYcantidades: any[][] = [];
 
   hormas: any[] = [];
   horma: any = {};
@@ -37,8 +37,6 @@ export class CrearRemisionComponent {
 
   totalParesSum: any;
   formattedPrecioSum: any;
-
-  
   
   constructor(private clientesService: ClientesService, public remisionesService: RemisionesService, 
       private hormasService: HormasService, public router: Router, private fb: FormBuilder) {
@@ -68,25 +66,49 @@ export class CrearRemisionComponent {
     if (this.remisionForm.get('horma_id')?.value) {
       const puntosYCantidadesFiltrados = this.puntosYcantidades.flatMap(row =>
         row.filter(item => item.cantidad !== 0)
-          .map(item => ({ vista: item.vista, punto: item.punto, cantidad: item.cantidad.toLocaleString() }))
+          .map(item => ({ vista: item.vista, punto: item.punto, cantidad: item.cantidad }))
       );
   
-      // Verificar si hay al menos un punto con cantidad diferente de 0
       const tieneCantidadValida = puntosYCantidadesFiltrados.length > 0;
   
       if (tieneCantidadValida) {
-        const elementos = {
-          horma_id: this.horma.id,
-          horma: this.horma.nombre,
-          oc: this.remisionForm.get('oc')?.value.toUpperCase(),
-          puntosYcantidades: puntosYCantidadesFiltrados,
-          totalPares: Number(this.total).toLocaleString(),
-          precio: (Number(this.total) * this.horma.precio).toLocaleString()
-        };
-        this.elementosAgregados.push(elementos);
+        const hormaId = this.horma.id;
+        const hormaNombre = this.horma.nombre;
+        const oc = this.remisionForm.get('oc')?.value.toUpperCase();
+        const totalPares = Number(this.total);
+        const precio = Number(this.total) * Number(this.horma.precio);
+  
+        let hormaExistente = this.elementosAgregados.find((h: { horma_id: any; }) => h.horma_id === hormaId);
+  
+        if (hormaExistente) {
+          hormaExistente.totalPares += totalPares;
+          hormaExistente.precio += precio;
+          hormaExistente.oc = oc;
+  
+          puntosYCantidadesFiltrados.forEach((nuevoPunto: { punto: number; cantidad: number; }) => {
+            let puntoExistente = hormaExistente.puntosYcantidades.find((p: { punto: number; }) => p.punto === nuevoPunto.punto);
+            if (puntoExistente) {
+              puntoExistente.cantidad += nuevoPunto.cantidad;
+            } else {
+              hormaExistente.puntosYcantidades.push(nuevoPunto);
+            }
+          });
+        } else {
+          const elementos = {
+            horma_id: hormaId,
+            horma: hormaNombre,
+            oc: oc,
+            puntosYcantidades: puntosYCantidadesFiltrados,
+            totalPares: totalPares.toLocaleString(),
+            precio: precio.toLocaleString()
+          };
+          this.elementosAgregados.push(elementos);
+        }
+  
         console.log(this.elementosAgregados);
         this.calcularSumatoria();
   
+        this.remisionForm.get('oc')?.reset();
         this.remisionForm.get('horma_id')?.reset();
         this.resetearPuntosYCantidades();
       } else {
@@ -105,7 +127,7 @@ export class CrearRemisionComponent {
     }
   }
   
-
+  
   eliminarElemento(index: number): void {
     const swalWithBootstrapButtons = Swal.mixin({
       customClass: {
@@ -194,13 +216,11 @@ export class CrearRemisionComponent {
         oc: elemento.oc,
     });
 
-    // Generar opciones para el select de hormas
     let opcionesHormas = '';
     this.hormas.forEach(horma => {
         opcionesHormas += `<option value="${horma.id}" ${horma.id === elemento.horma_id ? 'selected' : ''}>${horma.nombre}</option>`;
     });
 
-    // Generar HTML para la tabla de puntos
     let puntosTableHtml = '';
     let puntoInicio = 15;
     while (puntoInicio <= 32.5) {
@@ -212,7 +232,6 @@ export class CrearRemisionComponent {
         `;
         puntoInicio += 0.5;
 
-        // Agregar línea adicional para punto 1/2
         if (puntoInicio <= 32.5) {
             puntosTableHtml += `
                 <tr>
@@ -223,13 +242,11 @@ export class CrearRemisionComponent {
             puntoInicio += 0.5;
         }
 
-        // Agregar fila de separación cada 6 puntos
         if ((puntoInicio - 15) % 3 === 0 && puntoInicio <= 32.5) {
             puntosTableHtml += `<tr><td colspan="2"><hr></td></tr>`;
         }
     }
 
-    // Abrir SweetAlert con el formulario y la tabla de puntos
     Swal.fire({
         title: 'Editar Elemento',
         html: `
@@ -281,47 +298,31 @@ export class CrearRemisionComponent {
     });
 }
 
-
-
-
-
-
 actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidadesActualizados: any[]): void {
-  // Calcular total de pares
   let totalPares = 0;
   puntosYcantidadesActualizados.forEach(item => {
       totalPares += item.cantidad;
   });
 
-  // Calcular precio total
   const precio = (totalPares * this.hormas.find(horma => horma.id === hormaId)?.precio || 0).toLocaleString();
 
-  // Actualizar el elemento en el array
   this.elementosAgregados[index] = {
       horma_id: hormaId,
       horma: this.hormas.find(horma => horma.id === hormaId)?.nombre || '',
       oc: oc,
       puntosYcantidades: puntosYcantidadesActualizados,
-      totalPares: totalPares.toLocaleString(), // Ajustar el formato si es necesario
+      totalPares: totalPares.toLocaleString(),
       precio: precio
   };
 
-  // Mostrar mensaje de éxito
   Swal.fire('Actualizado', 'El elemento ha sido actualizado correctamente.', 'success');
 
-  // Recalcular sumatoria si es necesario
   this.calcularSumatoria();
 
-  // Resetear formulario y puntos y cantidades si es necesario
   this.remisionForm.get('horma_id')?.reset();
   this.resetearPuntosYCantidades();
 }
 
-
-
-
-
-// Función para obtener los puntos y cantidades actualizados desde la tabla del SweetAlert
 obtenerPuntosYCantidadesActualizados(): any[] {
   const puntosYCantidadesActualizados = [];
 
@@ -337,7 +338,6 @@ obtenerPuntosYCantidadesActualizados(): any[] {
 
       puntoInicio += 0.5;
 
-      // Agregar línea adicional para punto 1/2
       if (puntoInicio <= 32.5) {
           const inputPuntoMedio = document.getElementById(`punto_1/2_${puntoInicio}`) as HTMLInputElement;
           if (inputPuntoMedio) {
@@ -349,11 +349,9 @@ obtenerPuntosYCantidadesActualizados(): any[] {
           puntoInicio += 0.5;
       }
   }
-
   return puntosYCantidadesActualizados;
 }
 
-// Función para calcular el total de pares desde los puntos y cantidades actualizados
 calcularTotalParesA(puntosYCantidades: any[]): string {
   let totalPares = 0;
   puntosYCantidades.forEach(item => {
@@ -362,13 +360,6 @@ calcularTotalParesA(puntosYCantidades: any[]): string {
   return totalPares.toLocaleString();
 }
 
-// Función para calcular el precio total desde los puntos y cantidades actualizados
-calcularPrecioTotal(puntosYCantidades: any[]): string {
-  // Lógica para calcular el precio total basado en los puntos y cantidades actualizados
-  return ''; // Implementa la lógica necesaria
-}
-
-// Método para obtener la cantidad de un punto específico
 getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
   const puntoCantidad = puntosYcantidades.find(pc => pc.punto === punto);
   return puntoCantidad ? puntoCantidad.cantidad : 0;
@@ -474,9 +465,18 @@ getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
 
       this.formattedPrecioSum = precioSum.toFixed(2);
     } else {
-      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => sum + parseInt(elem.totalPares, 10), 0);
-      this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => sum + parseFloat(elem.precio), 0);
-
+      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => {
+        const totalParesSinComas = elem.totalPares.replace(/,/g, '');
+        const totalPares = parseInt(totalParesSinComas, 10);
+        return sum + totalPares;
+    }, 0);
+      this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => {
+        const precioSinComas = elem.precio.replace(/,/g, '');
+        const precio = parseFloat(precioSinComas);
+        return sum + precio;
+    }, 0).toFixed(2);
+      console.log("Precio final: ", this.formattedPrecioSum);
+      console.log("Total pares: ", this.totalParesSum);
     }
   }
 
@@ -532,7 +532,7 @@ getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
             });
           }
         });
-      } else if (this.fechaRemision && this.remisionForm.get('cliente_id')?.value && this.remisionForm.get('cliente_id')?.value == 36) {
+      } else if (this.fechaRemision && this.remisionForm.get('cliente_id')?.value && this.remisionForm.get('cliente_id')?.value == 36 && this.elementosAgregados && this.elementosAgregados.length > 0) {
         const swalWithBootstrapButtons = Swal.mixin({
           customClass: {
             confirmButton: "btn btn-success",
