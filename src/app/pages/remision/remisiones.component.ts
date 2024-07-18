@@ -259,10 +259,8 @@ export class RemisionesComponent implements OnInit {
               acc.push(horma);
             }
           
-            // Convertir el punto a un formato adecuado, por ejemplo, dos decimales
             const punto = typeof detalle.punto === 'number' ? detalle.punto.toFixed(2) : detalle.punto.toString();
           
-            // Verificar si el punto ya existe en la lista de puntos para evitar duplicados
             const existingPunto = horma.puntos.find((p: { punto: string; }) => p.punto === punto);
             if (existingPunto) {
               existingPunto.cantidad += +detalle.cantidad;
@@ -354,7 +352,6 @@ export class RemisionesComponent implements OnInit {
 
             this.calcularSumatoria();
 
-            // Reset the form elements
             hormaIdElement.value = '';
             if (ocElement) ocElement.value = '';
             this.resetearPuntosYCantidades();
@@ -406,7 +403,7 @@ eliminarElemento(index: number): void {
 
 cargarElementoParaEditar(index: number): void {
   const elemento = this.elementosAgregados[index];
-  console.log('Elemento para editar:', elemento);  // Verifica los datos aquí
+  console.log('Elemento para editar:', elemento);
 
   let opcionesHormas = '';
   this.hormas.forEach(horma => {
@@ -476,9 +473,9 @@ cargarElementoParaEditar(index: number): void {
 }
 
 getPuntoCantidad(puntos: any[], punto: number): number {
-  console.log('Buscando cantidad para punto:', punto, 'en puntos:', puntos);  // Verifica los datos aquí
-  const puntoStr = punto.toFixed(2); // Convierte el número a una cadena con dos decimales
-  const puntoObj = puntos.find(p => p.punto === puntoStr); // Busca por coincidencia exacta en cadena
+  console.log('Buscando cantidad para punto:', punto, 'en puntos:', puntos);
+  const puntoStr = punto.toFixed(2);
+  const puntoObj = puntos.find(p => p.punto === puntoStr);
   console.log('Cantidad encontrada:', puntoObj ? puntoObj.cantidad : 0);
   return puntoObj ? puntoObj.cantidad : 0;
 }
