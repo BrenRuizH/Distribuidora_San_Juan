@@ -526,7 +526,6 @@ cargarElementoParaEditar(index: number): void {
     }
 </style>
 
-
           <form>
               <div class="form-group mb-3">
                   <label for="horma_id1" class="form-label">Horma</label>
@@ -585,8 +584,8 @@ cargarElementoParaEditar(index: number): void {
 
 getPuntoCantidad(puntos: any[], punto: number): number {
   console.log('Buscando cantidad para punto:', punto, 'en puntos:', puntos);
-  const puntoStr = punto.toFixed(2);
-  const puntoObj = puntos.find(p => p.punto === puntoStr);
+  const puntoStr = punto.toFixed(2); // Asegúrate de que esto coincida con el formato en puntos
+  const puntoObj = puntos.find(p => parseFloat(p.punto) === parseFloat(puntoStr));
   console.log('Cantidad encontrada:', puntoObj ? puntoObj.cantidad : 0);
   return puntoObj ? puntoObj.cantidad : 0;
 }
@@ -595,9 +594,15 @@ obtenerPuntosYCantidadesActualizados(): any[] {
   const puntosYcantidadesActualizados = [];
   let puntoInicio = 15;
   while (puntoInicio <= 32.5) {
-    const cantidad = +((document.getElementById(`punto_${puntoInicio}`) as HTMLInputElement).value || 0);
-    if (cantidad > 0) {
-      puntosYcantidadesActualizados.push({ punto: puntoInicio, cantidad: cantidad });
+    const inputElement = document.getElementById(`punto_${puntoInicio}`) as HTMLInputElement;
+    if (inputElement) {
+      const cantidad = +((inputElement.value) || 0);
+      console.log(`Punto: ${puntoInicio}, Cantidad: ${cantidad}`);
+      if (cantidad > 0) {
+        puntosYcantidadesActualizados.push({ punto: puntoInicio, cantidad: cantidad });
+      }
+    } else {
+      console.log(`Elemento no encontrado para punto: ${puntoInicio}`);
     }
     puntoInicio += 0.5;
   }
