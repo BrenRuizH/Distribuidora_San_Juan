@@ -505,11 +505,16 @@ getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
             formData.append('precio_final', this.formattedPrecioSum);
             formData.append('folios', JSON.stringify(this.selectedFolios));
 
-            if (this.remisionForm.get('cantidad')?.value) {
+            if (this.remisionForm.get('cantidad')?.value && this.remisionForm.get('descripcion')?.value) {
               formData.append('extra', this.remisionForm.get('cantidad')?.value);
-            }
-            if (this.remisionForm.get('descripcion')?.value) {
               formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
+            } else if (this.remisionForm.get('cantidad')?.value || this.remisionForm.get('descripcion')?.value) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debe completar ambos campos para agregar un extra.",
+              });
+              return;
             }
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
@@ -556,13 +561,18 @@ getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
             formData.append('precio_final', this.formattedPrecioSum);
             formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
 
-            if (this.remisionForm.get('cantidad')?.value) {
+            if (this.remisionForm.get('cantidad')?.value && this.remisionForm.get('descripcion')?.value) {
               formData.append('extra', this.remisionForm.get('cantidad')?.value);
-            }
-            if (this.remisionForm.get('descripcion')?.value) {
               formData.append('descripcion', this.remisionForm.get('descripcion')?.value.toUpperCase());
+            } else if (this.remisionForm.get('cantidad')?.value || this.remisionForm.get('descripcion')?.value) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debe completar ambos campos para agregar un extra.",
+              });
+              return;
             }
-            
+
             console.log(this.remisionForm);
             
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{

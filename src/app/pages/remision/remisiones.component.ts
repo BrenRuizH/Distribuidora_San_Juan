@@ -70,6 +70,9 @@ export class RemisionesComponent implements OnInit {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerRemisiones();
+    
+      
+    
   }
 
   inicializarPuntosYCantidades(): void {
@@ -128,6 +131,7 @@ export class RemisionesComponent implements OnInit {
   seleccionar(event : Event ){
     const check = event.target as HTMLInputElement;
     this.mostrarInputs = check.checked;
+    
   }
 
   seleccionarTemporalidad(opcion: string) {
@@ -231,6 +235,15 @@ export class RemisionesComponent implements OnInit {
       this.remisionEditada2 = resp.items2;
       this.getHormas(this.remisionEditada.cliente_id)
       this.getFolios(this.remisionEditada.cliente_id, this.remisionEditada.id);
+
+      if (this.remisionEditada.extra) {
+        this.mostrarInputs = true;
+      
+        const extraCheckbox = document.getElementById('extra') as HTMLInputElement;
+        if (extraCheckbox) {
+          extraCheckbox.checked = true;
+        }
+      }
 
       if (Array.isArray(this.remisionEditada2) && this.remisionEditada2.length > 0) {
         if (this.remisionEditada.cliente_id != 36) {
@@ -425,7 +438,7 @@ cargarElementoParaEditar(index: number): void {
 
     tablaHtml += `<tr>${puntosFila}</tr>`;
     tablaHtml += `<tr>${inputsFila}</tr>`;
-}
+  }
 
 Swal.fire({
   title: 'Editar Elemento',
@@ -476,9 +489,7 @@ Swal.fire({
   if (result.isConfirmed) {
       const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
       this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
-  }
-});
-
+  }});
 }
 
 getPuntoCantidad(puntos: any[], punto: number): number {
@@ -623,11 +634,16 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
           formData.append('folios', JSON.stringify(this.selectedFolios));
           console.log("formData", JSON.stringify(this.selectedFolios));
 
-          if (this.remisionEditada.extra) {
-            formData.append('extra', this.remisionEditada.extra.toFixed(2));
-          }
-          if (this.remisionEditada.descripcion) {
+          if (this.remisionEditada.extra && this.remisionEditada.descripcion) {
+            formData.append('extra', this.remisionEditada.extra);
             formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
+          } else if (this.remisionEditada.extra || this.remisionEditada.descripcion) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Debe completar ambos campos para agregar un extra.",
+            });
+            return;
           }
 
           this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
@@ -674,12 +690,17 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
           formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
           console.log("JSON elementosAgregados", JSON.stringify(this.elementosAgregados))
 
-          if (this.remisionEditada.extra) {
-            formData.append('extra', this.remisionEditada.extra.toFixed(2));
-          }
-          if (this.remisionEditada.descripcion) {
-            formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
-          }
+            if (this.remisionEditada.extra && this.remisionEditada.descripcion) {
+              formData.append('extra', this.remisionEditada.extra);
+              formData.append('descripcion', this.remisionEditada.descripcion.toUpperCase());
+            } else if (this.remisionEditada.extra || this.remisionEditada.descripcion) {
+              Swal.fire({
+                icon: "error",
+                title: "Oops...",
+                text: "Debe completar ambos campos para agregar un extra.",
+              });
+              return;
+            }
 
           this.remisionesService.agregarRemision('editar.php', formData).subscribe((event: any) => {
             swalWithBootstrapButtons.fire({
