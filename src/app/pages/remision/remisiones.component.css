@@ -56,4 +56,16 @@
     padding: 5px;
     text-align: center;
   }
+
+  .swal-wide {
+    width: 1500%; /* Ajusta este valor según tus necesidades */
+    max-width: 1000px; /* Ajusta este valor según tus necesidades */
+}
+
+.swal2-popup .form-control {
+    width: auto; /* Esto ajusta los inputs a un tamaño automático */
+    min-width: 80px; /* Ajusta este valor según tus necesidades */
+}
+
+
   

@@ -403,73 +403,82 @@ eliminarElemento(index: number): void {
 
 cargarElementoParaEditar(index: number): void {
   const elemento = this.elementosAgregados[index];
-  console.log('Elemento para editar:', elemento);
 
   let opcionesHormas = '';
   this.hormas.forEach(horma => {
       opcionesHormas += `<option value="${horma.id}" ${horma.id === elemento.horma_id ? 'selected' : ''}>${horma.nombre}</option>`;
   });
 
-  let puntosTableHtml = '';
+  let tablaHtml = '';
   let puntoInicio = 15;
+
   while (puntoInicio <= 32.5) {
-      const cantidad = this.getPuntoCantidad(elemento.puntos, puntoInicio);
-      puntosTableHtml += `
-          <tr>
-              <td>${puntoInicio}</td>
-              <td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${cantidad}" /></td>
-          </tr>`;
-      puntoInicio += 0.5;
-  }
+    let puntosFila = '';
+    let inputsFila = '';
 
-  Swal.fire({
-      title: 'Editar Elemento',
-      html: `
-          <form>
-              <div class="form-group mb-3">
-                  <label for="horma_id" class="form-label">Horma</label>
-                  <select class="form-select" id="horma_id">
-                      ${opcionesHormas}
-                  </select>
-              </div>
-              <div class="form-group mb-3">
-                  <label for="oc" class="form-label">Orden de Compra</label>
-                  <input type="text" class="form-control" id="oc" value="${elemento.oc}">
-              </div>
-          </form>
-          <hr>
-          <h5 class="mt-4">Tabla de Puntos</h5>
-          <div style="overflow-x: auto;">
-              <table class="table table-bordered table-striped mt-2">
-                  <thead class="table-dark">
-                      <tr>
-                          <th>Punto</th>
-                          <th>Cantidad</th>
-                      </tr>
-                  </thead>
-                  <tbody>
-                      ${puntosTableHtml}
-                  </tbody>
-              </table>
+    for (let i = 0; i < 3 && puntoInicio <= 32.5; i += 0.5) {
+        puntosFila += `<th>${puntoInicio}</th>`;
+        const cantidad = this.getPuntoCantidad(elemento.puntos, puntoInicio);
+        inputsFila += `<td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${cantidad}" style="width: 100px;" /></td>`;
+        puntoInicio += 0.5;
+    }
+
+    tablaHtml += `<tr>${puntosFila}</tr>`;
+    tablaHtml += `<tr>${inputsFila}</tr>`;
+}
+
+Swal.fire({
+  title: 'Editar Elemento',
+  html: `
+      <form>
+          <div class="form-group mb-3">
+              <label for="horma_id1" class="form-label">Horma</label>
+              <select class="form-select" id="horma_id1">
+                  ${opcionesHormas}
+              </select>
           </div>
-      `,
-      showCancelButton: true,
-      confirmButtonColor: '#FFA500',
-      confirmButtonText: 'Actualizar',
-      cancelButtonText: 'Cancelar',
-      preConfirm: () => {
-          const hormaId = (document.getElementById('horma_id') as HTMLSelectElement).value;
-          const oc = (document.getElementById('oc') as HTMLInputElement).value.toUpperCase();
-          const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+          <div class="form-group mb-3">
+              <label for="oc1" class="form-label">Orden de Compra</label>
+              <input type="text" class="form-control" id="oc1" value="${elemento.oc}">
+          </div>
+      </form>
+      <hr>
+      <h5 class="mt-4">Tabla de Puntos</h5>
+      <div style="overflow-x: auto;">
+          <table class="table table-bordered table-striped mt-2">
+              <thead class="table-dark">
+                  ${tablaHtml}
+              </thead>
+          </table>
+      </div>
+  `,
+  showCancelButton: true,
+  confirmButtonColor: '#FFA500',
+  confirmButtonText: 'Actualizar',
+  cancelButtonText: 'Cancelar',
+  customClass: {
+      container: 'swal-wide'
+  },
+  didOpen: () => {
+      const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+      inputs.forEach(input => {
+          const htmlInput = input as HTMLInputElement;
+          htmlInput.addEventListener('focus', () => htmlInput.select());
+      });
+  },
+  preConfirm: () => {
+      const hormaId = (document.getElementById('horma_id1') as HTMLSelectElement).value;
+      const oc = (document.getElementById('oc1') as HTMLInputElement).value.toUpperCase();
+      const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+      return { hormaId, oc, puntosYcantidadesActualizados };
+  }
+}).then((result) => {
+  if (result.isConfirmed) {
+      const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
+      this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
+  }
+});
 
-          return { hormaId, oc, puntosYcantidadesActualizados };
-      }
-  }).then((result) => {
-      if (result.isConfirmed) {
-          const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
-          this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
-      }
-  });
 }
 
 getPuntoCantidad(puntos: any[], punto: number): number {
