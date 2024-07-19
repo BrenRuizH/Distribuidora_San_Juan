@@ -412,73 +412,163 @@ cargarElementoParaEditar(index: number): void {
   let tablaHtml = '';
   let puntoInicio = 15;
 
-  while (puntoInicio <= 32.5) {
-    let puntosFila = '';
-    let inputsFila = '';
+  while (puntoInicio <= 32) {
+      // Fila para puntos enteros
+      tablaHtml += `
+          <tr>
+              <td>${puntoInicio}</td>
+              <td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${this.getPuntoCantidad(elemento.puntos, puntoInicio)}" style="width: 80px; text-align: right;" /></td>
+          </tr>
+      `;
 
-    for (let i = 0; i < 3 && puntoInicio <= 32.5; i += 0.5) {
-        puntosFila += `<th>${puntoInicio}</th>`;
-        const cantidad = this.getPuntoCantidad(elemento.puntos, puntoInicio);
-        inputsFila += `<td><input type="number" class="form-control" id="punto_${puntoInicio}" value="${cantidad}" style="width: 100px;" /></td>`;
-        puntoInicio += 0.5;
+      // Fila para puntos medios
+      if (puntoInicio + 0.5 <= 32.5) {
+          tablaHtml += `
+              <tr>
+                  <td>&nbsp;&nbsp;1/2</td>
+                  <td><input type="number" class="form-control" id="punto_${puntoInicio + 0.5}" value="${this.getPuntoCantidad(elemento.puntos, puntoInicio + 0.5)}" style="width: 80px; text-align: right;" /></td>
+              </tr>
+          `;
+      }
+
+      // Preparar para el siguiente punto
+      puntoInicio += 1;
+  }
+
+  Swal.fire({
+      title: 'Editar Elemento',
+      html: `
+    <style>
+    .swal2-html-container {
+        width: 100%;
+        max-height: 500px; /* Ajusta la altura máxima según sea necesario */
+        overflow-y: auto;
     }
 
-    tablaHtml += `<tr>${puntosFila}</tr>`;
-    tablaHtml += `<tr>${inputsFila}</tr>`;
-}
+    .table-container {
+        overflow-x: auto;
+        max-width: 90%; /* Asegura que no se desborde del contenedor */
+    }
 
-Swal.fire({
-  title: 'Editar Elemento',
-  html: `
-      <form>
-          <div class="form-group mb-3">
-              <label for="horma_id1" class="form-label">Horma</label>
-              <select class="form-select" id="horma_id1">
-                  ${opcionesHormas}
-              </select>
-          </div>
-          <div class="form-group mb-3">
-              <label for="oc1" class="form-label">Orden de Compra</label>
-              <input type="text" class="form-control" id="oc1" value="${elemento.oc}">
-          </div>
-      </form>
-      <hr>
-      <h5 class="mt-4">Tabla de Puntos</h5>
-      <div style="overflow-x: auto;">
-          <table class="table table-bordered table-striped mt-2">
-              <thead class="table-dark">
-                  ${tablaHtml}
-              </thead>
-          </table>
-      </div>
-  `,
-  showCancelButton: true,
-  confirmButtonColor: '#FFA500',
-  confirmButtonText: 'Actualizar',
-  cancelButtonText: 'Cancelar',
-  customClass: {
-      container: 'swal-wide'
-  },
-  didOpen: () => {
-      const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
-      inputs.forEach(input => {
-          const htmlInput = input as HTMLInputElement;
-          htmlInput.addEventListener('focus', () => htmlInput.select());
-      });
-  },
-  preConfirm: () => {
-      const hormaId = (document.getElementById('horma_id1') as HTMLSelectElement).value;
-      const oc = (document.getElementById('oc1') as HTMLInputElement).value.toUpperCase();
-      const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
-      return { hormaId, oc, puntosYcantidadesActualizados };
-  }
-}).then((result) => {
-  if (result.isConfirmed) {
-      const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
-      this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
-  }
-});
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
 
+    table th, table td {
+        padding: 8px;
+        text-align: center;
+        border: 1px solid #dee2e6;
+    }
+
+    table th {
+        background-color: #343a40;
+        color: #ffffff;
+    }
+
+    table td input {
+        width: 80% !important; /* Ajusta el ancho del input dentro de la celda */
+        max-width: 120px !important; /* Ancho máximo del input */
+        box-sizing: border-box;
+        padding: 0.25rem; /* Añade relleno interno para mayor espacio */
+        text-align: left !important; /* Centra el texto dentro del input */
+    }
+
+    table td {
+        vertical-align: middle;
+    }
+
+    .form-group input {
+        width: 90%;
+        box-sizing: border-box; 
+    }
+
+    .form-group.mb-3 {
+        display: flex;
+        flex-direction: column; /* Alinea el contenido verticalmente */
+        align-items: center; /* Centra el contenido horizontalmente */
+        text-align: center; /* Centra el texto dentro del contenedor */
+        margin-bottom: 1rem; /* Espaciado inferior */
+    }
+
+    .form-group.mb-3 label {
+        margin-bottom: 0.5rem; /* Espaciado inferior del label */
+        font-weight: bold; /* Estilo en negrita para el label */
+        color: #343a40; /* Color del texto del label */
+    }
+
+    .form-group.mb-3 select.form-select {
+        width: 100%; /* Ancho completo del contenedor */
+        max-width: 300px; /* Ancho máximo del select */
+        padding: 0.5rem; /* Relleno interno */
+        border: 1px solid #ced4da; /* Borde del select */
+        border-radius: 0.25rem; /* Bordes redondeados */
+        background-color: #ffffff; /* Color de fondo del select */
+        box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Sombra del select */
+    }
+
+    .form-group.mb-3 select.form-select:focus {
+        border-color: #80bdff; /* Color del borde al enfocar */
+        outline: none; /* Quita el contorno de enfoque */
+        box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.25); /* Sombra del select al enfocar */
+    }
+</style>
+
+
+          <form>
+              <div class="form-group mb-3">
+                  <label for="horma_id1" class="form-label">Horma</label>
+                  <select class="form-select" id="horma_id1">
+                      ${opcionesHormas}
+                  </select>
+              </div>
+              <div class="form-group mb-3">
+                  <label for="oc1" class="form-label">Orden de Compra</label>
+                  <input type="text" class="form-control" id="oc1" value="${elemento.oc}">
+              </div>
+          </form>
+          <hr>
+          <h5 class="mt-4">Tabla de Puntos</h5>
+          <div class="table-container">
+              <table class="table table-bordered table-striped mt-2">
+                  <thead class="table-dark">
+                      <tr>
+                          <th>Punto</th>
+                          <th>Cantidad</th>
+                      </tr>
+                  </thead>
+                  <tbody>
+                      ${tablaHtml}
+                  </tbody>
+              </table>
+          </div>
+      `,
+      showCancelButton: true,
+      confirmButtonColor: '#FFA500',
+      confirmButtonText: 'Actualizar',
+      cancelButtonText: 'Cancelar',
+      customClass: {
+          container: 'swal-wide'
+      },
+      didOpen: () => {
+          const inputs = document.querySelectorAll('input[type="number"], input[type="text"]');
+          inputs.forEach(input => {
+              const htmlInput = input as HTMLInputElement;
+              htmlInput.addEventListener('focus', () => htmlInput.select());
+          });
+      },
+      preConfirm: () => {
+          const hormaId = (document.getElementById('horma_id1') as HTMLSelectElement).value;
+          const oc = (document.getElementById('oc1') as HTMLInputElement).value.toUpperCase();
+          const puntosYcantidadesActualizados = this.obtenerPuntosYCantidadesActualizados();
+          return { hormaId, oc, puntosYcantidadesActualizados };
+      }
+  }).then((result) => {
+      if (result.isConfirmed) {
+          const { hormaId, oc, puntosYcantidadesActualizados } = result.value;
+          this.actualizarElemento(index, hormaId, oc, puntosYcantidadesActualizados);
+      }
+  });
 }
 
 getPuntoCantidad(puntos: any[], punto: number): number {
