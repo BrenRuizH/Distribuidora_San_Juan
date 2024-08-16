@@ -35,7 +35,9 @@
                                         <th>Materiales</th>
                                         <th>Observaciones</th>
                                         <th>Cliente</th>
-                                        <th>Precio</th>
+                                        <th>Precio Actual</th>
+                                        <th>Precio Anterior</th>
+                                        <th>Fecha Mod</th>
                                         <th>Editar</th>
                                         <th>Eliminar</th>
                                     </tr>
@@ -132,12 +134,37 @@
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label class="control-label">Precio</label>
+                                                        <label class="control-label">Precio Actual</label>
                                                         <input type="number" class="form-control text-uppercase" name="precio" [(ngModel)]="hormaEditada.precio" placeholder="" required>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Precio Anterior</label>
+                                                        <input type="number" class="form-control text-uppercase" name="precioAnterior" placeholder="" >
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Fecha Mod</label>
+                                                        <input type="date" class="form-control text-uppercase" name="fechaMod" placeholder="">
+                                                    </div>
+                                                </div>
+                                                
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Observaciones por cambio de precio</label>
+                                                        <textarea type="text" class="form-control text-uppercase" name="observaciones"  placeholder="" required></textarea>
                                                     </div>
                                                 </div>
                                                 
                                             </div>
+                                            
+                                            
+
                                             <div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
