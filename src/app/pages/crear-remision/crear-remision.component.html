@@ -42,18 +42,6 @@
                                     </div>
                                 </div>
                                
-
-                                <div class="row p-t-20">
-                                    <div class="col-md-6"></div>
-                                    <div class="col-md-6">
-                                        
-                                        <label class="control-label">SubTotal</label>
-                                        <input type="number" class="form-control text-uppercase" name="subTotal"
-                                        [(ngModel)]="subTotal" [ngModelOptions]="{standalone: true}" readonly>
-                                    </div>
-                                </div>
-                                
-
                                 <div class="row p-t-20">
                                     <div class="col-md-6">
                                         <div class="form-group">
@@ -76,6 +64,12 @@
                                                 </div>
                                             </div>
                                         </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <label class="control-label">Subtotal (Sin Extra)</label>
+                                        <input type="number" class="form-control text-uppercase" name="subTotal"
+                                        [(ngModel)]="subTotal" [ngModelOptions]="{standalone: true}" readonly>
                                     </div>
                                 </div>
 
