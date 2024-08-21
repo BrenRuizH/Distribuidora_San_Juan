@@ -1,0 +1,252 @@
+<div class="page-wrapper">
+    <div class="container-fluid animated fadeIn">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Registrar Remisión</h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h3 class="card-title">Solicitud de Datos de la Remisión</h3>
+                            <form [formGroup]="remisionForm" (ngSubmit)="agregarRemision()">
+                                <hr>
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Fecha de Remisión</label>
+                                            <input type="text" class="form-control" name="fecha_remision"
+                                                [(ngModel)]="fechaRemision" [ngModelOptions]="{standalone: true}"
+                                                readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Cliente</label>
+                                            <select class="form-control text-uppercase" name="cliente_id"
+                                                formControlName="cliente_id"
+                                                (change)="getFolios(remisionForm.get('cliente_id')?.value); getHormas(remisionForm.get('cliente_id')?.value);">
+                                                <option value="" disabled>Seleccione un cliente</option>
+                                                <option *ngFor="let datos of clientes" [value]="datos.id">
+                                                    {{datos.codigo}}
+                                                </option>
+                                            </select>
+                                            <div *ngIf="!isClienteSelected() && (remisionForm.get('cliente_id')?.dirty || remisionForm.get('cliente_id')?.touched)"
+                                                class="text-danger">
+                                                Falta rellenar cliente
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <div class="checkbox">
+                                                <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                <label for="extra">Extra</label>
+                                            </div>
+                                        </div>
+                                        <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Cantidad</label>
+                                                    <input type="number" class="form-control text-uppercase" name="cantidad" formControlName="cantidad">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Descripción</label>
+                                                    <input type="text" class="form-control text-uppercase" name="descripcion" formControlName="descripcion">
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-9">
+                                        <p>Resumen de Puntos y Cantidades Anteriores</p>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="form-group">
+                                            <div class="form-actions">
+                                                <button type="button" class="btn btn-primary"
+                                                    (click)="agregarElemento()">
+                                                    <i class="fa fa-plus"></i> Agregar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                        <hr>
+                                        <table class="table">
+                                            <thead>
+                                                <tr>
+                                                    <th>Horma</th>
+                                                    <th>Orden de Compra</th>
+                                                    <th>Puntos</th>
+                                                    <th>Total de Pares</th>
+                                                    <th>Precio</th>
+                                                    <th>Acciones</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <ng-container *ngFor="let elemento of elementosAgregados; let index = index">
+                                                    <tr>
+                                                        <td>{{ elemento.horma }}</td>
+                                                        <td>{{ elemento.oc }}</td>
+                                                        <td>
+                                                            <table class="detalle-puntos-table">
+                                                                <tbody>
+                                                                    <tr>
+                                                                        <ng-container
+                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="punto">{{ puntoCantidad.punto }}
+                                                                            </td>
+                                                                        </ng-container>
+                                                                    </tr>
+                                                                    <tr>
+                                                                        <ng-container
+                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                            <td class="cantidad">{{
+                                                                                puntoCantidad.cantidad }}</td>
+                                                                        </ng-container>
+                                                                    </tr>
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                        <td>{{ elemento.totalPares }}</td>
+                                                        <td>$ {{ elemento.precio }}</td>
+                                                        <td> 
+                                                            <a (click)="cargarElementoParaEditar(index)" class="btn btn-warning">
+                                                                <i class="fa fa-edit"></i>
+                                                            </a>
+                                                            <a (click)="eliminarElemento(index)" class="btn btn-danger">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    </tr>
+                                                </ng-container>
+                                            </tbody>
+                                        </table>
+
+                                    
+                                </div>
+
+                                <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Horma</label>
+                                            <select class="form-control text-uppercase" name="horma_id"
+                                                formControlName="horma_id"
+                                                (change)="seleccionarHorma(remisionForm.get('horma_id')?.value);"
+                                                [disabled]="!remisionForm.get('cliente_id')?.value || noHormas">
+                                                <option value="" disabled>Seleccione una horma</option>
+                                                <option *ngFor="let datos of hormas" [value]="datos.id">
+                                                    {{datos.nombre}}
+                                                </option>
+                                            </select>
+                                            <div *ngIf="noHormas" class="text-danger">
+                                                No hay hormas que coincidan con el cliente
+                                            </div>
+                                            <div *ngIf="remisionForm.get('horma_id')?.invalid && (remisionForm.get('horma_id')?.dirty || remisionForm.get('horma_id')?.touched)"
+                                                class="text-danger">
+                                                Falta rellenar horma
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Orden de Compra</label>
+                                            <input type="text" class="form-control text-uppercase" name="oc" formControlName="oc">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-12">
+                                        <div class="form-group">
+                                            <label class="control-label">Total de Pares</label>
+                                            <input type="text" class="form-control" name="total" [(ngModel)]="total"
+                                                [ngModelOptions]="{standalone: true}" readonly>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value != 36">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Folios</label>
+                                            <div class="tags-container" formArrayName="folios">
+                                                <div *ngFor="let datos of folios" class="tag"
+                                                    [class.selected]="isSelected(datos.folio)"
+                                                    (click)="toggleSelection(datos)">
+                                                    {{ datos.folio }}
+                                                </div>
+                                            </div>
+                                            <div *ngIf="noFolios" class="text-danger">
+                                                No hay folios que coincidan con el cliente
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group" *ngIf="selectedFolios.length > 0">
+                                            <label class="control-label">Folios Seleccionados</label>
+                                            <table class="table">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Folio</th>
+                                                        <th>Precio Actual</th>
+                                                        <th></th>
+                                                        <th>Precio Anterior</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr *ngFor="let folio of selectedFolios">
+                                                        <td>{{ folio.folio }}</td>
+                                                        <td>{{ folio.precio_actual }}</td>
+                                                        <td [ngClass]="{ 'font-weight-bold': !folio.usarPrecioAnterior }">
+                                                            <label class="switch">
+                                                                <input type="checkbox" [(ngModel)]="folio.usarPrecioAnterior" [ngModelOptions]="{standalone: true}" (change)="actualizarPrecioSeleccionado(folio)">
+                                                                <span class="slider"></span>
+                                                              </label>
+                                                        </td>
+                                                        <td [ngClass]="{ 'font-weight-bold': folio.usarPrecioAnterior }">{{ folio.precio_anterior }}</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>                                    
+                                </div>
+
+                                <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">
+                                    <div class="col-md-12">
+                                        <table class="miTabla">
+                                            <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                                <td *ngFor="let item of fila">
+                                                    <div class="punto">{{item.vista}}</div>
+                                                    <hr class="linea">
+                                                    <input [(ngModel)]="item.cantidad"
+                                                        [ngModelOptions]="{standalone: true}" type="number" min="0"
+                                                        class="cantidad" (change)="calcularTotalPares()">
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-success" (click)="agregarRemision();">
+                                        <i class="fa fa-check"></i> Terminar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

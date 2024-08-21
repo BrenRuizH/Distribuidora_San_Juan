@@ -1,0 +1,131 @@
+<div class="page-wrapper">
+    <div class="container-fluid">            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">                                  
+                                    <h3 class="text-themecolor">Datos de Órdenes de Compra</h3>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <input id="input-search" type="text" class="form-control text-uppercase" name="texto_busqueda" [(ngModel)]="textoBusqueda" (input)="buscarOrdenesCompra()" placeholder="Buscar Órdenes" autocomplete="on">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadHoy" name="temporalidad" value="1" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('1')">
+                                        <label class="custom-radio-label" for="temporalidadHoy">HOY</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadSemana" name="temporalidad" value="2" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('2')">
+                                        <label class="custom-radio-label" for="temporalidadSemana">ESTA SEMANA</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mx-3">
+                                <div class="form-group">
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadMes" name="temporalidad" value="3" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('3')">
+                                        <label class="custom-radio-label" for="temporalidadMes">ESTE MES</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadPersonalizado" name="temporalidad" value="4" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('4')">
+                                        <label class="custom-radio-label" for="temporalidadPersonalizado">PERSONALIZADO</label>
+                                        <div *ngIf="temporalidadSeleccionada === '4'" class="ml-3 d-flex align-items-center">
+                                            <label for="fechaInicio" class="mr-2">Fecha Inicio:</label>
+                                            <input type="date" class="form-control" id="fechaInicio" [(ngModel)]="fechaInicio" [disabled]="temporalidadSeleccionada !== '4'">
+                                            <label for="fechaFin" class="ml-3 mr-2">Fecha Fin:</label>
+                                            <input type="date" class="form-control" id="fechaFin" [(ngModel)]="fechaFin" [disabled]="temporalidadSeleccionada !== '4'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mx-3">
+                                <div class="form-group">
+                                    <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="clienteSeleccionado" required>
+                                        <option value="">Seleccione un cliente</option>
+                                        <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <button type="button" (click)="imprimirReporte()" class="btn btn-success ml-2"><i class="fa fa-print"></i> Imprimir Reporte</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        
+                        <div class="table-responsive animated fadeInDown">
+                            <table class="table full-color-table full-primary-table hover-table">
+                                <thead>
+                                    <tr>
+                                        <th>Folio</th>
+                                        <th>Cliente</th>
+                                        <th>Orden de Compra</th>
+                                        <th>Fecha de Orden</th>
+                                        <th>Fecha de Entrega</th>
+                                        <th>Total de Pares</th>
+                                        <th>Precio</th>
+                                        <th>No. Factura</th>
+                                        <th>Status</th>
+                                        <th>Remision</th>
+                                        <th>Ver más</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let orden of ordenesCompra | paginate: {itemsPerPage: 10, currentPage: p}">
+                                        <td>{{orden.folio}}</td>
+                                        <td>{{orden.codigo}}</td>
+                                        <td>{{orden.orden_compra_c}}</td>
+                                        <td>{{orden.fecha_orden}}</td>
+                                        <td>{{orden.fecha_entrega}}</td>
+                                        <td>{{orden.total_pares | number}}</td>
+                                        <td>${{orden.precio | number}}</td>
+                                        <td (dblclick)="mostrarInput(orden)" *ngIf="!orden.editando">
+                                            {{ orden.facturaNo || 'Doble clic para editar' }}
+                                        </td>
+                                        <td *ngIf="orden.editando">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control text-uppercase" [(ngModel)]="orden.facturaNo">
+                                                <div class="input-group-append">
+                                                    <button class="btn btn-outline-secondary" type="button" (click)="guardarFacturaNo(orden)">
+                                                      <i class="fa fa-check"></i>
+                                                    </button>
+                                                  </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <select [ngClass]="getClaseEstado(orden.status)" (change)="cambiarEstado(orden, $event)">
+                                                <option [selected]="orden.status === 'EN PRODUCCIÓN'" value="EN PRODUCCIÓN">EN PRODUCCIÓN</option>
+                                                <option [selected]="orden.status === 'EN ENTREGA'" value="EN ENTREGA">EN ENTREGA</option>
+                                                <option [selected]="orden.status === 'FACTURADO'" value="FACTURADO">FACTURADO</option>
+                                                <option [selected]="orden.status === 'REMISIONADO'" value="REMISIONADO">REMISIONADO</option>
+                                            </select>
+                                        </td>
+                                        <td>{{orden.remision_id}}</td>
+                                        <td> 
+                                            <a (click)="verDetalles(orden.id);" class="btn btn-info">
+                                                <i class="fa fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>                                        
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>

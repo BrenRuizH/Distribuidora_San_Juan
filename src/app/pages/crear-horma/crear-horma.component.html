@@ -1,0 +1,99 @@
+<div class="page-wrapper">
+    <div class="container-fluid animated fadeIn">
+        <div class="row page-titles">
+            <div class="col-md-5 align-self-center">
+                <h3 class="text-themecolor">Registrar Horma</h3>
+            </div>
+            <div class="">
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="form-body">
+                            <h3 class="card-title">Solicitud de Datos de la Horma</h3>
+                            <form [formGroup]="hormaForm" (ngSubmit)="agregarHorma()">
+                                <hr>
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Horma</label>
+                                            <input type="text" class="form-control text-uppercase" name="nombre" formControlName="nombre">
+                                            <div *ngIf="hormaForm.get('nombre')?.invalid && (hormaForm.get('nombre')?.dirty || hormaForm.get('nombre')?.touched)" class="text-danger">
+                                                Falta rellenar horma
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Cliente</label>
+                                            <select class="form-control text-uppercase" name="cliente_id" formControlName="cliente_id">
+                                                <option value="" disabled>Seleccione un cliente</option>
+                                                <option *ngFor="let datos of clientes" [value]="datos.id">
+                                                    {{datos.codigo}}
+                                                </option>
+                                            </select>
+                                            <div *ngIf="hormaForm.get('cliente_id')?.invalid && (hormaForm.get('cliente_id')?.dirty || hormaForm.get('cliente_id')?.touched)" class="text-danger">
+                                                Falta rellenar cliente
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Matriz</label>
+                                            <input type="text" class="form-control text-uppercase" name="matriz" [(ngModel)]="hormas.matriz" [ngModelOptions]="{standalone: true}">
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Cambrillón</label>
+                                            <input type="text" class="form-control text-uppercase" name="cambrillon" [(ngModel)]="hormas.cambrillon" [ngModelOptions]="{standalone: true}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Materiales</label>
+                                            <textarea type="text" class="form-control text-uppercase" name="materiales" [(ngModel)]="hormas.materiales" [ngModelOptions]="{standalone: true}"></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Observaciones</label>
+                                            <textarea type="text" class="form-control text-uppercase" name="observaciones" [(ngModel)]="hormas.observaciones" [ngModelOptions]="{standalone: true}"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label class="control-label">Precio</label>
+                                            <input type="number" class="form-control text-uppercase" name="precio" [(ngModel)]="hormas.precio" [ngModelOptions]="{standalone: true}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-success" (click)="agregarHorma();">
+                                        <i class="fa fa-check"></i> Guardar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

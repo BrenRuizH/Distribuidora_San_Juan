@@ -1,0 +1,157 @@
+<div class="page-wrapper">
+    <div class="container-fluid">            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">                                  
+                                    <h3 class="text-themecolor">Datos de Clientes</h3>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <input id="input-search" type="text" class="form-control text-uppercase" name="texto_busqueda" [(ngModel)]="textoBusqueda" (input)="buscarClientes()" placeholder="Buscar clientes" autocomplete="off">
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <button type="button" (click)="imprimirCatalogoClientes()" class="btn btn-success"><i class="fa fa-print"></i>  Imprimir Catálogo</button>                                                                              
+                                </div>
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="table-responsive animated fadeInDown">
+                            <div id="contdiv">
+                            <table class="table full-color-table full-primary-table hover-table">
+                                <thead>
+                                    <tr>
+                                        <th>Código</th>
+                                        <th>Razón Social</th>
+                                        <th>RFC</th>
+                                        <th>Teléfono</th>
+                                        <th>Pagos Con</th>
+                                        <th>Pedidos A</th>
+                                        <th>Dirección</th>
+                                        <th>Editar</th>
+                                        <th>Eliminar</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let datos of clientes | paginate: {itemsPerPage: 10, currentPage: p}">
+                                        <td>{{datos.codigo}}</td>
+                                        <td>{{datos.razonSocial}}</td>
+                                        <td>{{datos.rfc}}</td>
+                                        <td>{{datos.telefono}}</td>
+                                        <td>{{datos.pagosCon}}</td>
+                                        <td>{{datos.pedidosA}}</td>
+                                        <td>{{datos.direccion}}</td>
+                                        <td> 
+                                            <a (click)="seleccionarCliente(datos.id);" class="btn btn-warning" data-toggle="modal" data-target=".example2-modal-lg">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td> 
+                                            <a (click)="eliminarCliente(datos.id);" class="btn btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                    </tr>                                        
+                                </tbody>
+                            </table>
+                        </div>     
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                        </div>  
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="modal fade example2-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myLargeModalLabel">Modificar datos del Cliente</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="card">
+                                <form>
+                                    <div class="card-body">
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Código</label>
+                                                        <input type="text" class="form-control text-uppercase" name="codigo" [(ngModel)]="cliente.codigo" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Razón Social</label>
+                                                        <input type="text" class="form-control text-uppercase" name="razonSocial" [(ngModel)]="cliente.razonSocial" required>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>RFC</label>
+                                                        <input type="text" class="form-control text-uppercase" name="rfc" [(ngModel)]="cliente.rfc" maxlength="13" minlength="13" required>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label>Teléfono</label>
+                                                    <div class="form-group">
+                                                        <input type="number" class="form-control" name="telefono" [(ngModel)]="cliente.telefono" maxlength="10" minlength="10">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Pagos Con</label>
+                                                        <input type="text" class="form-control text-uppercase" name="pagosCon" [(ngModel)]="cliente.pagosCon">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Pedidos A</label>
+                                                        <input type="text" class="form-control text-uppercase" name="pedidosA" [(ngModel)]="cliente.pedidosA">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label>Dirección</label>
+                                                        <input type="text" class="form-control text-uppercase" name="direccion" [(ngModel)]="cliente.direccion">
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <input type="text" class="form-control" name="id" [(ngModel)]="cliente.id" hidden>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="form-actions">
+                                            <button class="btn btn-success" (click)="editarCliente();"> <i class="fa fa-check" ></i> Guardar </button> 
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,314 @@
+<div class="page-wrapper">
+    <div class="container-fluid">            
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">                                  
+                                    <h3 class="text-themecolor">Datos de Remisiones</h3>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <input id="input-search" type="text" class="form-control text-uppercase" name="texto_busqueda" [(ngModel)]="remisionBusqueda" (input)="buscarRemisiones()" placeholder="Buscar Remisiones" autocomplete="on">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex animated fadeIn">
+                            <div class="mr-auto">
+                                <div class="form-group">
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadHoy" name="temporalidad" value="1" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('1')">
+                                        <label class="custom-radio-label" for="temporalidadHoy">HOY</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadSemana" name="temporalidad" value="2" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('2')">
+                                        <label class="custom-radio-label" for="temporalidadSemana">ESTA SEMANA</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mx-4">
+                                <div class="form-group">
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadMes" name="temporalidad" value="3" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('3')">
+                                        <label class="custom-radio-label" for="temporalidadMes">ESTE MES</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" id="temporalidadPersonalizado" name="temporalidad" value="4" [(ngModel)]="temporalidadSeleccionada" (change)="seleccionarTemporalidad('4')">
+                                        <label class="custom-radio-label" for="temporalidadPersonalizado">PERSONALIZADO</label>
+                                        <div *ngIf="temporalidadSeleccionada === '4'" class="ml-3 d-flex align-items-center">
+                                            <label for="fechaInicio" class="mr-2">Fecha Inicio:</label>
+                                            <input type="date" class="form-control" id="fechaInicio" [(ngModel)]="fechaInicio" [disabled]="temporalidadSeleccionada !== '4'">
+                                            <label for="fechaFin" class="ml-3 mr-2">Fecha Fin:</label>
+                                            <input type="date" class="form-control" id="fechaFin" [(ngModel)]="fechaFin" [disabled]="temporalidadSeleccionada !== '4'">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="clienteSeleccionado"  required>
+                                        <option value="">Seleccione un cliente</option>
+                                        <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="ml-auto">
+                                <div class="form-group">
+                                    <button type="button" (click)="imprimirReporte()" class="btn btn-success ml-2"><i class="fa fa-print"></i> Imprimir Reporte</button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="table-responsive animated fadeInDown">
+                            <table class="table full-color-table full-primary-table hover-table">
+                                <thead>
+                                    <tr>
+                                        <th>No. Remisión</th>
+                                        <th>Cliente</th>
+                                        <th>Pares</th>
+                                        <th>Total</th>
+                                        <th>Editar</th>
+                                        <th>Eliminar</th>
+                                        <th>Imprimir</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                    <tr *ngFor="let datos of remisiones | paginate: {itemsPerPage: 10, currentPage: p}">
+                                        <td>{{datos.id}}</td>
+                                        <td>{{datos.codigo}}</td>
+                                        <td>{{datos.total_pares | number}}</td>
+                                        <td>${{datos.precio_final | number}}</td>
+                                        <td> 
+                                            <a (click)="seleccionarRemision(datos.id);" class="btn btn-warning" data-toggle="modal" data-target=".example2-modal-lg">
+                                                <i class="fa fa-edit"></i>
+                                            </a>
+                                        </td>
+                                        <td> 
+                                            <a (click)="eliminarRemision(datos.id);" class="btn btn-danger">
+                                                <i class="fa fa-trash"></i>
+                                            </a>
+                                        </td>
+                                        <td> 
+                                            <a (click)="remisionar(datos.id)" class="btn btn-info">
+                                                <i class="fa fa-file"></i>
+                                            </a>
+                                        </td>
+                                    </tr>                                        
+                                </tbody>
+                            </table>
+                            <pagination-controls (pageChange)="p = $event"></pagination-controls>
+                        </div>                            
+                    </div>
+                </div>
+            </div>
+        </div>        
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-body">
+                <div class="modal fade example2-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h4 class="modal-title" id="myLargeModalLabel">Modificar datos de la remisión</h4>
+                                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                            </div>
+                            <div class="card">
+                                <form>
+                                    <div class="card-body">
+                                        <div class="form-body">
+                                            <div class="row p-t-20">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Fecha de Remisión</label>
+                                                        <input type="text" class="form-control" name="fecha" [(ngModel)]="remisionEditada.fecha" readonly>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Cliente</label>
+                                                        <select class="form-control text-uppercase" name="cliente_id" [(ngModel)]="remisionEditada.cliente_id" 
+                                                        (change)="getFolios(remisionEditada.cliente_id, remisionEditada.id);" required>
+                                                            <option value="" disabled>Seleccione un cliente</option>
+                                                            <option *ngFor="let datos of clientes" value="{{datos.id}}">{{datos.codigo}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                
+                                            <div class="row p-t-20">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <div class="checkbox">
+                                                            <input type="checkbox" id="extra" (change)="seleccionar($event)">
+                                                            <label for="extra">Extra</label>
+                                                        </div>
+                                                    </div>
+                                                    <div class="form-group cantidadDescripcion" *ngIf="mostrarInputs">
+                                                        <div class="row">
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Cantidad</label>
+                                                                <input type="number" class="form-control text-uppercase" name="cantidad" [(ngModel)]="remisionEditada.extra" (change)="calcularSumatoria();">
+                                                            </div>
+                                                            <div class="col-md-6">
+                                                                <label class="control-label">Descripción</label>
+                                                                <input type="text" class="form-control text-uppercase" name="descripcion" [(ngModel)]="remisionEditada.descripcion">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-9">
+                                                    <p>Resumen de Puntos y Cantidades Anteriores</p>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <div class="form-group">
+                                                        <div class="form-actions">
+                                                            <button type="button" class="btn btn-primary"
+                                                                (click)="agregarElemento()">
+                                                                <i class="fa fa-plus"></i> Agregar
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <hr>
+                                                    <table class="table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Horma</th>
+                                                                <th>Orden de Compra</th>
+                                                                <th>Puntos</th>
+                                                                <th>Total de Pares</th>
+                                                                <th>Precio</th>
+                                                                <th>Acciones</th>
+                                                            </tr>
+                                                        </thead>
+                                                    <tbody>
+                                                        <ng-container *ngFor="let elemento of elementosAgregados; let index = index">
+                                                            <tr>
+                                                                <td>{{elemento.horma}}</td>
+                                                                <td>{{elemento.oc}}</td>
+                                                                <td>
+                                                                    <table class="detalle-puntos-table">
+                                                                        <tbody>
+                                                                            <tr>
+                                                                                <ng-container>
+                                                                                    <td class="punto" *ngFor="let punto of elemento.puntos">{{punto.punto}}</td>
+                                                                                </ng-container>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <ng-container>
+                                                                                    <td class="cantidad" *ngFor="let punto of elemento.puntos">{{punto.cantidad}}</td>
+                                                                                </ng-container>
+                                                                            </tr>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                                <td>{{elemento.totalPares}}</td>
+                                                                <td>$ {{elemento.precio}}</td>
+                                                                <td> 
+                                                                    <a (click)="cargarElementoParaEditar(index)" class="btn btn-warning">
+                                                                        <i class="fa fa-edit"></i>
+                                                                    </a>
+                                                                    <a (click)="eliminarElemento(index)" class="btn btn-danger">
+                                                                        <i class="fa fa-trash"></i>
+                                                                    </a>
+                                                                </td>
+                                                            </tr>
+                                                        </ng-container>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                    
+                                            <div class="row" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Horma</label>
+                                                        <select class="form-control text-uppercase" name="horma_id" id="horma_id">
+                                                            <option value="" disabled>Seleccione una horma</option>
+                                                            <option *ngFor="let datos of hormas" [value]="datos.id">
+                                                                {{datos.nombre}}
+                                                            </option>
+                                                        </select>
+                                                        <div *ngIf="noHormas" class="text-danger">
+                                                            No hay hormas que coincidan con el cliente
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                        
+                                                <div class="col-md-6">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Orden de Compra</label>
+                                                        <input type="text" class="form-control text-uppercase" name="oc" id="oc">
+                                                    </div>
+                                                </div>
+                    
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Total de Pares</label>
+                                                        <input type="text" class="form-control" name="total" readonly>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                                
+                                            <div class="row p-t-20" *ngIf="remisionEditada.cliente_id != 36">
+                                                <div class="col-md-12">
+                                                    <div class="form-group">
+                                                        <label class="control-label">Folios</label>
+                                                        <div class="tags-container">
+                                                            <div *ngFor="let dato of folios" class="tag" 
+                                                                [class.selected]="isSelected(dato.folio)" 
+                                                                (click)="toggleSelection(dato.folio, dato.oc)">
+                                                                {{ dato.folio }}
+                                                            </div>
+                                                        </div>
+                                                        <div *ngIf="noFolios" class="text-danger">
+                                                            No hay folios que coincidan con el cliente
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div class="row p-t-20" *ngIf="remisionEditada.cliente_id == 36">
+                                                <div class="col-md-12">
+                                                    <table class="miTabla">
+                                                        <tr *ngFor="let fila of puntosYcantidades; let i = index">
+                                                            <td *ngFor="let item of fila">
+                                                                <div class="punto">{{item.vista}}</div>
+                                                                <hr class="linea">
+                                                                <input [(ngModel)]="item.cantidad"
+                                                                    [ngModelOptions]="{standalone: true}" type="number" min="0"
+                                                                    class="cantidad">
+                                                            </td>
+                                                        </tr>
+                                                    </table>
+                                                </div>
+                                            </div>
+
+                                            <div class="form-actions">
+                                                <button class="btn btn-success" (click)="editarRemision();">
+                                                    <i class="fa fa-check"></i> Guardar
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

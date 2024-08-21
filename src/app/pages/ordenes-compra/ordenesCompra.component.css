@@ -1,0 +1,69 @@
+.input-group {
+    width: 100%;
+    margin-bottom: 0;
+  }
+  
+  .input-group .form-control {
+    border-radius: 0.25rem 0 0 0.25rem;
+  }
+  
+  .input-group .btn-outline-secondary {
+    border-radius: 0 0.25rem 0.25rem 0;
+    border: 1px solid #55b66a;
+  }
+  
+  .input-group .btn-outline-secondary:hover {
+    background-color: #55b66a;
+  }  
+ 
+ .estado-produccion {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #CCE5FF;
+    color: #2a7ed8;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.estado-entrega {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #E5FFCC;
+    color: #67bd16;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.estado-facturado {
+    font-size: 11px;
+    font-weight: bold;
+    background-color: #FFFFCC;
+    color: #c5c52e;
+    border-radius: 50px;
+    display: inline-block;
+    padding: 10px;
+    line-height: 1;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+.estado-remisionado {
+  font-size: 11px;
+  font-weight: bold;
+  background-color: #FFFFCC;
+  color: #c52e2e;
+  border-radius: 50px;
+  display: inline-block;
+  padding: 10px;
+  line-height: 1;
+  text-align: center !important;
+  vertical-align: middle !important;
+}
