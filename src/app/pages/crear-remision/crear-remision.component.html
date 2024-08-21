@@ -41,9 +41,21 @@
                                         </div>
                                     </div>
                                 </div>
+                               
 
                                 <div class="row p-t-20">
-                                    <div class="col-md-12">
+                                    <div class="col-md-6"></div>
+                                    <div class="col-md-6">
+                                        
+                                        <label class="control-label">SubTotal</label>
+                                        <input type="number" class="form-control text-uppercase" name="subTotal"
+                                        [(ngModel)]="subTotal" [ngModelOptions]="{standalone: true}" readonly>
+                                    </div>
+                                </div>
+                                
+
+                                <div class="row p-t-20">
+                                    <div class="col-md-6">
                                         <div class="form-group">
                                             <div class="checkbox">
                                                 <input type="checkbox" id="extra" (change)="seleccionar($event)">
@@ -54,11 +66,13 @@
                                             <div class="row">
                                                 <div class="col-md-6">
                                                     <label class="control-label">Cantidad</label>
-                                                    <input type="number" class="form-control text-uppercase" name="cantidad" formControlName="cantidad">
+                                                    <input type="number" class="form-control text-uppercase"
+                                                        name="cantidad" formControlName="cantidad">
                                                 </div>
                                                 <div class="col-md-6">
                                                     <label class="control-label">Descripción</label>
-                                                    <input type="text" class="form-control text-uppercase" name="descripcion" formControlName="descripcion">
+                                                    <input type="text" class="form-control text-uppercase"
+                                                        name="descripcion" formControlName="descripcion">
                                                 </div>
                                             </div>
                                         </div>
@@ -80,59 +94,61 @@
                                         </div>
                                     </div>
 
-                                        <hr>
-                                        <table class="table">
-                                            <thead>
+                                    <hr>
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Horma</th>
+                                                <th>Orden de Compra</th>
+                                                <th>Puntos</th>
+                                                <th>Total de Pares</th>
+                                                <th>Precio</th>
+                                                <th>Acciones</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <ng-container
+                                                *ngFor="let elemento of elementosAgregados; let index = index">
                                                 <tr>
-                                                    <th>Horma</th>
-                                                    <th>Orden de Compra</th>
-                                                    <th>Puntos</th>
-                                                    <th>Total de Pares</th>
-                                                    <th>Precio</th>
-                                                    <th>Acciones</th>
+                                                    <td>{{ elemento.horma }}</td>
+                                                    <td>{{ elemento.oc }}</td>
+                                                    <td>
+                                                        <table class="detalle-puntos-table">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <ng-container
+                                                                        *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                        <td class="punto">{{ puntoCantidad.punto }}
+                                                                        </td>
+                                                                    </ng-container>
+                                                                </tr>
+                                                                <tr>
+                                                                    <ng-container
+                                                                        *ngFor="let puntoCantidad of elemento.puntosYcantidades">
+                                                                        <td class="cantidad">{{
+                                                                            puntoCantidad.cantidad }}</td>
+                                                                    </ng-container>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </td>
+                                                    <td>{{ elemento.totalPares }}</td>
+                                                    <td>$ {{ elemento.precio }}</td>
+                                                    <td>
+                                                        <a (click)="cargarElementoParaEditar(index)"
+                                                            class="btn btn-warning">
+                                                            <i class="fa fa-edit"></i>
+                                                        </a>
+                                                        <a (click)="eliminarElemento(index)" class="btn btn-danger">
+                                                            <i class="fa fa-trash"></i>
+                                                        </a>
+                                                    </td>
                                                 </tr>
-                                            </thead>
-                                            <tbody>
-                                                <ng-container *ngFor="let elemento of elementosAgregados; let index = index">
-                                                    <tr>
-                                                        <td>{{ elemento.horma }}</td>
-                                                        <td>{{ elemento.oc }}</td>
-                                                        <td>
-                                                            <table class="detalle-puntos-table">
-                                                                <tbody>
-                                                                    <tr>
-                                                                        <ng-container
-                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
-                                                                            <td class="punto">{{ puntoCantidad.punto }}
-                                                                            </td>
-                                                                        </ng-container>
-                                                                    </tr>
-                                                                    <tr>
-                                                                        <ng-container
-                                                                            *ngFor="let puntoCantidad of elemento.puntosYcantidades">
-                                                                            <td class="cantidad">{{
-                                                                                puntoCantidad.cantidad }}</td>
-                                                                        </ng-container>
-                                                                    </tr>
-                                                                </tbody>
-                                                            </table>
-                                                        </td>
-                                                        <td>{{ elemento.totalPares }}</td>
-                                                        <td>$ {{ elemento.precio }}</td>
-                                                        <td> 
-                                                            <a (click)="cargarElementoParaEditar(index)" class="btn btn-warning">
-                                                                <i class="fa fa-edit"></i>
-                                                            </a>
-                                                            <a (click)="eliminarElemento(index)" class="btn btn-danger">
-                                                                <i class="fa fa-trash"></i>
-                                                            </a>
-                                                        </td>
-                                                    </tr>
-                                                </ng-container>
-                                            </tbody>
-                                        </table>
+                                            </ng-container>
+                                        </tbody>
+                                    </table>
 
-                                    
+
                                 </div>
 
                                 <div class="row" *ngIf="remisionForm.get('cliente_id')?.value == 36">
@@ -157,11 +173,12 @@
                                             </div>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-md-6">
                                         <div class="form-group">
                                             <label class="control-label">Orden de Compra</label>
-                                            <input type="text" class="form-control text-uppercase" name="oc" formControlName="oc">
+                                            <input type="text" class="form-control text-uppercase" name="oc"
+                                                formControlName="oc">
                                         </div>
                                     </div>
 
@@ -206,18 +223,24 @@
                                                     <tr *ngFor="let folio of selectedFolios">
                                                         <td>{{ folio.folio }}</td>
                                                         <td>{{ folio.precio_actual }}</td>
-                                                        <td [ngClass]="{ 'font-weight-bold': !folio.usarPrecioAnterior }">
+                                                        <td
+                                                            [ngClass]="{ 'font-weight-bold': !folio.usarPrecioAnterior }">
                                                             <label class="switch">
-                                                                <input type="checkbox" [(ngModel)]="folio.usarPrecioAnterior" [ngModelOptions]="{standalone: true}" (change)="actualizarPrecioSeleccionado(folio)">
+                                                                <input type="checkbox"
+                                                                    [(ngModel)]="folio.usarPrecioAnterior"
+                                                                    [ngModelOptions]="{standalone: true}"
+                                                                    (change)="actualizarPrecioSeleccionado(folio)">
                                                                 <span class="slider"></span>
-                                                              </label>
+                                                            </label>
                                                         </td>
-                                                        <td [ngClass]="{ 'font-weight-bold': folio.usarPrecioAnterior }">{{ folio.precio_anterior }}</td>
+                                                        <td
+                                                            [ngClass]="{ 'font-weight-bold': folio.usarPrecioAnterior }">
+                                                            {{ folio.precio_anterior }}</td>
                                                     </tr>
                                                 </tbody>
                                             </table>
                                         </div>
-                                    </div>                                    
+                                    </div>
                                 </div>
 
                                 <div class="row p-t-20" *ngIf="remisionForm.get('cliente_id')?.value == 36">
@@ -235,7 +258,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                
+
 
                                 <div class="form-actions">
                                     <button type="button" class="btn btn-success" (click)="agregarRemision();">

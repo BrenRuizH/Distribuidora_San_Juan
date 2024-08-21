@@ -31,7 +31,7 @@ export class CrearRemisionComponent {
   clientes: any[] = [];
   folios: any[] = [];
   cliente_id: number | null = null;
-
+  subTotal : number = 0;
   selectedFolios: any[] = [];
   //selectedFolios: { folio: string, oc: string, precio_actual: string, precio_anterior: string, usarPrecioAnterior: boolean, precio_seleccionado: string }[] = [];
   
@@ -465,6 +465,7 @@ toggleSelection(datos: any): void {
       });
   }
   console.log('Selected Folios:', this.selectedFolios);
+  this.calcularSumatoria();
 }
 
 actualizarPrecioSeleccionado(folio: any) {
@@ -519,7 +520,7 @@ actualizarPrecioSeleccionado(folio: any) {
     console.log(this.elementosAgregados);
 
     }
-
+    this.subTotal = this.formattedPrecioSum;
     console.log("Precio final: ", this.formattedPrecioSum);
     console.log("Total pares: ", this.totalParesSum);
   }
