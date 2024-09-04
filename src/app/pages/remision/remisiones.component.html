@@ -263,7 +263,7 @@
                                             </div>
                                                 
                                             <div class="row p-t-20" *ngIf="remisionEditada.cliente_id != 36">
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="control-label">Folios</label>
                                                         <div class="tags-container">
@@ -276,6 +276,35 @@
                                                         <div *ngIf="noFolios" class="text-danger">
                                                             No hay folios que coincidan con el cliente
                                                         </div>
+                                                    </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <div class="form-group" *ngIf="selectedFolios.length > 0">
+                                                        <label class="control-label">Folios Seleccionados</label>
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Folio</th>
+                                                                    <th>Precio Actual</th>
+                                                                    <th></th>
+                                                                    <th>Precio Anterior</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let folio of selectedFolios">
+                                                                    <td>{{ folio.folio }}</td>
+                                                                    <td></td>
+                                                                    <td>
+                                                                        <label class="switch">
+                                                                            <input type="checkbox">
+                                                                            <span class="slider"></span>
+                                                                        </label>
+                                                                    </td>
+                                                                    <td></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
