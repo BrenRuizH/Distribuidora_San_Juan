@@ -37,7 +37,9 @@ export class RemisionesComponent implements OnInit {
   folios: any[] = [];
   cliente_id: number | null = null;
   remision_id: number | null = null;
-  selectedFolios: { folio: string, oc: string }[] = [];
+
+  selectedFolios: any[] = [];
+  //selectedFolios: { folio: string, oc: string }[] = [];
   noFolios: boolean = false;
   totalParesSum: any;
   formattedPrecioSum: any;
@@ -62,7 +64,7 @@ export class RemisionesComponent implements OnInit {
   temp: string = '';
 
   constructor(private clientesService: ClientesService, private remisionesService: RemisionesService, private changeDetector: ChangeDetectorRef,
-    private hormasService: HormasService
+    private hormasService: HormasService, private cdr: ChangeDetectorRef
   ) {
     this.obtenerRemisiones();
     this.inicializarPuntosYCantidades();
@@ -71,9 +73,7 @@ export class RemisionesComponent implements OnInit {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerRemisiones();
-    
-      
-    
+    this.calcularSumatoria();
   }
 
   inicializarPuntosYCantidades(): void {
@@ -237,6 +237,9 @@ export class RemisionesComponent implements OnInit {
       this.getHormas(this.remisionEditada.cliente_id)
       this.getFolios(this.remisionEditada.cliente_id, this.remisionEditada.id);
 
+      this.calcularSumatoria();
+      console.log("REMISION EDITADA 2", this.remisionEditada2);
+
       if (this.remisionEditada.extra) {
         this.mostrarInputs = true;
       
@@ -251,12 +254,22 @@ export class RemisionesComponent implements OnInit {
           this.folios = this.remisionEditada2.map(folio => ({
             id: folio.id,
             folio: folio.folio,
-            oc: folio.oc
+            oc: folio.oc,
+            precio: folio.precio,
+            precio_actual: folio.precio_actual,
+            precio_anterior: folio.precio_anterior,
+            usarPrecioAnterior: folio.usarPrecioAnterior,
+            precio_seleccionado: folio.precio_actual
           }));
       
           this.selectedFolios = this.folios.map(folio => ({
             folio: folio.folio,
-            oc: folio.oc
+            oc: folio.oc,
+            precio: folio.precio,
+            precio_actual: folio.precio_actual,
+            precio_anterior: folio.precio_anterior,
+            usarPrecioAnterior: folio.usarPrecioAnterior,
+            precio_seleccionado: folio.precio_actual
           }));
         } else {
           this.elementosAgregados = this.remisionEditada2.reduce((acc, detalle) => {
@@ -641,7 +654,11 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
         folio: folio.folio,
         oc: folio.oc,
         total_pares: folio.total_pares,
-        precio: folio.precio
+        precio: folio.precio,
+        precio_actual: folio.precio_actual,
+        precio_anterior: folio.precio_anterior,
+        usarPrecioAnterior: folio.usarPrecioAnterior || false, // Predeterminado a false para usar precio_actual
+        precio_seleccionado: folio.anterior // Inicia con el precio correcto
       }));
       if (this.folios.length === 0) {
         this.noFolios = true;
@@ -663,16 +680,34 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
     return !!this.remisionEditada.cliente_id;
   }
 
-  toggleSelection(folio: string, oc: string): void {
-    const index = this.selectedFolios.findIndex(f => f.folio === folio);
+  toggleSelection(datos: any): void {
+    const index = this.selectedFolios.findIndex(f => f.folio === datos.folio);
     if (index > -1) {
+        // Eliminar el folio de los seleccionados si ya está en la lista
         this.selectedFolios.splice(index, 1);
     } else {
-        this.selectedFolios.push({ folio, oc });
-        console.log(this.selectedFolios);
+        // Añadir el folio con los datos correctos
+        this.selectedFolios.push({ 
+            folio: datos.folio, 
+            oc: datos.oc,
+            precio_actual: datos.precio_actual,
+            precio_anterior: datos.precio_anterior,
+            usarPrecioAnterior: datos.usarPrecioAnterior === datos.precio_anterior, // Default to false to use precio_actual
+            precio_seleccionado: datos.precio_actual
+          });
     }
+    console.log('Selected Folios:', this.selectedFolios);
     this.calcularSumatoria();
-  }
+}
+
+// Actualiza el precio seleccionado basado en el valor del switch
+actualizarPrecioSeleccionado(folio: any): void {
+    folio.precio_seleccionado = folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual;
+    this.cdr.detectChanges();  // Forzar la detección de cambios
+    console.log('Precio Seleccionado:', folio.precio_seleccionado);
+    console.log('Usar Precio Anterior:', folio.usarPrecioAnterior);
+    this.calcularSumatoria();
+}
 
   calcularSumatoria() {
     if(this.remisionEditada.cliente_id != 36) {
@@ -684,8 +719,11 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
 
       const precioSum = this.selectedFolios.reduce((sum, folioObj) => {
         const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
-        const precio = parseFloat(selectedFolio?.precio || '0');
-        return sum + precio;
+        const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
+        
+        const precioUnitario = parseFloat(folioObj.usarPrecioAnterior ? selectedFolio?.precio_anterior : selectedFolio?.precio_actual || '0');
+        const precioTotalPorFolio = precioUnitario * totalPares;
+        return sum + precioTotalPorFolio;
       }, 0);
 
       this.formattedPrecioSum = precioSum.toFixed(2);
@@ -699,9 +737,11 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
         const precio = parseFloat(elem.precio.toString().replace(/,/g, ''));
         return sum + precio;
     }, 0).toFixed(2);
-      console.log("Precio final: ", this.formattedPrecioSum);
-      console.log("Total pares: ", this.totalParesSum);
+      
     }
+    console.log("Precio final: ", this.formattedPrecioSum);
+    console.log("Total pares: ", this.totalParesSum);
+    this.subtotal = this.formattedPrecioSum;
   }
   
   editarRemision() {
@@ -721,14 +761,21 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
       cancelButtonText: "No, cancelar",
     }).then((result) => {
       if (result.isConfirmed) {
+        this.calcularSumatoria();
         let formData = new FormData();
           formData.append('id', this.remisionEditada.id);
           formData.append('fecha', this.remisionEditada.fecha);
           formData.append('cliente_id', this.remisionEditada.cliente_id.toUpperCase());
           formData.append('total_pares', this.totalParesSum);
           formData.append('precio_final', this.formattedPrecioSum);
-          formData.append('folios', JSON.stringify(this.selectedFolios));
-          console.log("formData", JSON.stringify(this.selectedFolios));
+          const foliosWithPrecio = this.selectedFolios.map(folio => ({
+            ...folio,
+            precio_unitario: folio.precio_seleccionado // Agregando el precio seleccionado
+          }));
+
+          formData.append('folios', JSON.stringify(foliosWithPrecio));
+
+          console.log(foliosWithPrecio);
 
           if (this.remisionEditada.extra && this.remisionEditada.descripcion) {
             formData.append('extra', this.remisionEditada.extra);

@@ -146,7 +146,7 @@
                                             </div>
                                                 
                                             <div class="row p-t-20">
-                                                <div class="col-md-12">
+                                                <div class="col-md-6">
                                                     <div class="form-group">
                                                         <div class="checkbox">
                                                             <input type="checkbox" id="extra" (change)="seleccionar($event)">
@@ -165,6 +165,12 @@
                                                             </div>
                                                         </div>
                                                     </div>
+                                                </div>
+
+                                                <div class="col-md-6">
+                                                    <label class="control-label">Subtotal (Sin Extra)</label>
+                                                    <input type="number" class="form-control text-uppercase" name="subTotal"
+                                                    [(ngModel)]="subtotal" [ngModelOptions]="{standalone: true}" readonly>
                                                 </div>
                                             </div>
 
@@ -267,10 +273,10 @@
                                                     <div class="form-group">
                                                         <label class="control-label">Folios</label>
                                                         <div class="tags-container">
-                                                            <div *ngFor="let dato of folios" class="tag" 
-                                                                [class.selected]="isSelected(dato.folio)" 
-                                                                (click)="toggleSelection(dato.folio, dato.oc)">
-                                                                {{ dato.folio }}
+                                                            <div *ngFor="let datos of folios" class="tag" 
+                                                                [class.selected]="isSelected(datos.folio)" 
+                                                                (click)="toggleSelection(datos)">
+                                                                {{ datos.folio }}
                                                             </div>
                                                         </div>
                                                         <div *ngIf="noFolios" class="text-danger">
@@ -278,9 +284,9 @@
                                                         </div>
                                                     </div>
                                                 </div>
-
-                                                <div class="col-md-6">
-                                                    <div class="form-group" *ngIf="selectedFolios.length > 0">
+                                            
+                                                <div class="col-md-6" *ngIf="selectedFolios.length > 0">
+                                                    <div class="form-group">
                                                         <label class="control-label">Folios Seleccionados</label>
                                                         <table class="table">
                                                             <thead>
@@ -294,20 +300,25 @@
                                                             <tbody>
                                                                 <tr *ngFor="let folio of selectedFolios">
                                                                     <td>{{ folio.folio }}</td>
-                                                                    <td></td>
-                                                                    <td>
+                                                                    <td>{{ folio.precio_actual }}</td>
+                                                                    <td [ngClass]="{ 'font-weight-bold': !folio.usarPrecioAnterior }">
                                                                         <label class="switch">
-                                                                            <input type="checkbox">
+                                                                            <input type="checkbox" [(ngModel)]="folio.usarPrecioAnterior"
+                                                                                   [ngModelOptions]="{standalone: true}"
+                                                                                   (change)="actualizarPrecioSeleccionado(folio)">
                                                                             <span class="slider"></span>
                                                                         </label>
                                                                     </td>
-                                                                    <td></td>
+                                                                    <td [ngClass]="{ 'font-weight-bold': folio.usarPrecioAnterior }">
+                                                                        {{ folio.precio_anterior }}
+                                                                    </td>
                                                                 </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>
                                                 </div>
                                             </div>
+                                            
 
                                             <div class="row p-t-20" *ngIf="remisionEditada.cliente_id == 36">
                                                 <div class="col-md-12">

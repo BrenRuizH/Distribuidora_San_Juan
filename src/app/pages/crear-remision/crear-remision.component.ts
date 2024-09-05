@@ -473,6 +473,7 @@ actualizarPrecioSeleccionado(folio: any) {
   this.cdr.detectChanges();  // Forzar la detección de cambios
   console.log('Precio Seleccionado:', folio.precio_seleccionado);
   console.log('Precion anterior: ', folio.usarPrecioAnterior);
+  this.calcularSumatoria();
 }
 
   calcularTotalPares() {

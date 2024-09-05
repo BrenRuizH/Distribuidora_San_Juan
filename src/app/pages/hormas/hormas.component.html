@@ -51,6 +51,8 @@
                                         <td>{{datos.observaciones}}</td>
                                         <td>{{datos.cliente}}</td>
                                         <td>${{datos.precio}}</td>
+                                        <td>${{datos.precio_anterior}}</td>
+                                        <td>{{datos.fecha_modificacion}}</td>
                                         <td> 
                                             <a (click)="seleccionarHorma(datos.id);" class="btn btn-warning" data-toggle="modal" data-target=".example2-modal-lg">
                                                 <i class="fa fa-edit"></i>
@@ -142,20 +144,20 @@
                                                 <div class="col-md-6">
                                                     <div class="form-group">
                                                         <label class="control-label">Precio Anterior</label>
-                                                        <input type="number" class="form-control text-uppercase" name="precioAnterior" placeholder="" >
+                                                        <input type="number" class="form-control text-uppercase" name="precio_anterior" [(ngModel)]="hormaEditada.precio_anterior" placeholder="" readonly>
                                                     </div>
                                                 </div>
 
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label class="control-label">Fecha Mod</label>
-                                                        <input type="date" class="form-control text-uppercase" name="fechaMod" placeholder="">
+                                                        <label class="control-label">Fecha de Modificación</label>
+                                                        <input type="text" class="form-control" name="fecha_modificacion" [(ngModel)]="hormaEditada.fecha_modificacion" readonly>
                                                     </div>
                                                 </div>
                                                 <div class="col-md-6">
                                                     <div class="form-group">
-                                                        <label class="control-label">Observaciones por cambio de precio</label>
-                                                        <textarea type="text" class="form-control text-uppercase" name="observaciones"  placeholder="" required></textarea>
+                                                        <label class="control-label">Motivo por Cambio de Precio</label>
+                                                        <textarea type="text" class="form-control text-uppercase" name="motivo_cambio" [(ngModel)]="hormaEditada.motivo_cambio" placeholder="" required></textarea>
                                                     </div>
                                                 </div>
                                             </div>

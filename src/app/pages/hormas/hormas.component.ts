@@ -4,6 +4,7 @@ import { catchError, of } from 'rxjs';
 import { HormasService } from 'src/app/services/hormas.service';
 import Swal from 'sweetalert2';
 import * as printJS from 'print-js';
+import { formatDate } from '@angular/common';
 
 @Component({
   selector: 'app-hormas',
@@ -15,6 +16,7 @@ export class HormasComponent {
   horma: any = {cliente_id: ''};
   hormaEditada: any = {};
   clientes: any[] = [];
+  fechaMod: string = '';
 
   p: number = 1;
 
@@ -25,6 +27,8 @@ export class HormasComponent {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerHormas();
+    this.fechaMod = formatDate(new Date(), 'yyyy-MM-dd', 'en-US');
+
   }
 
   getClientes() {
@@ -100,12 +104,12 @@ export class HormasComponent {
           if(this.hormaEditada.observaciones) {
             formData.append('observaciones', this.hormaEditada.observaciones.toUpperCase());
           }
+          formData.append('fecha_modificacion', this.fechaMod);
           formData.append('precio', this.hormaEditada.precio);
           formData.append('precio_anterior', this.hormaEditada.precio_anterior);
           if(this.hormaEditada.motivo_cambio) {
             formData.append('motivo_cambio', this.hormaEditada.motivo_cambio);
           }
-          //formData.append('precio', this.hormaEditada.precio);
 
           this.hormasService.agregarHorma('editar.php', formData).subscribe((event: any) =>{
             swalWithBootstrapButtons.fire({
