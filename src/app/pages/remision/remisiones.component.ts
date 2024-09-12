@@ -73,7 +73,6 @@ export class RemisionesComponent implements OnInit {
   ngOnInit(): void {
     this.getClientes();
     this.obtenerRemisiones();
-    this.calcularSumatoria();
   }
 
   inicializarPuntosYCantidades(): void {
@@ -225,7 +224,7 @@ export class RemisionesComponent implements OnInit {
       })
       ).subscribe((data) => {
         this.remisiones = data.items;
-        this.changeDetector.detectChanges();
+       
       });
     }
   }
@@ -242,7 +241,6 @@ export class RemisionesComponent implements OnInit {
 
       if (this.remisionEditada.extra) {
         this.mostrarInputs = true;
-      
         const extraCheckbox = document.getElementById('extra') as HTMLInputElement;
         if (extraCheckbox) {
           extraCheckbox.checked = true;
@@ -251,24 +249,33 @@ export class RemisionesComponent implements OnInit {
 
       if (Array.isArray(this.remisionEditada2) && this.remisionEditada2.length > 0) {
         if (this.remisionEditada.cliente_id != 36) {
-          this.folios = this.remisionEditada2.map(folio => ({
-            id: folio.id,
-            folio: folio.folio,
-            oc: folio.oc,
-            precio: folio.precio,
-            precio_actual: folio.precio_actual,
-            precio_anterior: folio.precio_anterior,
-            usarPrecioAnterior: folio.usarPrecioAnterior,
-            precio_seleccionado: folio.precio_actual
-          }));
-      
+          this.folios = this.remisionEditada2.map(folio => {
+            // Si precio_actual y precio_anterior son iguales, siempre usar precio_actual.
+            const precioSeleccionado = (folio.precio_actual === folio.precio_anterior) 
+            ? folio.precio_actual 
+            : folio.precio ?? folio.precio_actual;
+
+            // Determinar si se debe usar el precio anterior
+            const usarPrecioAnterior = precioSeleccionado === folio.precio_anterior && folio.precio_actual !== folio.precio_anterior;
+
+            return {
+              id: folio.id,
+              folio: folio.folio,
+              oc: folio.oc,
+              precio: folio.precio,
+              precio_actual: folio.precio_actual,
+              precio_anterior: folio.precio_anterior,
+              precio_seleccionado: precioSeleccionado,
+              usarPrecioAnterior: usarPrecioAnterior,
+          };
+          });
           this.selectedFolios = this.folios.map(folio => ({
             folio: folio.folio,
             oc: folio.oc,
             precio: folio.precio,
             precio_actual: folio.precio_actual,
             precio_anterior: folio.precio_anterior,
-            usarPrecioAnterior: folio.usarPrecioAnterior,
+            usarPrecioAnterior: folio.usarPrecioAnterior || false,
             precio_seleccionado: folio.precio_actual
           }));
         } else {
@@ -643,107 +650,108 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
 }
 
 // ******************************************************************************************************
-
-  getFolios(cliente_id: any, remision_id: any) {
-    this.folios = [];
-    this.cliente_id = cliente_id;
-    this.remision_id = remision_id;
-    this.selectedFolios = [];
-    this.remisionesService.consultarFolioEditar(cliente_id, remision_id).subscribe((data) => {
-      this.folios = data.items.map((folio: any) => ({
-        folio: folio.folio,
-        oc: folio.oc,
-        total_pares: folio.total_pares,
-        precio: folio.precio,
-        precio_actual: folio.precio_actual,
-        precio_anterior: folio.precio_anterior,
-        usarPrecioAnterior: folio.usarPrecioAnterior || false, // Predeterminado a false para usar precio_actual
-        precio_seleccionado: folio.anterior // Inicia con el precio correcto
-      }));
-      if (this.folios.length === 0) {
-        this.noFolios = true;
-      } else {
-        this.noFolios = false;
-      }
-    },
-      (error) => {
-        this.noFolios = true;
-      });
-  }
-
-  isSelected(folio: string): boolean {
-
-    return this.selectedFolios.some(f => f.folio === folio);
-  }
-
-  isClienteSelected(): boolean {
-    return !!this.remisionEditada.cliente_id;
-  }
-
-  toggleSelection(datos: any): void {
-    const index = this.selectedFolios.findIndex(f => f.folio === datos.folio);
-    if (index > -1) {
-        // Eliminar el folio de los seleccionados si ya está en la lista
-        this.selectedFolios.splice(index, 1);
+//this
+getFolios(cliente_id: any, remision_id: any) {
+  this.remisionesService.consultarFolioEditar(cliente_id, remision_id).subscribe((data) => {
+    this.folios = data.items.map((folio: any) => ({
+      folio: folio.folio,
+      oc: folio.oc,
+      total_pares: folio.total_pares,
+      precio: folio.precio,
+      precio_actual: folio.precio_actual,
+      precio_anterior: folio.precio_anterior,
+      usarPrecioAnterior: folio.usarPrecioAnterior || false, // Inicializa correctamente
+      precio_seleccionado: folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual
+    }));
+    if (this.folios.length === 0) {
+      this.noFolios = true;
     } else {
-        // Añadir el folio con los datos correctos
-        this.selectedFolios.push({ 
-            folio: datos.folio, 
-            oc: datos.oc,
-            precio_actual: datos.precio_actual,
-            precio_anterior: datos.precio_anterior,
-            usarPrecioAnterior: datos.usarPrecioAnterior === datos.precio_anterior, // Default to false to use precio_actual
-            precio_seleccionado: datos.precio_actual
-          });
+      this.calcularSumatoria();
+      this.noFolios = false;
     }
-    console.log('Selected Folios:', this.selectedFolios);
-    this.calcularSumatoria();
+  },
+    (error) => {
+      this.noFolios = true;
+    });
 }
 
-// Actualiza el precio seleccionado basado en el valor del switch
+
+isSelected(folio: string): boolean {
+
+  return this.selectedFolios.some(f => f.folio === folio);
+}
+
+isClienteSelected(): boolean {
+  return !!this.remisionEditada.cliente_id;
+}
+
+toggleSelection(datos: any): void {
+  const index = this.selectedFolios.findIndex(f => f.folio === datos.folio);
+  if (index > -1) {
+    // Eliminar el folio de los seleccionados si ya está en la lista
+    this.selectedFolios.splice(index, 1);
+  } else {
+    // Añadir el folio con los datos correctos
+    this.selectedFolios.push({ 
+      folio: datos.folio, 
+      oc: datos.oc,
+      precio_actual: datos.precio_actual,
+      precio_anterior: datos.precio_anterior,
+      usarPrecioAnterior: datos.usarPrecioAnterior || false,  // Asegúrate de que esté inicializado correctamente
+      precio_seleccionado: datos.usarPrecioAnterior ? datos.precio_anterior : datos.precio_actual
+    });
+  }
+  console.log('Selected Folios:', this.selectedFolios);
+  this.calcularSumatoria();
+}
+
+
+
 actualizarPrecioSeleccionado(folio: any): void {
-    folio.precio_seleccionado = folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual;
-    this.cdr.detectChanges();  // Forzar la detección de cambios
-    console.log('Precio Seleccionado:', folio.precio_seleccionado);
-    console.log('Usar Precio Anterior:', folio.usarPrecioAnterior);
-    this.calcularSumatoria();
+  folio.precio_seleccionado = folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual;
+  this.cdr.detectChanges();
+  console.log('Precio Seleccionado:', folio.precio_seleccionado);
+  console.log('Usar Precio Anterior:', folio.usarPrecioAnterior);
+  this.calcularSumatoria();
 }
 
-  calcularSumatoria() {
-    if(this.remisionEditada.cliente_id != 36) {
-      this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
-        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
-        const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
-        return sum + totalPares;
-      }, 0);
 
-      const precioSum = this.selectedFolios.reduce((sum, folioObj) => {
-        const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
-        const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
-        
-        const precioUnitario = parseFloat(folioObj.usarPrecioAnterior ? selectedFolio?.precio_anterior : selectedFolio?.precio_actual || '0');
-        const precioTotalPorFolio = precioUnitario * totalPares;
-        return sum + precioTotalPorFolio;
-      }, 0);
 
-      this.formattedPrecioSum = precioSum.toFixed(2);
-    } else {
-      this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => {
-        const totalPares = parseInt(elem.totalPares.toString().replace(/,/g, ''), 10);
-        return sum + totalPares;
+
+calcularSumatoria() {
+  if (this.remisionEditada.cliente_id != 36) {
+    this.totalParesSum = this.selectedFolios.reduce((sum, folioObj) => {
+      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
+      const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
+      return sum + totalPares;
+    }, 0);
+
+    const precioSum = this.selectedFolios.reduce((sum, folioObj) => {
+      const selectedFolio = this.folios.find(f => f.folio === folioObj.folio);
+      const totalPares = parseInt(selectedFolio?.total_pares || '0', 10);
+      
+      const precioUnitario = parseFloat(folioObj.usarPrecioAnterior ? selectedFolio?.precio_anterior : selectedFolio?.precio_actual || '0');
+      const precioTotalPorFolio = precioUnitario * totalPares;
+      return sum + precioTotalPorFolio;
+    }, 0);
+
+    this.formattedPrecioSum = precioSum.toFixed(2);
+  } else {
+    this.totalParesSum = this.elementosAgregados.reduce((sum, elem) => {
+      const totalPares = parseInt(elem.totalPares.toString().replace(/,/g, ''), 10);
+      return sum + totalPares;
     }, 0);
 
     this.formattedPrecioSum = this.elementosAgregados.reduce((sum, elem) => {
-        const precio = parseFloat(elem.precio.toString().replace(/,/g, ''));
-        return sum + precio;
+      const precio = parseFloat(elem.precio.toString().replace(/,/g, ''));
+      return sum + precio;
     }, 0).toFixed(2);
-      
-    }
-    console.log("Precio final: ", this.formattedPrecioSum);
-    console.log("Total pares: ", this.totalParesSum);
-    this.subtotal = this.formattedPrecioSum;
   }
-  
+  console.log("Precio final: ", this.formattedPrecioSum);
+  console.log("Total pares: ", this.totalParesSum);
+  this.subtotal = this.formattedPrecioSum;
+}
+
   editarRemision() {
     if (this.remisionEditada.cliente_id != 36) {
     const swalWithBootstrapButtons = Swal.mixin({
