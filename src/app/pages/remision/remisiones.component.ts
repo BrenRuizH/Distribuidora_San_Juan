@@ -199,7 +199,6 @@ export class RemisionesComponent implements OnInit {
     (error) => {
       this.noHormas = true;
     });
-    console.log(this.hormas);
   }
 
   obtenerRemisiones() {
@@ -237,7 +236,6 @@ export class RemisionesComponent implements OnInit {
       this.getFolios(this.remisionEditada.cliente_id, this.remisionEditada.id);
 
       this.calcularSumatoria();
-      console.log("REMISION EDITADA 2", this.remisionEditada2);
 
       if (this.remisionEditada.extra) {
         this.mostrarInputs = true;
@@ -310,8 +308,6 @@ export class RemisionesComponent implements OnInit {
           
             return acc;
           }, []);
-          
-          console.log(this.elementosAgregados);
         }
       }      
     });
@@ -604,10 +600,8 @@ cargarElementoParaEditar(index: number): void {
 }
 
 getPuntoCantidad(puntos: any[], punto: number): number {
-  console.log('Buscando cantidad para punto:', punto, 'en puntos:', puntos);
   const puntoStr = punto.toFixed(2); // Asegúrate de que esto coincida con el formato en puntos
   const puntoObj = puntos.find(p => parseFloat(p.punto) === parseFloat(puntoStr));
-  console.log('Cantidad encontrada:', puntoObj ? puntoObj.cantidad : 0);
   return puntoObj ? puntoObj.cantidad : 0;
 }
 
@@ -618,12 +612,10 @@ obtenerPuntosYCantidadesActualizados(): any[] {
     const inputElement = document.getElementById(`punto_${puntoInicio}`) as HTMLInputElement;
     if (inputElement) {
       const cantidad = +((inputElement.value) || 0);
-      console.log(`Punto: ${puntoInicio}, Cantidad: ${cantidad}`);
       if (cantidad > 0) {
         puntosYcantidadesActualizados.push({ punto: puntoInicio, cantidad: cantidad });
       }
     } else {
-      console.log(`Elemento no encontrado para punto: ${puntoInicio}`);
     }
     puntoInicio += 0.5;
   }
@@ -701,7 +693,6 @@ toggleSelection(datos: any): void {
       precio_seleccionado: datos.usarPrecioAnterior ? datos.precio_anterior : datos.precio_actual
     });
   }
-  console.log('Selected Folios:', this.selectedFolios);
   this.calcularSumatoria();
 }
 
@@ -710,8 +701,6 @@ toggleSelection(datos: any): void {
 actualizarPrecioSeleccionado(folio: any): void {
   folio.precio_seleccionado = folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual;
   this.cdr.detectChanges();
-  console.log('Precio Seleccionado:', folio.precio_seleccionado);
-  console.log('Usar Precio Anterior:', folio.usarPrecioAnterior);
   this.calcularSumatoria();
 }
 
@@ -747,8 +736,6 @@ calcularSumatoria() {
       return sum + precio;
     }, 0).toFixed(2);
   }
-  console.log("Precio final: ", this.formattedPrecioSum);
-  console.log("Total pares: ", this.totalParesSum);
   this.subtotal = this.formattedPrecioSum;
 }
 
@@ -782,8 +769,6 @@ calcularSumatoria() {
           }));
 
           formData.append('folios', JSON.stringify(foliosWithPrecio));
-
-          console.log(foliosWithPrecio);
 
           if (this.remisionEditada.extra && this.remisionEditada.descripcion) {
             formData.append('extra', this.remisionEditada.extra);
@@ -839,7 +824,6 @@ calcularSumatoria() {
           formData.append('total_pares', this.totalParesSum);
           formData.append('precio_final', this.formattedPrecioSum);
           formData.append('elementosAgregados', JSON.stringify(this.elementosAgregados));
-          console.log("JSON elementosAgregados", JSON.stringify(this.elementosAgregados))
 
           const extra = this.remisionEditada.extra;
             if (extra !== undefined && extra !== null && extra !== '') {
@@ -938,7 +922,6 @@ calcularSumatoria() {
     this.remisionesService.imprimirRemision(id).subscribe((resp: any) => {
       this.clienteInfo = resp.cliente[0] || {};
       this.remisionInfo = resp.remision[0] || {};
-      console.log(this.remisionInfo);
       this.ordenCompraInfo = resp.orden_compra;
 
       this.mostrarExtra = this.remisionInfo.extra !== null && this.remisionInfo.extra !== undefined && this.remisionInfo.extra !== '';
@@ -967,9 +950,7 @@ calcularSumatoria() {
         centSingular: 'CENTAVO'
       });
 
-      console.log(this.remisionInfo.fecha);
       this.fechaImpresion = moment(this.remisionInfo.fecha).format('DD/MM/YYYY');
-      console.log(this.fechaImpresion);
 
       const clienteHTML = `
   <div class="cliente-info-container">

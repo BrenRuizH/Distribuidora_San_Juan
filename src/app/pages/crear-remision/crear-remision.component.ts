@@ -83,11 +83,6 @@ export class CrearRemisionComponent {
             const totalPares = Number(this.total);
             const precio = totalPares * precio_unitario;
 
-            console.log("Total pares:", totalPares); // Debería ser 1
-            console.log("Precio unitario:", precio_unitario); // Debería ser 5.3
-            console.log("Precio calculado:", precio); 
-
-
             let hormaExistente = this.elementosAgregados.find((h: { horma_id: any; }) => h.horma_id === hormaId);
 
             if (hormaExistente) {
@@ -117,7 +112,6 @@ export class CrearRemisionComponent {
                 this.elementosAgregados.push(elementos);
             }
 
-            console.log(this.elementosAgregados);
             this.calcularSumatoria();
 
             this.remisionForm.get('oc')?.reset();
@@ -428,7 +422,6 @@ getPuntoCantidad(puntosYcantidades: any[], punto: number): number {
             precio_seleccionado: folio.precio_actual // Inicia con precio_actual
         }));
         
-        console.log('Folios: ', this.folios);
         if (this.folios.length === 0) {
             this.noFolios = true;
         } else {
@@ -464,15 +457,12 @@ toggleSelection(datos: any): void {
           precio_seleccionado: datos.precio_actual // Inicializamos con el precio actual
       });
   }
-  console.log('Selected Folios:', this.selectedFolios);
   this.calcularSumatoria();
 }
 
 actualizarPrecioSeleccionado(folio: any) {
   folio.precio_seleccionado = folio.usarPrecioAnterior ? folio.precio_anterior : folio.precio_actual;
   this.cdr.detectChanges();  // Forzar la detección de cambios
-  console.log('Precio Seleccionado:', folio.precio_seleccionado);
-  console.log('Precion anterior: ', folio.usarPrecioAnterior);
   this.calcularSumatoria();
 }
 
@@ -516,14 +506,8 @@ actualizarPrecioSeleccionado(folio: any) {
       const precio = parseFloat(elem.precio.toString().replace(',', '.')); 
       return sum + precio;
   }, 0).toFixed(2);
-  
-  
-    console.log(this.elementosAgregados);
-
     }
     this.subTotal = this.formattedPrecioSum;
-    console.log("Precio final: ", this.formattedPrecioSum);
-    console.log("Total pares: ", this.totalParesSum);
   }
 
     agregarRemision() {
@@ -626,8 +610,6 @@ actualizarPrecioSeleccionado(folio: any) {
               return;
             }
 
-            console.log(this.remisionForm);
-            
             this.remisionesService.agregarRemision('crear.php', formData).subscribe((event: any) =>{
               swalWithBootstrapButtons.fire({
                 title: "¡Agregada!",
@@ -654,7 +636,6 @@ actualizarPrecioSeleccionado(folio: any) {
           title: "Oops...",
           text: "El formulario está incompleto. Por favor, completa todos los campos.",
         });
-        console.log(this.remisionForm);
       }
     }
 }

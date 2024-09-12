@@ -267,16 +267,13 @@ export class OrdenesCompraComponent {
     }
 
     let url = 'reporte.php?fecha_inicio=' + this.fechaInicio + '&fecha_fin=' + this.fechaFin;
-    console.log(this.clienteSeleccionado);
     if (this.clienteSeleccionado) {
       url += '&cliente_id=' + this.clienteSeleccionado;
     }
 
-    console.log(url);
     this.ordenCompraService.getOrdenesCompra(url)
       .subscribe((data) => {
         this.ordenesCompraR = data.items;
-        console.log(this.ordenesCompraR);
 
         const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; remision_id:any; status: any; }) => `
         <tr>

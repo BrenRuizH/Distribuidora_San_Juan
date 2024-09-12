@@ -161,7 +161,6 @@ export class CrearOrdenCompraComponent implements OnInit{
   seleccionarHorma(horma_id: any) {
     this.hormasService.seleccionarHorma(horma_id).subscribe((resp: any) => {
       this.horma = resp.items[0];
-      console.log(this.horma);
     })
   }
 
