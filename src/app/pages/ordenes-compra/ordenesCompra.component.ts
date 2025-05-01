@@ -275,11 +275,12 @@ export class OrdenesCompraComponent {
       .subscribe((data) => {
         this.ordenesCompraR = data.items;
 
-        const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; remision_id:any; status: any; }) => `
+        const ordenesHTML = this.ordenesCompraR.map((orden: { folio: any; codigo: any; orden_compra_c: any; horma: any; fecha_orden: any; fecha_entrega: any; total_pares: any; facturaNo: any; remision_id:any; status: any; }) => `
         <tr>
           <td>${orden.folio || ''}</td>
           <td>${orden.codigo || ''}</td>
           <td>${orden.orden_compra_c || ''}</td>
+          <td>${orden.horma || ''}</td>
           <td>${orden.fecha_orden || ''}</td>
           <td>${orden.fecha_entrega || ''}</td>
           <td>${Number(orden.total_pares).toLocaleString() || ''}</td>
@@ -297,10 +298,11 @@ export class OrdenesCompraComponent {
               <th>Folio</th>
               <th>Cliente</th>
               <th>Orden de Compra</th>
+              <th>Horma</th>
               <th>Fecha de Orden</th>
               <th>Fecha de Entrega</th>
               <th>Total de Pares</th>
-              <th>Remision</th>
+              <th>Remisión</th>
               <th>Status</th>
               <th>No. Factura</th>
             </tr>

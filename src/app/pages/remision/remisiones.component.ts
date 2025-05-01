@@ -643,11 +643,19 @@ actualizarElemento(index: number, hormaId: string, oc: string, puntosYcantidades
 
 // ******************************************************************************************************
 //this
+getOrdenCompraByFolio(folio: string): string | undefined {
+  // Encuentra el folio en la lista de folios y retorna la orden de compra asociada
+  const folioSeleccionado = this.folios.find(f => f.folio === folio);
+  return folioSeleccionado ? folioSeleccionado.orden_compra_c : 'No disponible';
+}
+
 getFolios(cliente_id: any, remision_id: any) {
   this.remisionesService.consultarFolioEditar(cliente_id, remision_id).subscribe((data) => {
     this.folios = data.items.map((folio: any) => ({
       folio: folio.folio,
       oc: folio.oc,
+      orden_compra_c: folio.orden_compra_c, // Asegúrate de incluir esta propiedad
+      fecha: folio.fecha,
       total_pares: folio.total_pares,
       precio: folio.precio,
       precio_actual: folio.precio_actual,
@@ -687,6 +695,8 @@ toggleSelection(datos: any): void {
     this.selectedFolios.push({ 
       folio: datos.folio, 
       oc: datos.oc,
+      orden_compra_c: datos.orden_compra_c, // Aquí agregamos orden_compra_c
+      fecha:datos.fecha,
       precio_actual: datos.precio_actual,
       precio_anterior: datos.precio_anterior,
       usarPrecioAnterior: datos.usarPrecioAnterior || false,  // Asegúrate de que esté inicializado correctamente
@@ -1252,12 +1262,15 @@ const remisionHTML = `
       .subscribe((data) => {
         this.remisionesReporte = data.items;
 
-        const remisionesHTML = this.remisionesReporte.map((remision: { id: any; codigo: any; total_pares: any; precio_final: any; }) => `
+        const remisionesHTML = this.remisionesReporte.map((remision: { id: any; codigo: any; orden_compra_c:any; total_pares: any; precio_final: any; fecha: any; }) => `
       <tr>
         <td>${remision.id || ''}</td>
         <td>${remision.codigo || ''}</td>
+        <td>${remision.orden_compra_c || ''}</td>
+        <td>${remision.fecha || ''}</td>
         <td>${Number(remision.total_pares).toLocaleString('en-US', { minimumFractionDigits: 0 }) || ''}</td>
         <td>$${Number(remision.precio_final).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) || ''}</td>
+
     `).join('');
     const totalPares = this.remisionesReporte.reduce((sum: number, remision: { total_pares: any; }) => sum + Number(remision.total_pares), 0);
       const totalGanado = this.remisionesReporte.reduce((sum: number, remision: { precio_final: any; }) => sum + Number(remision.precio_final), 0);
@@ -1270,8 +1283,12 @@ const remisionHTML = `
             <tr>
               <th>No. Remisión</th>
               <th>Cliente</th>
+              <th>Orden de Compra</th>
+              <th>Fecha de Creación</th>
               <th>Pares</th>
               <th>Total</th>
+             
+
             </tr>
           </thead>
           <tbody>
@@ -1279,7 +1296,7 @@ const remisionHTML = `
           </tbody>
           <tfoot>
             <tr>
-              <td colspan="2"><strong>Total</strong></td>
+              <td colspan="4"><strong>Total</strong></td>
               <td><strong>${totalPares.toLocaleString('en-US')}</strong></td>
               <td><strong>$${totalGanado.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</strong></td>
             </tr>
